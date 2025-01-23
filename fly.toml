@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for tpn-weathered-log-875 on 2025-01-23T21:40:05+05:00
+# fly.toml app configuration file generated for xpr-tpn on 2025-01-23T23:27:03+05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'tpn-weathered-log-875'
+app = 'xpr-tpn'
 primary_region = 'sin'
 kill_signal = 'SIGTERM'
 
@@ -13,7 +13,7 @@ kill_signal = 'SIGTERM'
   release_command = '/app/bin/migrate'
 
 [env]
-  PHX_HOST = 'tpn-weathered-log-875.fly.dev'
+  PHX_HOST = 'xpr-tpn.fly.dev'
   PORT = '8080'
 
 [http_service]
@@ -30,6 +30,4 @@ kill_signal = 'SIGTERM'
     soft_limit = 1000
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+  size = 'shared-cpu-1x'
