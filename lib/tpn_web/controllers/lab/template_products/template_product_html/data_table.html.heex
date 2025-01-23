@@ -1,0 +1,54 @@
+<%= if(!Enum.empty?(@records)) do %>
+  <.table id="template_products" rows={@records} url={get_url()} meta={@meta}>
+    <:col :let={record} label="Template" field={:template_name}><%= record.template_name %></:col>
+    <:col :let={record} label="Substance" field={:class_name}>
+      <%= record.class_name %>
+    </:col>
+    <:col :let={record} label="Default Product" field={:formulary_name}>
+      <%= record.formulary_name %>
+    </:col>
+    <:col :let={record} label="Filling Method" field={:filling_method_name}>
+      <%= record.filling_method_name %>
+    </:col>
+    <:col :let={record} label="Additional Dose" field={:additional_dose_allowed}>
+      <.empty_badge status={record.additional_dose_allowed} />
+    </:col>
+
+    <:col :let={record} :if={@is_admin} label="Added By" field={:user_name}>
+      <%= record.user_name %>
+    </:col>
+
+    <:action :let={record} :if={@is_admin || @can.update}>
+      <button
+        hx-get={"#{get_url()}/#{record.id}/edit"}
+        hx-target="#table_modal_contents"
+        hx-indicator="#table_modal_indicator"
+        hx-on:click="table_modal.showModal()"
+        type="button"
+        class="btn btn-info btn-xs"
+      >
+        Edit
+      </button>
+    </:action>
+
+    <:action :let={record} :if={@is_admin || @can.delete}>
+      <.form
+        for={%{}}
+        method="delete"
+        action={"#{get_url()}/#{record.id}"}
+        hx-delete={"#{get_url()}/#{record.id}"}
+        hx-confirm="Are you sure to delete?"
+      >
+        <button class="btn btn-error btn-xs">
+          Delete
+        </button>
+      </.form>
+    </:action>
+  </.table>
+
+  <%= if @meta.has_previous_page or @meta.has_next_page do %>
+    <.pagination meta={@meta} url={get_url()} />
+  <% end %>
+<% else %>
+  <.no_records />
+<% end %>

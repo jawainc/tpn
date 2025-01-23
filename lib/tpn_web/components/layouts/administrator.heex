@@ -1,0 +1,12 @@
+<div>
+  <%!-- Mobile Menu --%> <.admin_menu />
+  <div class="lg:pl-72">
+    <.admin_header />
+    <main class="py-10">
+      <span class="loading loading-spinner loading-lg mx-auto mt10 main-contents-loader block htmx-indicator " />
+      <div id="main-contents" class="px-4 sm:px-6 lg:px-8 main-contents hide-on-htmx-request">
+        <%= @inner_content %>
+      </div>
+    </main>
+  </div>
+</div>

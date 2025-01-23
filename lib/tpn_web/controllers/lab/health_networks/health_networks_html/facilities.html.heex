@@ -1,0 +1,4 @@
+<option value="">Select...</option>
+<%= for {name, id} <- @facilities do %>
+  <option value={id}><%= name %></option>
+<% end %>

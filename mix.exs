@@ -5,7 +5,7 @@ defmodule Tpn.MixProject do
     [
       app: :tpn,
       version: "0.1.0",
-      elixir: "~> 1.16.3",
+      elixir: "~> 1.17.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -32,6 +32,7 @@ defmodule Tpn.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:pbkdf2_elixir, "~> 2.3.0"},
       {:phoenix, "~> 1.7.18"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -57,7 +58,9 @@ defmodule Tpn.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:nebulex, "~> 2.6.4"},
+      {:timex, "~> 3.7.11"}
     ]
   end
 

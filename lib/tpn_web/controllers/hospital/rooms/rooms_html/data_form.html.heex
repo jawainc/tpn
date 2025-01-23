@@ -1,0 +1,70 @@
+<.simple_form :let={f} 
+    for={@changeset} action={@action}
+    hx-post={@action}
+    hx-target="#form_container"
+    hx-disabled-elt="#form-button"
+    hx-on::config-request="formConfigRequest(event)"
+    autocomplete="off"
+    >
+    
+    <.flash_group flash={@flash} />
+    <div class="grid grid-cols-2 gap-4">
+        <.input
+        :if={@is_admin}
+          hx-get="/health_networks"
+          hx-target="#room_facility_id"
+          hx-on:htmx-after-on-load="selectRemoveOptions('room_campus_id'); triggerEvent(event.target.value, 'load_wards', 'lhn', 'room')"
+          field={f[:local_health_network_id]}
+          type="select"
+          label="Local Health Network"
+          prompt="Select..."
+          options={@lhns}
+        />
+  
+        <.input
+        :if={netwrok_access(@is_admin, "facility", @current_user)}
+          hx-get="/health_networks"
+          hx-target="#room_campus_id"
+          hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'room')"
+          field={f[:facility_id]}
+          type="select"
+          label="Facility"
+          prompt="Select..."
+          options={@facilities}
+        />
+  
+        <.input
+        :if={netwrok_access(@is_admin, "campus", @current_user)}
+          hx-on:change="triggerEvent(event.target.value, 'load_wards', 'campus', 'room')"
+          field={f[:campus_id]}
+          type="select"
+          label="Campus"
+          prompt="Select..."
+          options={@campuses}
+        />
+      </div>
+
+    <div class="grid grid-cols-2 gap-4">      
+        <.input field={f[:name]} type="text" label="Name" required />
+        <.input field={f[:code]} type="text" label="Code" required />
+        <.input
+            hx-get="/health_networks/wards"
+            hx-vals="js:{id: event.detail.id, type: event.detail.type}"
+            hx-trigger="load_wards from:body"
+            hx-target="#room_ward_id"
+            field={f[:ward_id]} type="select" label="Ward" options={@wards} prompt="Select..." required />
+    </div>    
+    
+    
+    
+    <:actions>
+        <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3" >
+            <%= if(@edit) do %> Update <% else %> Create <% end %>
+            <span class="loading loading-spinner loading-md htmx-indicator"></span>
+        </button>
+    </:actions>
+</.simple_form>
+
+
+
+  

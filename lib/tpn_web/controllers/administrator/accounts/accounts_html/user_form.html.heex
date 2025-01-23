@@ -1,0 +1,38 @@
+<.simple_form :let={f} 
+    for={@changeset} action={@action}
+    hx-post={@action}
+    hx-target="#form_container"
+    hx-disabled-elt="#form-button"
+    autocomplete="off"
+    >
+    
+    <.flash_group flash={@flash} />
+
+    <div class="grid grid-cols-2 gap-4">
+        <.input field={f[:first_name]} type="text" label="First Name" required autocomplete="new-name" />
+        <.input field={f[:last_name]} type="text" label="last Name" required autocomplete="new-name" />
+        <.input field={f[:email]} type="email" label="Email" required autocomplete="new-email" />
+        <.input field={f[:contact_no]} type="text" label="Conatct No" />
+        <.input field={f[:role_id]} type="select" label="Role" prompt="Select..." options={@roles} required />
+        <div></div>
+        <.input field={f[:active]} type="checkbox" label="Active" />
+        <.input field={f[:deleted]} type="checkbox" label="Deleted" />
+        
+        <%= if (!@edit) do %>
+        <div class="divider col-span-2 "></div> 
+        <.input field={f[:password]} type="password" label="Password" required autocomplete="new-password" />
+        <.input field={f[:password_confirmation]} type="password" label="Confirm Password" required />
+        <% end %>
+    </div>
+    
+    <:actions>
+        <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3" >
+            <%= if (!@edit) do %> Create <% else %> Update <% end %>
+            <span class="loading loading-spinner loading-md htmx-indicator"></span>
+        </button>
+    </:actions>
+</.simple_form>
+
+
+
+  

@@ -1,0 +1,16 @@
+<div id="form_container">
+  <.header>
+    New Vascular Access
+  </.header>
+  
+  <.data_form 
+    changeset={@changeset} 
+    action={"#{get_url()}"} 
+    flash={@flash} 
+    edit={false} 
+    is_admin={@is_admin}
+    current_user={@current_user}
+    />
+</div>
+
+  

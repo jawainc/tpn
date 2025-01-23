@@ -1,0 +1,19 @@
+<div id="form_container">
+  <.header>
+    New Osmolarity
+  </.header>
+  
+  <.data_form 
+    changeset={@changeset} 
+    action={"#{get_url()}"} 
+    flash={@flash} 
+    edit={false} 
+    is_admin={@is_admin} 
+    units={@units}
+    patient_types={@patient_types}
+    vascular_accesses={@vascular_accesses}
+    current_user={@current_user}
+    />
+</div>
+
+  

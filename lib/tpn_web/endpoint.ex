@@ -7,7 +7,8 @@ defmodule TpnWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_tpn_key",
-    signing_salt: "tSoI1H4B",
+    signing_salt: "ifk/EGBx",
+    encryption_salt: "1b3%yL9TS:5P",
     same_site: "Lax"
   ]
 

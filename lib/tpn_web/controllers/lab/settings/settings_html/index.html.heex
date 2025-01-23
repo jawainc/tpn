@@ -1,0 +1,96 @@
+<div class="mx-auto max-w-7xl">
+  <.header>Settings</.header>
+</div>
+
+<.simple_form
+  :let={_}
+  for={}
+  action="/settings"
+  hx-post="/settings"
+  hx-disabled-elt="#form-button"
+  hx-on::config-request="formConfigRequest(event)"
+  autocomplete="off"
+>
+  <.currencies currencies={@currencies} selected={get_selected_record("currency", @records)} />
+
+  <div class="mx-auto max-w-7xl">
+    <div class="divider">Formulary</div>
+  </div>
+
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-2 gap-4">
+      <.setting_select
+        label="Concentration Unit Type"
+        name="formulary_concentration_unit_type"
+        value={get_selected_record("formulary_concentration_unit_type", @records)}
+        options={@unit_types}
+      />
+      <.setting_select
+        label="Calories Unit Type"
+        name="formulary_calories_unit_type"
+        value={get_selected_record("formulary_calories_unit_type", @records)}
+        options={@unit_types}
+      />
+      <.setting_select
+        label="UOM Unit Type"
+        name="formulary_uom_unit_type"
+        value={get_selected_record("formulary_uom_unit_type", @records)}
+        options={@unit_types}
+      />
+      <.setting_select
+        label="Ingredients Unit Type"
+        name="formulary_ingredients_unit_type"
+        value={get_selected_record("formulary_ingredients_unit_type", @records)}
+        options={@unit_types}
+      />
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-7xl">
+    <div class="divider">Template</div>
+  </div>
+
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-2 gap-4">
+      <.setting_select
+        label="Fluid Unit Type"
+        name="template_fluid_unit_type"
+        value={get_selected_record("template_fluid_unit_type", @records)}
+        options={@unit_types}
+      />
+      <.setting_select
+        label="Dosing Unit Type"
+        name="template_dosing_unit_type"
+        value={get_selected_record("template_dosing_unit_type", @records)}
+        options={@unit_types}
+      />
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-7xl">
+    <div class="divider">Patient</div>
+  </div>
+
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-2 gap-4">
+      <.setting_select
+        label="Weight Unit Type"
+        name="patient_weight_unit_type"
+        value={get_selected_record("patient_weight_unit_type", @records)}
+        options={@unit_types}
+      />
+      <.setting_select
+        label="Height Unit Type"
+        name="patient_height_unit_type"
+        value={get_selected_record("patient_height_unit_type", @records)}
+        options={@unit_types}
+      />
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-7xl">
+    <button id="form-button" type="submit" class="w-48 btn btn-primary flex space-x-3 mt-16">
+      Save <span class="loading loading-spinner loading-md htmx-indicator"></span>
+    </button>
+  </div>
+</.simple_form>

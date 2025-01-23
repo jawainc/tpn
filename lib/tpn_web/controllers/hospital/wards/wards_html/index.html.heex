@@ -1,0 +1,36 @@
+<div class="mx-auto max-w-7xl">
+  <.header>
+    Wards
+    <:actions>
+      <button
+        hx-get={"#{get_url()}/new"}
+        hx-target="#table_modal_contents"
+        hx-on:click="table_modal.showModal()"
+        type="button"
+        class="btn btn-sm btn-primary"
+      >
+        Create New
+      </button>
+    </:actions>
+  </.header>
+</div>
+ <.search url={"#{get_url()}?table=1"} />
+<div class="mx-auto max-w-7xl mt-10 ">
+  <.htmx_indicator id="data-table-indicator" />
+  <div
+    id="data-table"
+    class="hide-on-htmx-request"
+    hx-get={"#{get_url()}?table=1"}
+    hx-trigger="reloadDataTable from:body"
+    hx-indicator="#data-table-indicator"
+  >
+    <.data_table
+      records={@records}
+      meta={@meta}
+      is_admin={@is_admin}
+      can={@can}
+      current_user={@current_user}
+    />
+  </div>
+   <.form_modal classes="max-w-3xl" />
+</div>

@@ -13,11 +13,12 @@ defmodule Tpn.Application do
       {DNSCluster, query: Application.get_env(:tpn, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Tpn.PubSub},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: Tpn.Finch},
+      # {Finch, name: Tpn.Finch},
       # Start a worker by calling: Tpn.Worker.start_link(arg)
       # {Tpn.Worker, arg},
       # Start to serve requests, typically the last entry
-      TpnWeb.Endpoint
+      TpnWeb.Endpoint,
+      {Tpn.Cache, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
