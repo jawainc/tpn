@@ -1,0 +1,41 @@
+<.simple_form :let={f} 
+    for={@changeset} action={@action}
+    hx-post={@action}
+    hx-target="#form_container"
+    hx-disabled-elt="#form-button"
+    hx-on::config-request="formConfigRequest(event)"
+    autocomplete="off"
+    >
+    
+    <.flash_group flash={@flash} />
+
+    <div class="grid grid-cols-2 gap-4">
+        
+        <.input field={f[:name]} type="text" label="Name" required />
+        <.input 
+            field={f[:unit_type_id]} 
+            type="select" 
+            label="Unit Type" 
+            options={@unit_types} 
+            prompt="Select..." 
+            required />
+        <.input
+            field={f[:print_on_label]} 
+            type="checkbox" 
+            label="Print on Label" />
+        
+    </div>    
+   
+    
+    
+    <:actions>
+        <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3" >
+            <%= if(@edit) do %> Update <% else %> Create <% end %>
+            <span class="loading loading-spinner loading-md htmx-indicator"></span>
+        </button>
+    </:actions>
+</.simple_form>
+
+
+
+  

@@ -1,0 +1,45 @@
+<%= if(!Enum.empty?(@records)) do %>
+    <.table id="wards" rows={@records} url={get_url()} meta={@meta} >
+        <:col :let={record} label="Name" field={:name}><%= record.name %></:col>
+        <:col :let={record} label="Code" field={:code}><%= record.code %></:col>
+        
+        <:col :if={@is_admin} :let={record} label="L.H.N" field={:local_health_network}><%= record.local_health_network %></:col>
+        <:col :if={netwrok_access(@is_admin, "facility", @current_user)} :let={record} label="Facility" field={:facility}><%= record.facility %></:col>
+        <:col :if={netwrok_access(@is_admin, "campus", @current_user)} :let={record} label="Campus" field={:campus}><%= record.campus %></:col>
+        <:col :if={@is_admin} :let={record} label="Added By" field={:user_name}><%= record.user_name %></:col>
+
+        <:action :if={@is_admin || @can.update} :let={record}>
+            <button
+            hx-get={"#{get_url()}/#{record.id}/edit"}
+            hx-target="#table_modal_contents"
+            hx-indicator="#table_modal_indicator"
+            hx-on:click="table_modal.showModal()"
+            type="button"
+            class="btn btn-info btn-xs"
+            >
+            Edit
+            </button>
+        </:action>
+
+        <:action :if={@is_admin || @can.delete} :let={record}>
+            <.form
+            for={%{}}
+            method="delete"
+            action={"#{get_url()}/#{record.id}"}
+            hx-delete={"#{get_url()}/#{record.id}"}
+            hx-confirm="Are you sure to delete?"
+            >
+            <button class="btn btn-error btn-xs">
+                Delete
+            </button>
+            </.form>
+        </:action>
+    </.table>
+
+    <%= if @meta.has_previous_page or @meta.has_next_page do %>
+        <.pagination meta={@meta} url={get_url()} />
+    <% end %>
+
+<% else %>
+    <.no_records />
+<% end %>

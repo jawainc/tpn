@@ -1,0 +1,9 @@
+<div id="form_container">
+    <.header>
+      Update Administrator
+    </.header>
+    
+    <.user_form changeset={@changeset} action={~p"/administrator/users/#{@user.id}/edit"} flash={@flash} edit={true} />
+</div>
+  
+    

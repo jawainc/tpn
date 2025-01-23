@@ -1,0 +1,17 @@
+<div id="form_container">
+  <.header>
+    New User
+  </.header>
+  
+  <.user_form 
+    changeset={@changeset} 
+    action={"#{get_url()}"} 
+    flash={@flash} 
+    roles={@roles} 
+    lhns={@lhns}
+    facilities={@facilities}
+    campuses={@campuses}
+    />
+</div>
+
+  

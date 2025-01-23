@@ -1,0 +1,21 @@
+<div id="form_container">
+    <.header>
+      Update Bed
+    </.header>
+    
+    <.data_form 
+      changeset={@changeset} 
+      action={"#{get_url()}/#{@record.id}"} 
+      flash={@flash} 
+      edit={true} 
+      is_admin={@is_admin} 
+      wards={@wards}
+      rooms={@rooms}
+      lhns={@lhns}
+      facilities={@facilities}
+      campuses={@campuses} 
+      current_user={@current_user}
+      />
+</div>
+  
+    

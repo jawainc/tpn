@@ -1,0 +1,47 @@
+<%= if(!Enum.empty?(@records)) do %>
+    <.table id="users" rows={@records} url={get_url()} meta={@meta}>
+        <:col :let={record} label="First Name" field={:first_name}><%= record.first_name %></:col>
+        <:col :let={record} label="Last Name" field={:last_name}><%= record.last_name %></:col>
+        <:col :let={record} label="Email" field={:email}><%= record.email %></:col>
+        <:col :let={record} label="Role" field={:role_id}><%= record.role.name %></:col>
+        <:col :let={record} label="Active" field={:active}>
+            <.empty_badge status={record.active} />
+        </:col>
+        <:col :let={record} label="Deleted" field={:deleted}>
+            <.empty_badge status={record.deleted} />
+        </:col>
+
+        <:action :let={user}>
+            <button
+            hx-get={"#{get_url()}/#{user.id}/change_password"}
+            hx-target="#table_modal_contents"
+            hx-indicator="#table_modal_indicator"
+            hx-on:click="table_modal.showModal()"
+            type="button"
+            class="btn btn-xs"
+            >
+            Change Password
+            </button>
+        </:action>
+
+        <:action :let={record}>
+            <button
+            hx-get={"#{get_url()}/#{record.id}/edit"}
+            hx-target="#table_modal_contents"
+            hx-indicator="#table_modal_indicator"
+            hx-on:click="table_modal.showModal()"
+            type="button"
+            class="btn btn-info btn-xs"
+            >
+            Edit
+            </button>
+        </:action>        
+    </.table>
+
+    <%= if @meta.has_previous_page or @meta.has_next_page do %>
+        <.pagination meta={@meta} url={get_url()} />
+    <% end %>
+
+<% else %>
+    <.no_records />
+<% end %>
