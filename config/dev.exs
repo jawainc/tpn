@@ -5,7 +5,7 @@ config :tpn, Tpn.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "",
+  database: "tpn_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -20,16 +20,10 @@ config :tpn, TpnWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
-  # https: [
-  #   port: 4001,
-  #   cipher_suite: :strong,
-  #   certfile: "priv/cert/selfsigned.pem",
-  #   keyfile: "priv/cert/selfsigned_key.pem"
-  # ],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "bWVuaG91c2VqdW5nbGVuZXN0Y29hdGFsbW9zdHRvbGR2ZWdldGFibGV3YW50aGVhdnk=",
+  secret_key_base: "E3OQbbqD6HZTRe1F1hyzedGZbaBnRHg3QUH/u/hO9zI6RNnctoriuMZqwOuPGNq6",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:tpn, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:tpn, ~w(--watch)]}
@@ -81,8 +75,11 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-# Include HEEx debug annotations as HTML comments in rendered markup
-config :phoenix_live_view, :debug_heex_annotations, true
+config :phoenix_live_view,
+  # Include HEEx debug annotations as HTML comments in rendered markup
+  debug_heex_annotations: true,
+  # Enable helpful, but potentially expensive runtime checks
+  enable_expensive_runtime_checks: true
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false

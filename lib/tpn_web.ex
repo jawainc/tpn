@@ -17,7 +17,7 @@ defmodule TpnWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(vendors assets fonts images favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
     quote do
@@ -30,9 +30,6 @@ defmodule TpnWeb do
     end
   end
 
-  @spec channel() ::
-          {:use, [{:context, TpnWeb} | {:end_of_expression, [...]} | {:imports, [...]}, ...],
-           [{:__aliases__, [...], [...]}, ...]}
   def channel do
     quote do
       use Phoenix.Channel
@@ -45,8 +42,9 @@ defmodule TpnWeb do
         formats: [:html, :json],
         layouts: [html: TpnWeb.Layouts]
 
+      use Gettext, backend: TpnWeb.Gettext
+
       import Plug.Conn
-      import TpnWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -71,7 +69,7 @@ defmodule TpnWeb do
 
   def html do
     quote do
-      use Phoenix.Component, global_prefixes: ~w(hx-)
+      use Phoenix.Component
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
@@ -84,11 +82,13 @@ defmodule TpnWeb do
 
   defp html_helpers do
     quote do
+      # Translation
+      use Gettext, backend: TpnWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components and translation
+      # Core UI components
       import TpnWeb.CoreComponents
-      import TpnWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -108,7 +108,7 @@ defmodule TpnWeb do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

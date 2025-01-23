@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "daisyui": "^4.12.10"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
-  }
-}

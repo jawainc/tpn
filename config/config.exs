@@ -7,37 +7,20 @@
 # General application configuration
 import Config
 
-config :tpn, Tpn.Cache,
-  # When using :shards as backend
-  # backend: :shards,
-  # GC interval for pushing new generation: 12 hrs
-  gc_interval: :timer.hours(12),
-  # Max 1 million entries in cache
-  max_size: 1_000_000,
-  # Max 2 GB of memory
-  allocated_memory: 2_000_000_000,
-  # GC min timeout: 10 sec
-  gc_cleanup_min_timeout: :timer.seconds(10),
-  # GC max timeout: 10 min
-  gc_cleanup_max_timeout: :timer.minutes(10)
-
-config :tpn,
-  ecto_repos: [Tpn.Repo]
-
 config :tpn,
   ecto_repos: [Tpn.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
 config :tpn, TpnWeb.Endpoint,
-  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: TpnWeb.ErrorHTML, json: TpnWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: Tpn.PubSub,
-  live_view: [signing_salt: "1635sjcl"]
+  live_view: [signing_salt: "IG6LoG86"]
 
 # Configures the mailer
 #
@@ -53,14 +36,14 @@ config :esbuild,
   version: "0.17.11",
   tpn: [
     args:
-      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --external:/vendors/*),
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.0",
+  version: "3.4.3",
   tpn: [
     args: ~w(
       --config=tailwind.config.js
