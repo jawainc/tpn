@@ -1,5 +1,4 @@
 defmodule TpnWeb.Router do
-  alias TpnWeb.PageController
   use TpnWeb, :router
   use Plug.ErrorHandler
 
@@ -52,7 +51,7 @@ defmodule TpnWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/install", PageController, :install
+
     get "/logout", Login.LoginController, :delete
 
     get "/login", Login.LoginController, :index
@@ -72,6 +71,7 @@ defmodule TpnWeb.Router do
     get "/health_networks/rooms", HealthNetworks.HealthNetworksController, :rooms
     get "/health_networks/beds", HealthNetworks.HealthNetworksController, :beds
     get "/health_networks/hospitals", HealthNetworks.HealthNetworksController, :hospitals
+    get "/health_networks/mrn", HealthNetworks.HealthNetworksController, :mrn
     get "/template_products/formularies", TemplateProductController, :formularies
 
     resources "/wards", WardsController, except: [:show, :delete]
@@ -90,6 +90,9 @@ defmodule TpnWeb.Router do
     resources "/templates", TemplateController, except: [:show, :delete]
     resources "/template_products", TemplateProductController, except: [:show, :delete]
     resources "/patients/dashboard", Hospital.PatientDashboardController, except: [:delete]
+    post "/patients/admissions", Hospital.AdmissionsController, :create
+
+    get "/patients/:id/admissions", Hospital.AdmissionsController, :index
     get "/patients/:id/admissions/new", Hospital.AdmissionsController, :new
 
     get "/settings", SettingsController, :index
@@ -195,12 +198,12 @@ defmodule TpnWeb.Router do
     end
   end
 
-  # @impl Plug.ErrorHandler
-  # def handle_errors(conn, %{kind: kind, reason: _reason, stack: _stack}) do
-  #   if kind in [:error, :throw] do
-  #     conn
-  #     |> put_resp_header("hx-redirect", "/login")
-  #     |> send_resp(200, "")
-  #   end
-  # end
+  @impl Plug.ErrorHandler
+  def handle_errors(conn, %{kind: kind, reason: _reason, stack: _stack}) do
+    if kind in [:error, :throw] do
+      conn
+      |> put_resp_header("hx-redirect", "/login")
+      |> send_resp(200, "")
+    end
+  end
 end

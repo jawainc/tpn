@@ -40,6 +40,18 @@ defmodule TpnWeb.HealthNetworks.HealthNetworksController do
     render(conn, :beds, beds: bed_data)
   end
 
+  def mrn(conn, %{"patient_id" => patient_id, "campus_id" => campus_id}) do
+    mrn_data =
+      Tpn.PatientMrn
+      |> where([m], m.patient_id == ^patient_id)
+      |> where([m], m.campus_id == ^campus_id)
+      |> Repo.one()
+
+    IO.inspect(mrn_data)
+
+    render(conn, :mrn, mrn: mrn_data)
+  end
+
   defp ward_data(conn, %{"id" => id, "type" => "lhn"}) do
     ward_data =
       Tpn.Hospital.Ward

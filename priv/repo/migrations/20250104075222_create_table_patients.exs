@@ -61,32 +61,32 @@ defmodule Tpn.Repo.Migrations.CreateTablePatients do
     execute """
       CREATE OR REPLACE VIEW patients_view AS
       SELECT p.id,
-      p.first_name,
-      p.last_name,
-      p.identity_no,
-      p.dob,
-      p.gender,
-      p.address_1,
-      p.address_2,
-      p.city,
-      p.state,
-      p.country,
-      p.zip,
-      p.phone,
-      p.email,
-      p.notes,
-      p.tpn_id,
-      p.local_health_network_id,
-      p.facility_id,
-      p.campus_id,
-      p.user_id,
-      p.inserted_at,
-      p.updated_at,
-      lhn.name AS local_health_network,
-      f.name AS facility,
-      c.name AS campus,
-      u.first_name as user_name,
-      COALESCE(admission_status.is_admitted, FALSE) as is_admitted
+          p.first_name,
+          p.last_name,
+          p.identity_no,
+          p.dob,
+          p.gender,
+          p.address_1,
+          p.address_2,
+          p.city,
+          p.state,
+          p.country,
+          p.zip,
+          p.phone,
+          p.email,
+          p.notes,
+          p.tpn_id,
+          p.local_health_network_id,
+          p.facility_id,
+          p.campus_id,
+          p.user_id,
+          p.inserted_at,
+          p.updated_at,
+          lhn.name AS local_health_network,
+          f.name AS facility,
+          c.name AS campus,
+          u.first_name as user_name,
+          COALESCE(admission_status.is_admitted, FALSE) as is_admitted
       FROM patients p
       LEFT JOIN local_health_networks lhn ON p.local_health_network_id = lhn.id
       LEFT JOIN facilities f ON p.facility_id = f.id
@@ -95,7 +95,7 @@ defmodule Tpn.Repo.Migrations.CreateTablePatients do
       LEFT JOIN LATERAL (
           SELECT TRUE as is_admitted
           FROM admissions a
-          WHERE a.patient_id = f.id
+          WHERE a.patient_id = p.id  -- Changed from f.id to p.id
           AND a.discharged_at IS NULL
           LIMIT 1
       ) admission_status ON TRUE;

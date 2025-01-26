@@ -3,7 +3,6 @@
  * @param {*} id
  */
 export function selectRemoveOptions(arg) {
-  console.log("selectRemoveOptions >>>>>>", arg);
   if (Array.isArray(arg)) {
     arg.forEach((id) => {
       const select = document.getElementById(id);
@@ -36,6 +35,10 @@ export function triggerEvent(value, event, type, elm = "") {
     case "load_rooms":
       load_rooms(value, elm);
       break;
+    case "load_wards_with_mrn":
+      load_wards(value, type, elm);
+      load_mrn(value);
+      break;
     case "load_beds":
       load_beds(value, elm);
       break;
@@ -61,7 +64,7 @@ export function applyCheckboxSelector(element) {
 
 function load_wards(value, type, elm) {
   if (!value) {
-    selectRemoveOptions(elm + "_ward_id");
+    selectRemoveOptions([elm + "_ward_id", elm + "_room_id", elm + "_bed_id"]);
     return;
   }
 
@@ -69,16 +72,14 @@ function load_wards(value, type, elm) {
 }
 
 function load_rooms(value, elm) {
-  console.log("load rooms >>>>>>", elm);
   if (!value) {
-    selectRemoveOptions(elm + "_room_id");
+    selectRemoveOptions([elm + "_room_id", elm + "_bed_id"]);
     return;
   }
   document.body.dispatchEvent(new CustomEvent("load_rooms", { detail: { id: value } }));
 }
 
 function load_beds(value, elm) {
-  console.log("load beds >>>>>>", elm);
   if (!value) {
     selectRemoveOptions(elm + "_bed_id");
     return;
@@ -100,6 +101,20 @@ function load_template_formularies(value) {
       detail: {
         template_id: template_id,
         class_id: class_id,
+      },
+    }),
+  );
+}
+
+function load_mrn(value) {
+  if (!value) {
+    document.getElementById("mrn").value = "";
+  }
+  document.body.dispatchEvent(
+    new CustomEvent("load_mrn", {
+      detail: {
+        campus_id: value,
+        patient_id: document.getElementById("admission_patient_id").value,
       },
     }),
   );

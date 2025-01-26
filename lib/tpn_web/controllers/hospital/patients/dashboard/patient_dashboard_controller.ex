@@ -84,7 +84,6 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
 
     conn
     |> assign(:age, age)
-    |> assign(:admission_number, nil)
     |> assign(:patient, patient)
     |> assign(:admissions, get_admissions(id))
     |> render(:show)

@@ -1,5 +1,6 @@
 defmodule Tpn.Admissions do
   import Ecto.Query, warn: false
+  alias Ecto.Multi
   alias Tpn.Repo
   alias Tpn.Admission
   alias Tpn.PatientMrn
@@ -21,6 +22,37 @@ defmodule Tpn.Admissions do
   end
 
   def create_admission(attrs \\ %{}) do
+    multi =
+      Multi.new()
+      |> Multi.insert(:admission, %Admission{} |> Admission.changeset(attrs))
+      |> Multi.merge(fn %{admission: admission} ->
+        Multi.new()
+        |> Multi.insert(
+          :patient_mrn,
+          %PatientMrn{}
+          |> PatientMrn.changeset(%{
+            patient_id: admission.patient_id,
+            campus_id: admission.campus_id,
+            facility_id: admission.facility_id,
+            local_health_network_id: admission.local_health_network_id,
+            admission_id: admission.id,
+            user_id: admission.user_id,
+            mrn: attrs["mrn"]
+          })
+        )
+      end)
+
+    case Repo.transaction(multi) do
+      {:ok, %{admission: admission} = _multi_result} ->
+        {:ok, admission}
+
+      {:error, changeset} ->
+        {:error, changeset}
+
+      {:error, _, changeset, _} ->
+        {:error, changeset}
+    end
+
     %Admission{}
     |> Admission.changeset(attrs)
     |> Repo.insert()

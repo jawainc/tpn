@@ -11,31 +11,47 @@
   <.flash_group flash={@flash} />
   <input type="hidden" name="admission[admission_no]" value={@admission_no} />
   <input type="hidden" name="admission[age]" value={@age} />
-  <input type="hidden" name="admission[patient_id]" value={@patient_id} />
+  <input type="hidden" id="admission_patient_id" name="admission[patient_id]" value={@patient_id} />
   <div class="grid grid-cols-2 gap-4">
     <div class="flex flex-col space-y-1">
       <span>Admission No.</span>
-      <span class="font-semibold"><%= @admission_no %></span>
+      <span class="font-semibold">{@admission_no}</span>
     </div>
     <div class="flex flex-col space-y-1">
       <span>Age</span>
-      <span class="font-semibold"><%= @age %></span>
+      <span class="font-semibold">{@age}</span>
     </div>
     <%= if !is_nil(@mrn) do %>
+      <input type="hidden" name="admission[mrn]" value={@mrn} />
       <div class="flex flex-col space-y-1">
         <span>M.R.N</span>
-        <span class="font-semibold"><%= @mrn %></span>
+        <span class="font-semibold">{@mrn}</span>
       </div>
     <% else %>
-      <div class="flex flex-col space-y-1">
-        <span>M.R.N<span class="text-error">*</span></span>
-        <input
-          class="input input-bordered w-full h-10"
-          type="text"
-          value=""
-          name="admission[mrn]"
-          id="admission_mrn"
-        />
+      <div
+        hx-get="/health_networks/mrn"
+        hx-target="#mrn_container"
+        hx-vals="js:{patient_id: event.detail.patient_id, campus_id: event.detail.campus_id}"
+        hx-trigger="load_mrn from:body"
+        hx-indicator="#mrn_loader"
+        id="mrn_container"
+        class="flex flex-col space-y-1"
+      >
+        <span id="mrn_loader" class="loading loading-spinner loading-xs htmx-indicator"></span>
+        <%= if @has_campus do %>
+          <span>M.R.N<span class="text-error">*</span></span>
+          <input
+            class="input input-bordered w-full h-10"
+            type="text"
+            value=""
+            name="admission[mrn]"
+            id="admission_mrn"
+            required
+          />
+        <% else %>
+          <span>M.R.N</span>
+          <span class="font-semibold">---</span>
+        <% end %>
       </div>
     <% end %>
   </div>
@@ -44,34 +60,37 @@
       :if={@is_admin}
       hx-get="/health_networks"
       hx-target="#admission_facility_id"
-      hx-on:htmx-after-on-load="selectRemoveOptions('admission_campus_id'); triggerEvent(event.target.value, 'load_wards', 'lhn', 'bed')"
+      hx-on:htmx-after-on-load="selectRemoveOptions(['admission_campus_id', 'admission_ward_id', 'admission_room_id', 'admission_bed_id']);"
       field={f[:local_health_network_id]}
       type="select"
       label="Local Health Network"
       prompt="Select..."
       options={@lhns}
+      required
     />
 
     <.input
       :if={netwrok_access(@is_admin, "facility", @current_user)}
       hx-get="/health_networks"
       hx-target="#admission_campus_id"
-      hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'bed')"
+      hx-on:htmx-after-on-load="selectRemoveOptions(['admission_ward_id', 'admission_room_id', 'admission_bed_id']);"
       field={f[:facility_id]}
       type="select"
       label="Facility"
       prompt="Select..."
       options={@facilities}
+      required
     />
 
     <.input
       :if={netwrok_access(@is_admin, "campus", @current_user)}
-      hx-on:change="triggerEvent(event.target.value, 'load_wards', 'campus', 'bed')"
+      hx-on:change="triggerEvent(event.target.value, 'load_wards_with_mrn', 'campus', 'admission')"
       field={f[:campus_id]}
       type="select"
       label="Campus"
       prompt="Select..."
       options={@campuses}
+      required
     />
 
     <.input
@@ -79,7 +98,7 @@
       hx-vals="js:{id: event.detail.id, type: event.detail.type}"
       hx-trigger="load_wards from:body"
       hx-target="#admission_ward_id"
-      hx-on:change="triggerEvent(event.target.value, 'load_rooms', 'room', 'bed')"
+      hx-on:change="triggerEvent(event.target.value, 'load_rooms', 'room', 'admission')"
       hx-on:htmx-after-on-load="selectRemoveOptions(['admission_room_id', 'admission_bed_id'])"
       field={f[:ward_id]}
       type="select"
@@ -94,8 +113,8 @@
       hx-vals="js:{ward_id: event.detail.id}"
       hx-trigger="load_rooms from:body"
       hx-target="#admission_room_id"
-      hx-on:change="triggerEvent(event.target.value, 'load_beds', 'room', 'bed')"
-      hx-on:htmx-after-on-load="selectRemoveOptions(['admission_room_id', 'admission_bed_id'])"
+      hx-on:change="triggerEvent(event.target.value, 'load_beds', 'room', 'admission')"
+      hx-on:htmx-after-on-load="selectRemoveOptions('admission_bed_id')"
       field={f[:room_id]}
       type="select"
       label="Room"

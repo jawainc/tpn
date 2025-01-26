@@ -20,9 +20,9 @@
     </div>
   </div>
 
-  <.patient_details patient={@patient} age={@age} admission_number={@admission_number} />
+  <.patient_details patient={@patient} age={@age} />
 
-  <.patient_admissions admissions={@admissions} />
+  <.patient_admissions admissions={@admissions} patient_id={@patient.id} />
 </div>
 
 <.form_modal classes="max-w-3xl" />

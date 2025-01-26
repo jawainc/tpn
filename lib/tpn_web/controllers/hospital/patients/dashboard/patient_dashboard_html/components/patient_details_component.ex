@@ -26,19 +26,14 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
         >
           <path d="M48 0C21.5 0 0 21.5 0 48V256H144c8.8 0 16 7.2 16 16s-7.2 16-16 16H0v64H144c8.8 0 16 7.2 16 16s-7.2 16-16 16H0v80c0 26.5 21.5 48 48 48H265.9c-6.3-10.2-9.9-22.2-9.9-35.1c0-46.9 25.8-87.8 64-109.2V271.8 48c0-26.5-21.5-48-48-48H48zM152 64h16c8.8 0 16 7.2 16 16v24h24c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H184v24c0 8.8-7.2 16-16 16H152c-8.8 0-16-7.2-16-16V152H112c-8.8 0-16-7.2-16-16V120c0-8.8 7.2-16 16-16h24V80c0-8.8 7.2-16 16-16zM512 272a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM288 477.1c0 19.3 15.6 34.9 34.9 34.9H541.1c19.3 0 34.9-15.6 34.9-34.9c0-51.4-41.7-93.1-93.1-93.1H381.1c-51.4 0-93.1 41.7-93.1 93.1z" />
         </svg>
-        <div class="font-bold text-lg mt-5"><%= @patient.first_name %> <%= @patient.last_name %></div>
-        <div class="text-xs text-gray-500 dark:text-gray-600"><%= @patient.email %></div>
+        <div class="font-bold text-lg mt-5">{@patient.first_name} {@patient.last_name}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-600">{@patient.email}</div>
         <div class="mt-5 text-sm">
-          <%= @patient.tpn_id %>
+          {@patient.tpn_id}
         </div>
         <div class="font-semibold text-gray-500 dark:text-gray-600">TPN ID</div>
 
-        <%= if !is_nil(@admission_number) do %>
-          <div class="mt-5 text-sm">
-            <%= @admission_number %>
-          </div>
-          <div class="font-semibold text-gray-500 dark:text-gray-600">Admission Number</div>
-        <% else %>
+        <%= if !@patient.is_admitted do %>
           <button
             hx-get={"/patients/#{@patient.id}/admissions/new"}
             hx-target="#table_modal_contents"
@@ -48,6 +43,14 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
           >
             New Admission
           </button>
+        <% else %>
+          <button
+            hx-get={"/patients/#{@patient.id}/admissions/discharge"}
+            type="button"
+            class="btn btn-xs btn-neutral mt-5"
+          >
+            Discharge Patient
+          </button>
         <% end %>
       </div>
 
@@ -55,13 +58,13 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
         <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
           <div class="flex flex-col">
             <span class="font-semibold text-gray-600">Gender</span>
-            <span class="text-sm"><%= @patient.gender %></span>
+            <span class="text-sm">{@patient.gender}</span>
           </div>
 
           <div class="flex flex-col">
             <%= if !is_nil(@age) do %>
               <span class="font-semibold text-gray-600">Age</span>
-              <span class="text-sm"><%= @age %></span>
+              <span class="text-sm">{@age}</span>
             <% end %>
           </div>
 
@@ -82,25 +85,25 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
         <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
           <div class="flex flex-col">
             <span class="font-semibold text-gray-600">Birthday</span>
-            <span class="text-sm"><%= Calendar.strftime(@patient.dob, "%B %d, %Y") %></span>
+            <span class="text-sm">{Calendar.strftime(@patient.dob, "%B %d, %Y")}</span>
           </div>
           <div class="flex flex-col">
             <span class="font-semibold text-gray-500 dark:text-gray-600">Identity No</span>
-            <span class="text-sm"><%= @patient.identity_no %></span>
+            <span class="text-sm">{@patient.identity_no}</span>
           </div>
           <div class="flex flex-col">
             <span class="font-semibold text-gray-500 dark:text-gray-600">Phone</span>
-            <span class="text-sm"><%= @patient.phone %></span>
+            <span class="text-sm">{@patient.phone}</span>
           </div>
         </div>
         <div class="grid grid-cols-1 gap-2 p-4">
           <div class="flex flex-col">
             <span class="font-semibold text-gray-500 dark:text-gray-600">Address</span>
             <p class="break-words ">
-              <span class="block text-sm"><%= @patient.address_1 %></span>
-              <span class="block text-sm"><%= @patient.address_2 %></span>
+              <span class="block text-sm">{@patient.address_1}</span>
+              <span class="block text-sm">{@patient.address_2}</span>
               <span class="block text-sm">
-                <%= @patient.city %> <%= @patient.state %> <%= @patient.zip %> <%= @patient.country %>
+                {@patient.city} {@patient.state} {@patient.zip} {@patient.country}
               </span>
             </p>
           </div>
@@ -109,7 +112,7 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
       <div class="bg-gray-300/10 relative box-border dark:bg-gray-700/10 py-4 min-w-[300px] border border-gray-300 dark:border-slate-800">
         <h3 class="font-semibold px-6 text-gray-500 dark:text-gray-600">Notes</h3>
         <div class="px-6 py-2 break-words max-w-[280px] text-sm">
-          <%= raw(format_lines(@patient.notes)) %>
+          {raw(format_lines(@patient.notes))}
         </div>
       </div>
     </div>
