@@ -13,6 +13,7 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
   attr :admission_number, :string, default: nil
   attr :admitted, :boolean, default: false
   attr :age, :string, required: false
+  attr :can_be_discharged, :boolean, default: false
 
   def patient_details(assigns) do
     ~H"""
@@ -44,13 +45,24 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
             New Admission
           </button>
         <% else %>
-          <button
-            hx-get={"/patients/#{@patient.id}/admissions/discharge"}
-            type="button"
-            class="btn btn-xs btn-neutral mt-5"
+          <.simple_form
+            :if={@can_be_discharged}
+            for={%{}}
+            action="/patients/admissions/discharge"
+            hx-post="/patients/admissions/discharge"
+            hx-disabled-elt="#discharge-form-button"
+            hx-target="#main-contents"
           >
-            Discharge Patient
-          </button>
+            <input type="hidden" name="patient_id" value={@patient.id} />
+            <button
+              type="submit"
+              id="discharge-form-button"
+              class="btn btn-xs btn-neutral mt-5 flex space-x-3"
+            >
+              Discharge Patient
+              <span class="loading loading-spinner loading-xs htmx-indicator"></span>
+            </button>
+          </.simple_form>
         <% end %>
       </div>
 

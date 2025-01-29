@@ -2,44 +2,67 @@ defmodule Tpn.Admissions do
   import Ecto.Query, warn: false
   alias Ecto.Multi
   alias Tpn.Repo
-  alias Tpn.Admission
+  alias Tpn.{Admission, AdmissionView}
   alias Tpn.PatientMrn
   alias Tpn.Helpers.PaginationHelper
 
-  def list_admissions(params, conn) do
+  def list_admissions(params) do
     admissions =
-      from(a in Admission)
-      |> PaginationHelper.build_networks_query(conn)
-      |> PaginationHelper.build_query_params(Admission, params, !conn.assigns[:is_admin])
+      from(a in AdmissionView)
+      |> PaginationHelper.build_query_params(AdmissionView, params, false)
       |> Repo.all()
 
-    meta =
-      from(a in Admission)
-      |> PaginationHelper.build_networks_query(conn)
-      |> PaginationHelper.get_paging_meta(params, Admission)
+    {:ok, admissions}
+  end
 
-    {:ok, {admissions, meta}}
+  def get_admission_by_lhn_id(patient_id, lhn_id) do
+    from(a in Admission)
+    |> where([a], a.patient_id == ^patient_id)
+    |> where([a], a.local_health_network_id == ^lhn_id)
+    |> where([a], a.discharged == false)
+    |> order_by([a], desc: a.inserted_at)
+    |> Repo.one()
+  end
+
+  def get_admission_by_facility_id(patient_id, facility_id) do
+    from(a in Admission)
+    |> where([a], a.patient_id == ^patient_id)
+    |> where([a], a.facility_id == ^facility_id)
+    |> where([a], a.discharged == false)
+    |> order_by([a], desc: a.inserted_at)
+    |> Repo.one()
+  end
+
+  def get_admission_by_campus_id(patient_id, campus_id) do
+    from(a in Admission)
+    |> where([a], a.patient_id == ^patient_id)
+    |> where([a], a.campus_id == ^campus_id)
+    |> where([a], a.discharged == false)
+    |> order_by([a], desc: a.inserted_at)
+    |> Repo.one()
   end
 
   def create_admission(attrs \\ %{}) do
     multi =
       Multi.new()
       |> Multi.insert(:admission, %Admission{} |> Admission.changeset(attrs))
-      |> Multi.merge(fn %{admission: admission} ->
-        Multi.new()
-        |> Multi.insert(
-          :patient_mrn,
-          %PatientMrn{}
-          |> PatientMrn.changeset(%{
-            patient_id: admission.patient_id,
-            campus_id: admission.campus_id,
-            facility_id: admission.facility_id,
-            local_health_network_id: admission.local_health_network_id,
-            admission_id: admission.id,
-            user_id: admission.user_id,
-            mrn: attrs["mrn"]
-          })
-        )
+      |> Multi.run(:patient_mrn, fn _repo, %{admission: admission} ->
+        case Map.has_key?(attrs, "mrn") do
+          true ->
+            {:ok,
+             %PatientMrn{}
+             |> PatientMrn.changeset(%{
+               patient_id: admission.patient_id,
+               campus_id: admission.campus_id,
+               facility_id: admission.facility_id,
+               local_health_network_id: admission.local_health_network_id,
+               user_id: admission.user_id,
+               mrn: attrs["mrn"]
+             })}
+
+          false ->
+            {:ok, nil}
+        end
       end)
 
     case Repo.transaction(multi) do
@@ -52,14 +75,18 @@ defmodule Tpn.Admissions do
       {:error, _, changeset, _} ->
         {:error, changeset}
     end
-
-    %Admission{}
-    |> Admission.changeset(attrs)
-    |> Repo.insert()
   end
 
   def get_admission!(id) do
     Repo.get!(Admission, id)
+  end
+
+  def discharge_admission(patient_id) do
+    from(a in Admission,
+      where: a.patient_id == ^patient_id and a.discharged == false,
+      update: [set: [discharged: true, discharged_at: fragment("NOW()")]]
+    )
+    |> Repo.update_all([])
   end
 
   def get_mrn(patient_id, campus_id) do

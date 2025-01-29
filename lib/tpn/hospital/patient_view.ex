@@ -1,30 +1,9 @@
 defmodule Tpn.PatientView do
   use Ecto.Schema
 
-  @filterable_fields [
-    :first_name,
-    :last_name,
-    :identity_no,
-    :phone,
-    :email,
-    :tpn_id,
-    :campus,
-    :user_name,
-    :is_admitted
-  ]
+  @filterable_fields []
 
-  @sortable_fields [
-    :mrn,
-    :first_name,
-    :last_name,
-    :identity_no,
-    :phone,
-    :email,
-    :tpn_id,
-    :campus,
-    :user_name,
-    :is_admitted
-  ]
+  @sortable_fields []
 
   schema "patients_view" do
     field :first_name, :string

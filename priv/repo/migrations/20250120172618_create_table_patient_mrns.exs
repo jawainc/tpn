@@ -11,7 +11,6 @@ defmodule Tpn.Repo.Migrations.CreateTablePatientMrns do
 
       add :facility_id, references(:facilities, on_delete: :nilify_all), null: false
       add :campus_id, references(:campuses, on_delete: :nilify_all), null: false
-      add :admission_id, references(:admissions, on_delete: :nilify_all), null: false
       add :user_id, references(:users, on_delete: :nilify_all), null: true
 
       timestamps()
@@ -58,16 +57,16 @@ defmodule Tpn.Repo.Migrations.CreateTablePatientMrns do
             hu.unit AS height_unit,
             u.first_name AS user_name
             FROM admissions a
-            JOIN patients p ON a.patient_id = p.id
-            JOIN patient_types pt ON a.patient_type_id = pt.id
-            JOIN local_health_networks lhn ON a.local_health_network_id = lhn.id
-            JOIN facilities f ON a.facility_id = f.id
-            JOIN campuses c ON a.campus_id = c.id
+            LEFT JOIN patients p ON a.patient_id = p.id
+            LEFT JOIN patient_types pt ON a.patient_type_id = pt.id
+            LEFT JOIN local_health_networks lhn ON a.local_health_network_id = lhn.id
+            LEFT JOIN facilities f ON a.facility_id = f.id
+            LEFT JOIN campuses c ON a.campus_id = c.id
             LEFT JOIN wards w ON a.ward_id = w.id
             LEFT JOIN rooms r ON a.room_id = r.id
             LEFT JOIN beds b ON a.bed_id = b.id
             LEFT JOIN users u ON a.user_id = u.id
-            LEFT JOIN patient_mrns mr ON a.id = mr.admission_id
+            LEFT JOIN patient_mrns mr ON a.campus_id = mr.campus_id
             LEFT JOIN units wu ON a.weight_unit_id = wu.id
             LEFT JOIN units hu ON a.height_unit_id = hu.id
     """

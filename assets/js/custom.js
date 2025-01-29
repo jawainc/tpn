@@ -50,6 +50,16 @@ export function triggerEvent(value, event, type, elm = "") {
   }
 }
 
+export function filterPatients() {
+  const filter = document.querySelector("input[name=filter]").value || "";
+  const filter_by = document.querySelector("input[name=by_filter]").value || "";
+
+  return {
+    filter: filter,
+    filter_by: filter_by,
+  };
+}
+
 /**
  * adds/removes a class to an element based on the checked state of a checkbox
  * @param {*} element

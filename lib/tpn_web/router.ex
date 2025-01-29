@@ -90,7 +90,9 @@ defmodule TpnWeb.Router do
     resources "/templates", TemplateController, except: [:show, :delete]
     resources "/template_products", TemplateProductController, except: [:show, :delete]
     resources "/patients/dashboard", Hospital.PatientDashboardController, except: [:delete]
+    get "/patients/admissions/search", Hospital.AdmissionsController, :search
     post "/patients/admissions", Hospital.AdmissionsController, :create
+    post "/patients/admissions/discharge", Hospital.AdmissionsController, :discharge
 
     get "/patients/:id/admissions", Hospital.AdmissionsController, :index
     get "/patients/:id/admissions/new", Hospital.AdmissionsController, :new

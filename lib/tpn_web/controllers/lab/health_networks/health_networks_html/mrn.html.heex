@@ -9,7 +9,7 @@
     required
   />
 <% else %>
-  <input type="hidden" name="admission[mrn]" value={@mrn.mrn} />
+  <input type="hidden" name="admission[has_mrn]" value={@mrn.mrn} />
   <div class="flex flex-col space-y-1">
     <span>M.R.N</span>
     <span class="font-semibold">{@mrn.mrn}</span>

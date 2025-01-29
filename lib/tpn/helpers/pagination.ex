@@ -32,9 +32,15 @@ defmodule Tpn.Helpers.PaginationHelper do
     # if filter is nil, set it to %{}
     params = Map.put_new(params, "filter", "")
 
+    filter_fields =
+      case params["filter_by"] do
+        nil -> schema.filter_fields()
+        _ -> [String.to_atom(params["filter_by"])]
+      end
+
     # get filterable fields from schema
     filterable_fields =
-      schema.filter_fields()
+      filter_fields
       |> filter_params_for_admin(params, sub)
 
     page = String.to_integer(params["page"])

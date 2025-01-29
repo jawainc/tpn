@@ -2,8 +2,8 @@ defmodule Tpn.Patient do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @filterable_fields [:first_name, :last_name, :mrn, :identity_no, :phone, :email, :notes]
-  @sortable_fields [:first_name, :last_name, :mrn, :identity_no, :phone, :email, :notes]
+  @filterable_fields [:first_name, :last_name, :identity_no, :phone, :email]
+  @sortable_fields [:first_name, :last_name, :identity_no, :phone, :email]
 
   schema "patients" do
     field :first_name, :string
@@ -28,7 +28,7 @@ defmodule Tpn.Patient do
     belongs_to :user, Tpn.Accounts.User
 
     has_many :admissions, Tpn.Admission
-    has_many :patient_mrns, Tpn.Hospital.PatientMrn
+    has_many :patient_mrns, Tpn.PatientMrn
 
     timestamps(type: :utc_datetime)
   end

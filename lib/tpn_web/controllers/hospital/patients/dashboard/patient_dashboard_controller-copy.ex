@@ -1,4 +1,4 @@
-defmodule TpnWeb.Hospital.PatientDashboardController do
+defmodule TpnWeb.Hospital.PatientDashboardControllerCC do
   use TpnWeb, :controller
 
   import Ecto.Query, warn: false

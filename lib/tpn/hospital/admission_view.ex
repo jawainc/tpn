@@ -3,8 +3,6 @@ defmodule Tpn.AdmissionView do
 
   @filterable_fields [
     :admission_no,
-    :discharged,
-    :discharged_at,
     :age,
     :patient_type,
     :local_health_network,
@@ -13,23 +11,6 @@ defmodule Tpn.AdmissionView do
     :ward,
     :room,
     :bed,
-    :user,
-    :mrn
-  ]
-
-  @sortable_fields [
-    :admission_no,
-    :discharged,
-    :discharged_at,
-    :age,
-    :patient_type,
-    :local_health_network,
-    :facility,
-    :campus,
-    :ward,
-    :room,
-    :bed,
-    :user,
     :mrn
   ]
 
@@ -66,5 +47,9 @@ defmodule Tpn.AdmissionView do
     field :room_id, :integer
     field :bed_id, :integer
     field :user_id, :integer
+  end
+
+  def filter_fields() do
+    @filterable_fields
   end
 end

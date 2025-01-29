@@ -10,7 +10,6 @@ defmodule Tpn.PatientMrn do
     belongs_to :facility, Tpn.Accounts.Networks.Facility
     belongs_to :campus, Tpn.Accounts.Networks.Campus
     belongs_to :user, Tpn.Accounts.User
-    belongs_to :admission, Tpn.Admission
 
     timestamps()
   end
@@ -23,8 +22,7 @@ defmodule Tpn.PatientMrn do
       :local_health_network_id,
       :facility_id,
       :campus_id,
-      :user_id,
-      :admission_id
+      :user_id
     ])
     |> validate_required([
       :mrn,
@@ -32,8 +30,8 @@ defmodule Tpn.PatientMrn do
       :local_health_network_id,
       :facility_id,
       :campus_id,
-      :admission_id,
       :user_id
     ])
+    |> unique_constraint(:mrn, name: :unique_mrn_per_campus)
   end
 end

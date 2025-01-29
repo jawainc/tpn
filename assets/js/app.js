@@ -50,10 +50,11 @@ window.SnackBar = SnackBar;
 window.flatpickr = flatpickr;
 
 import { events, formConfigRequest } from "./events.js";
-import { selectRemoveOptions, applyCheckboxSelector, triggerEvent } from "./custom.js";
+import { selectRemoveOptions, applyCheckboxSelector, triggerEvent, filterPatients } from "./custom.js";
 
 events();
 window.formConfigRequest = formConfigRequest;
 window.selectRemoveOptions = selectRemoveOptions;
 window.applyCheckboxSelector = applyCheckboxSelector;
 window.triggerEvent = triggerEvent;
+window.filterPatients = filterPatients;

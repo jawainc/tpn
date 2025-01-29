@@ -46,4 +46,17 @@ defmodule TpnWeb.Hospital.AdmissionsHTML do
       false
     end
   end
+
+  def format_lines(nil), do: ""
+
+  def format_lines(string) do
+    String.replace(string, "\n", "<br>")
+  end
+
+  def format_date(nil), do: ""
+
+  def format_date(date) do
+    {:ok, formatted_date} = Timex.format(date, "{M}/{D}/{YYYY} {h12}:{m} {AM}")
+    formatted_date
+  end
 end

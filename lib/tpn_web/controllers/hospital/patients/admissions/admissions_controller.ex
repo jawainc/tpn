@@ -2,12 +2,18 @@ defmodule TpnWeb.Hospital.AdmissionsController do
   use TpnWeb, :controller
 
   import Ecto.Query, warn: false
-  alias Tpn.{Admissions, Admission, Patients, Units, Settings, PatientTypes}
+  alias Tpn.{Admissions, Admission, Units, Settings, PatientTypes}
   alias Tpn.Hospital.Wards
   alias TpnWeb.Helpers.{ClientEvents, Networks, PatientHelper}
 
   @weight_unit_type "patient_weight_unit_type"
   @height_unit_type "patient_height_unit_type"
+
+  def search(conn, params) do
+    with {:ok, admissions} <- Admissions.list_admissions(params) do
+      render(conn, :list, admissions: admissions)
+    end
+  end
 
   def new(conn, %{"id" => id}) do
     age = PatientHelper.calc_age(id)
@@ -37,14 +43,24 @@ defmodule TpnWeb.Hospital.AdmissionsController do
 
     case Admissions.create_admission(admission_params) do
       {:ok, admission} ->
+        {:ok, redirect} =
+          Jason.encode(%{
+            path: "/patients/dashboard/#{admission.patient_id}",
+            target: "#main-contents"
+          })
+
         conn
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadPatientAdmissionTable",
+            "",
             "success",
             "Created successfully."
           )
+        )
+        |> put_resp_header(
+          "HX-Location",
+          redirect
         )
         |> send_resp(204, "")
 
@@ -69,6 +85,28 @@ defmodule TpnWeb.Hospital.AdmissionsController do
 
   def new_change do
     Admissions.change_admission(%Admission{})
+  end
+
+  def discharge(conn, %{"patient_id" => id}) do
+    Admissions.discharge_admission(id)
+
+    {:ok, redirect} =
+      Jason.encode(%{
+        path: "/patients/dashboard/#{id}",
+        target: "#main-contents"
+      })
+
+    conn
+    |> put_resp_header(
+      "hx-trigger",
+      ClientEvents.generate_client_event(
+        "",
+        "success",
+        "Discharged successfully."
+      )
+    )
+    |> put_resp_header("HX-Location", redirect)
+    |> send_resp(204, "")
   end
 
   defp get_mrn(_, %{campus_id: nil}), do: nil
