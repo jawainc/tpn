@@ -49,31 +49,6 @@
         >
           Preview
         </div>
-
-        <button
-          :if={@is_admin || @can.update}
-          hx-get={"#{get_url()}/#{record.id}/edit"}
-          hx-target="#table_modal_contents"
-          hx-indicator="#table_modal_indicator"
-          hx-on:click="table_modal.showModal()"
-          type="button"
-          class="btn btn-info btn-xs"
-        >
-          Edit
-        </button>
-
-        <.form
-          :if={@is_admin || @can.delete}
-          for={%{}}
-          method="delete"
-          action={"#{get_url()}/#{record.id}"}
-          hx-delete={"#{get_url()}/#{record.id}"}
-          hx-confirm="Are you sure to delete?"
-        >
-          <button class="btn btn-error btn-xs">
-            Delete
-          </button>
-        </.form>
       </li>
     <% end %>
   </ul>

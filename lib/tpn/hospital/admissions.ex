@@ -46,22 +46,25 @@ defmodule Tpn.Admissions do
     multi =
       Multi.new()
       |> Multi.insert(:admission, %Admission{} |> Admission.changeset(attrs))
-      |> Multi.run(:patient_mrn, fn _repo, %{admission: admission} ->
+      |> Multi.merge(fn %{admission: admission} ->
         case Map.has_key?(attrs, "mrn") do
-          true ->
-            {:ok,
-             %PatientMrn{}
-             |> PatientMrn.changeset(%{
-               patient_id: admission.patient_id,
-               campus_id: admission.campus_id,
-               facility_id: admission.facility_id,
-               local_health_network_id: admission.local_health_network_id,
-               user_id: admission.user_id,
-               mrn: attrs["mrn"]
-             })}
-
           false ->
-            {:ok, nil}
+            Multi.new()
+
+          _ ->
+            Multi.new()
+            |> Multi.insert(
+              :patient_mrn,
+              %PatientMrn{}
+              |> PatientMrn.changeset(%{
+                patient_id: admission.patient_id,
+                campus_id: admission.campus_id,
+                facility_id: admission.facility_id,
+                local_health_network_id: admission.local_health_network_id,
+                user_id: admission.user_id,
+                mrn: attrs["mrn"]
+              })
+            )
         end
       end)
 
