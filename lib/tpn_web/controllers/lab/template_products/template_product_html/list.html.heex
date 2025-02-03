@@ -1,0 +1,112 @@
+<%= if Enum.empty?(@products) do %>
+  <.no_records />
+<% else %>
+  <div
+    x-sort="triggerEvent(null, 'sort_products')"
+    id="products_table"
+    class="bg-gray-300/10 dark:bg-gray-700/10 pb-10 mt-5 space-y-10 divide-y divide-white/5 border border-white/5 rounded-md"
+  >
+    <%= for product <- @products do %>
+      <div x-sort:item={product.id} class="flex space-x-5">
+        <div x-sort:handle class="px-5 pt-10 cursor-move group">
+          <.icon
+            name="hero-arrows-pointing-out"
+            class="flex-shrink h-4 w-4 text-gray-600 group-hover:text-gray-400"
+          />
+        </div>
+        <div class="flex-grow grid grid-cols-5 gap-4 pt-10">
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">Class</div>
+            <div class="text-sm">{product.class_name}</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">Formulary</div>
+            <div class="text-sm">{product.formulary_name}</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">Filling Method</div>
+            <div class="text-sm">{product.filling_method_name}</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">Dose</div>
+            <div class="text-sm">{product.dose} {product.dose_unit}</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">
+              <.simple_badge state={product.additional_dose_allowed} label="Additional Dose" />
+            </div>
+            <div class="text-sm">{product.additional_dose} {product.additional_dose_unit}</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">Max. Allowed Limit</div>
+            <div class="text-sm">{product.max_allowed_limit} {product.max_allowed_unit}</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-600">Substance Locked On Order</div>
+            <.simple_badge
+              state={product.substance_locked_on_order}
+              label={
+                if(product.substance_locked_on_order) do
+                  "Active"
+                else
+                  "Inactive"
+                end
+              }
+            />
+          </div>
+        </div>
+        <div class="px-5 pt-10 flex-shrink">
+          <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-circle btn-ghost px-2 m-1">
+              <.icon name="hero-ellipsis-vertical" class="text-gray-500" />
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-base-100 rounded-box z-[1] w-28 p-2 shadow"
+            >
+              <li>
+                <a
+                  hx-get={"template_products/#{product.id}/edit"}
+                  hx-target="#table_modal_contents"
+                  hx-on:click="table_modal.showModal()"
+                >
+                  Edit
+                </a>
+              </li>
+              <li>
+                <.simple_form
+                  for={%{}}
+                  action={"/template_products/#{product.id}"}
+                  hx-post={"/template_products/#{product.id}"}
+                  hx-confirm="Are you sure to delete?"
+                  no_styles={true}
+                >
+                  <input name="_method" type="hidden" value="delete" />
+                  <button type="submit" id="discharge-form-button" class="btn-no-styles w-full">
+                    Delete
+                  </button>
+                </.simple_form>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <.simple_form
+    for={%{}}
+    action="/template_products/sort"
+    hx-post="/template_products/sort"
+    hx-trigger="updateProductsPositions from:body"
+  >
+    <input name="_method" type="hidden" value="put" />
+    <%= for product <- @products do %>
+      <input
+        id={"form_product_field_#{product.id}"}
+        type="hidden"
+        name="products[]"
+        value={"#{product.id},#{product.position}"}
+      />
+    <% end %>
+  </.simple_form>
+<% end %>

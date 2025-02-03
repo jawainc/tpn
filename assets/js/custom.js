@@ -45,6 +45,9 @@ export function triggerEvent(value, event, type, elm = "") {
     case "load_template_formularies":
       load_template_formularies();
       break;
+    case "sort_products":
+      sort_products(value);
+      break;
     default:
       document.body.dispatchEvent(new CustomEvent(event, { detail: value }));
   }
@@ -128,4 +131,23 @@ function load_mrn(value) {
       },
     }),
   );
+}
+
+function sort_products(value) {
+  const conatiner_div = document.getElementById("products_table");
+  if (!conatiner_div) {
+    return;
+  }
+
+  // get all children
+  // convert to array
+  const children = Array.from(conatiner_div.children);
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    const product_id = child.getAttribute("x-sort:item");
+    const field = document.getElementById(`form_product_field_${product_id}`);
+    field.value = `${product_id},${i}`;
+  }
+
+  document.body.dispatchEvent(new CustomEvent("updateProductsPositions"));
 }

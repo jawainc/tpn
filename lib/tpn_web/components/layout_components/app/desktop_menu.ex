@@ -362,21 +362,6 @@ defmodule TpnWeb.LayoutComponents.App.Menu do
 
                   <li :if={
                     UserAccessLevel.has_menu_access_level?(@user_access_level, @is_admin, [
-                      "TemplateProducts"
-                    ])
-                  }>
-                    <a
-                      hx-get={~p"/template_products"}
-                      hx-target="#main-contents"
-                      hx-indicator=".main-contents-loader"
-                      class="sub-menu-item"
-                    >
-                      Template Products
-                    </a>
-                  </li>
-
-                  <li :if={
-                    UserAccessLevel.has_menu_access_level?(@user_access_level, @is_admin, [
                       "Settings"
                     ])
                   }>

@@ -18,6 +18,8 @@ defmodule Tpn.TemplateProductView do
   ]
 
   schema "template_products_view" do
+    field :position, :integer
+    field :template_id, :id
     field :dose, :decimal
     field :additional_dose, :decimal
     field :additional_dose_allowed, :boolean

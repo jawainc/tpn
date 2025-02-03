@@ -25,12 +25,18 @@ defmodule TpnWeb.TemplateProductController do
     end
   end
 
-  def new(conn, _params) do
+  def new(conn, %{"id" => template_id}) do
     conn
     |> set_assigns()
+    |> assign(:template_id, template_id)
     |> assign(:formularies, [])
     |> assign(:changeset, new_change())
     |> render(:new)
+  end
+
+  def list_template_products(conn, %{"id" => id}) do
+    template_products = TemplateProducts.list_template_products_by_template_id(id)
+    render(conn, :list, products: template_products, template_id: id)
   end
 
   def create(conn, %{"template_product" => template_product_params}) do
@@ -42,9 +48,10 @@ defmodule TpnWeb.TemplateProductController do
         |> put_flash(:success, "created successfully.")
         |> put_resp_header(
           "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
+          ClientEvents.generate_client_event("reloadProductsTable")
         )
         |> set_assigns()
+        |> assign(:template_id, params["template_id"])
         |> assign(:formularies, [])
         |> assign(:changeset, new_change())
         |> render(:new)
@@ -53,6 +60,7 @@ defmodule TpnWeb.TemplateProductController do
         conn
         |> put_flash(:error, "Please fix the errors.")
         |> set_assigns()
+        |> assign(:template_id, params["template_id"])
         |> assign(:formularies, formularies_data(params["template_id"], params["class_id"]))
         |> render(:new, changeset: changeset)
     end
@@ -64,6 +72,7 @@ defmodule TpnWeb.TemplateProductController do
 
     conn
     |> set_assigns()
+    |> assign(:template_id, record.template_id)
     |> assign(:formularies, formularies_data(record.template_id, record.class_id))
     |> assign(:changeset, changeset)
     |> assign(:record, record)
@@ -81,7 +90,7 @@ defmodule TpnWeb.TemplateProductController do
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "reloadProductsTable",
             "success",
             "Updated successfully."
           )
@@ -97,6 +106,21 @@ defmodule TpnWeb.TemplateProductController do
     end
   end
 
+  def sort(conn, %{"products" => products}) do
+    TemplateProducts.sort_template_products(products)
+
+    conn
+    |> put_resp_header(
+      "hx-trigger",
+      ClientEvents.generate_client_event(
+        "reloadProductsTable",
+        "success",
+        "Updated successfully."
+      )
+    )
+    |> send_resp(204, "")
+  end
+
   def delete(conn, %{"id" => id}) do
     record = TemplateProducts.get_template_product!(id)
     {:ok, _} = TemplateProducts.delete_template_product(record)
@@ -104,7 +128,11 @@ defmodule TpnWeb.TemplateProductController do
     conn
     |> put_resp_header(
       "hx-trigger",
-      ClientEvents.generate_client_event("reloadDataTable", "success", "Deleted successfully.")
+      ClientEvents.generate_client_event(
+        "reloadProductsTable",
+        "success",
+        "Deleted successfully."
+      )
     )
     |> send_resp(204, "")
   end

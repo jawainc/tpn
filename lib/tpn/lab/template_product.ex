@@ -3,6 +3,7 @@ defmodule Tpn.TemplateProduct do
   import Ecto.Changeset
 
   schema "template_products" do
+    field :position, :integer
     field :dose, :decimal
     field :additional_dose, :decimal
     field :additional_dose_allowed, :boolean
@@ -24,6 +25,7 @@ defmodule Tpn.TemplateProduct do
   def changeset(template_product, attrs) do
     template_product
     |> cast(attrs, [
+      :position,
       :dose,
       :additional_dose,
       :additional_dose_allowed,

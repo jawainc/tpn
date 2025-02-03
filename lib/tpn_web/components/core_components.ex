@@ -54,7 +54,7 @@ defmodule TpnWeb.CoreComponents do
   def badge(assigns) do
     ~H"""
     <span class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </span>
     """
   end
@@ -71,7 +71,7 @@ defmodule TpnWeb.CoreComponents do
       !@state &&
         "bg-pink-50 dark:bg-pink-400/10 text-pink-700 dark:text-pink-400 ring-pink-700/10 dark:ring-pink-400/20"
     ]}>
-      <%= @label %>
+      {@label}
     </span>
     """
   end
@@ -159,7 +159,7 @@ defmodule TpnWeb.CoreComponents do
       <.icon :if={@type == :error} name="hero-x-circle" class="h-6 w-6" />
       <.icon :if={@type == :warning} name="hero-exclamation-triangle" class="h-6 w-6" />
       <.icon :if={@type == :success} name="hero-check-circle" class="h-6 w-6" />
-      <span><%= msg %></span>
+      <span>{msg}</span>
 
       <button
         hx-on:click="document.getElementById('form-alert').style.display = 'none'"
@@ -208,6 +208,7 @@ defmodule TpnWeb.CoreComponents do
   """
   attr :for, :any, required: true, doc: "the datastructure for the form"
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
+  attr :no_styles, :boolean, default: false, doc: "the flag to disable default styles"
 
   attr :rest, :global,
     include: ~w(autocomplete name rel action enctype method novalidate target multipart),
@@ -219,10 +220,13 @@ defmodule TpnWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-6">
-        <%= render_slot(@inner_block, f) %>
-        <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+      <div class={!@no_styles && "mt-10 space-y-6"}>
+        {render_slot(@inner_block, f)}
+        <div
+          :for={action <- @actions}
+          class={!@no_styles && "mt-2 flex items-center justify-between gap-6"}
+        >
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -254,7 +258,7 @@ defmodule TpnWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -388,9 +392,9 @@ defmodule TpnWeb.CoreComponents do
           class="checkbox checkbox-primary bg-transparent"
           {@rest}
         />
-        <%= @label %>
+        {@label}
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -401,7 +405,7 @@ defmodule TpnWeb.CoreComponents do
       <label for={@id} class="form-control w-full">
         <div class="label">
           <span class="label-text">
-            <%= @label %>
+            {@label}
             <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
           </span>
         </div>
@@ -415,10 +419,10 @@ defmodule TpnWeb.CoreComponents do
           ]}
           {@rest}
         >
-          <option :if={@prompt} value=""><%= @prompt %></option>
-          <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+          <option :if={@prompt} value="">{@prompt}</option>
+          {Phoenix.HTML.Form.options_for_select(@options, @value)}
         </select>
-        <.error :for={msg <- @errors}><%= msg %></.error>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
     </div>
     """
@@ -430,7 +434,7 @@ defmodule TpnWeb.CoreComponents do
       <label for={@id} class="form-control w-full">
         <div class="label">
           <span class="label-text">
-            <%= @label %> <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
+            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
           </span>
         </div>
         <textarea
@@ -442,7 +446,7 @@ defmodule TpnWeb.CoreComponents do
           ]}
           {@rest}
         ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-        <.error :for={msg <- @errors}><%= msg %></.error>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
     </div>
     """
@@ -454,12 +458,12 @@ defmodule TpnWeb.CoreComponents do
       <label for={@id} class="form-control w-full">
         <div class="label">
           <span class="label-text">
-            <%= @label %> <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
+            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
           </span>
         </div>
         <div class="input input-bordered flex items-center gap-2 h-10 overflow-hidden">
           <span :if={@label_inside_left != nil} class="opacity-50 shrink-0">
-            <%= @label_inside_left %>
+            {@label_inside_left}
           </span>
           <input
             type={@input_type}
@@ -473,10 +477,10 @@ defmodule TpnWeb.CoreComponents do
             {@rest}
           />
           <span :if={@label_inside_right != nil} class="opacity-50 shrink-0">
-            <%= @label_inside_right %>
+            {@label_inside_right}
           </span>
         </div>
-        <.error :for={msg <- @errors}><%= msg %></.error>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
     </div>
     """
@@ -496,7 +500,7 @@ defmodule TpnWeb.CoreComponents do
       <label for={@id} class="form-control w-full">
         <div class="label">
           <span class="label-text">
-            <%= @label %> <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
+            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
           </span>
         </div>
         <div class={[
@@ -516,10 +520,10 @@ defmodule TpnWeb.CoreComponents do
             id={@id_2}
             class="select h-10 join-item border-0 focus:ring-0 focus:outline-0 border-l border-neutral grow"
           >
-            <%= Phoenix.HTML.Form.options_for_select(@options, @value_2) %>
+            {Phoenix.HTML.Form.options_for_select(@options, @value_2)}
           </select>
         </div>
-        <.error :for={msg <- @errors}><%= msg %></.error>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
     </div>
     """
@@ -532,7 +536,7 @@ defmodule TpnWeb.CoreComponents do
       <label for={@id} class="form-control w-full">
         <div class="label">
           <span class="label-text">
-            <%= @label %> <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
+            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
           </span>
         </div>
         <input
@@ -546,7 +550,7 @@ defmodule TpnWeb.CoreComponents do
           ]}
           {@rest}
         />
-        <.error :for={msg <- @errors}><%= msg %></.error>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
     </div>
     """
@@ -568,7 +572,7 @@ defmodule TpnWeb.CoreComponents do
     <label for={@id} class="form-control w-full">
       <div class="label">
         <span class="label-text">
-          <%= @label %> <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
+          {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
         </span>
       </div>
 
@@ -583,7 +587,7 @@ defmodule TpnWeb.CoreComponents do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </label>
     """
   end
@@ -597,7 +601,7 @@ defmodule TpnWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -611,7 +615,7 @@ defmodule TpnWeb.CoreComponents do
     ~H"""
     <div class="label">
       <span class="label-text-alt text-error">
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </span>
     </div>
     """
@@ -631,13 +635,13 @@ defmodule TpnWeb.CoreComponents do
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
         <h1 class="text-lg font-semibold leading-8">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-base-content">
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -694,11 +698,11 @@ defmodule TpnWeb.CoreComponents do
                   indicator={@indicator}
                 />
               <% else %>
-                <%= col[:label] %>
+                {col[:label]}
               <% end %>
             </th>
             <th :if={@action != []}>
-              <span class="sr-only"><%= gettext("Actions") %></span>
+              <span class="sr-only">{gettext("Actions")}</span>
             </th>
           </tr>
         </thead>
@@ -709,11 +713,11 @@ defmodule TpnWeb.CoreComponents do
               phx-click={@row_click && @row_click.(row)}
               class={["", @row_click && "hover:cursor-pointer"]}
             >
-              <%= render_slot(col, @row_item.(row)) %>
+              {render_slot(col, @row_item.(row))}
             </td>
             <td :if={@action != []} class="flex justify-end gap-3">
               <%= for action <- @action do %>
-                <%= render_slot(action, @row_item.(row)) %>
+                {render_slot(action, @row_item.(row))}
               <% end %>
             </td>
           </tr>
@@ -738,7 +742,7 @@ defmodule TpnWeb.CoreComponents do
       hx-target={@target}
       class="flex items-center gap-1 cursor-pointer"
     >
-      <span><%= @label %></span>
+      <span>{@label}</span>
       <%= if(@meta.order_by == Atom.to_string(@field)) do %>
         <div class="flex flex-col items-center">
           <.icon
@@ -774,8 +778,8 @@ defmodule TpnWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none text-zinc-500">{item.title}</dt>
+          <dd class="text-zinc-700">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>

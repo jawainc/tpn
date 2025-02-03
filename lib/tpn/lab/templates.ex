@@ -41,6 +41,10 @@ defmodule Tpn.Templates do
     Repo.get!(Template, id)
   end
 
+  def get_template_view!(id) do
+    Repo.get!(TemplateView, id)
+  end
+
   def change_template(template) do
     Template.changeset(template, %{})
   end

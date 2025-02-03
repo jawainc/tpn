@@ -25,10 +25,33 @@ defmodule Tpn.TemplateProducts do
     {:ok, {template_products, meta}}
   end
 
+  def list_template_products_by_template_id(template_id) do
+    from(a in TemplateProductView,
+      where: a.template_id == ^template_id,
+      order_by: [asc: :position]
+    )
+    |> Repo.all()
+  end
+
   def create_template_product(params) do
+    max_position_query =
+      from(t in TemplateProduct,
+        select: max(t.position)
+      )
+
+    current_max_position = Repo.one(max_position_query) || -1
+    new_position = current_max_position + 1
+
+    params = Map.put(params, "position", new_position)
+
     %TemplateProduct{}
     |> TemplateProduct.changeset(params)
     |> Repo.insert()
+  end
+
+  def get_template_products_by_template_id(template_id) do
+    from(a in TemplateProductView, where: a.template_id == ^template_id)
+    |> Repo.all()
   end
 
   def get_template_product!(id) do
@@ -47,5 +70,23 @@ defmodule Tpn.TemplateProducts do
     template_product
     |> TemplateProduct.changeset(params)
     |> Repo.update()
+  end
+
+  def sort_template_products(products) when is_list(products) do
+    Repo.transaction(fn ->
+      Enum.each(products, fn data ->
+        [product_id, position] = String.split(data, ",")
+
+        from(tp in TemplateProduct,
+          where: tp.id == ^product_id
+        )
+        |> Repo.update_all(
+          set: [
+            position: position,
+            updated_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+          ]
+        )
+      end)
+    end)
   end
 end

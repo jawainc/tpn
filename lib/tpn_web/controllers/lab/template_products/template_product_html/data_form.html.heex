@@ -10,15 +10,13 @@
   <.flash_group flash={@flash} />
 
   <div class="grid grid-cols-2 gap-4">
-    <.input
-      hx-on:change="triggerEvent('', 'load_template_formularies')"
-      field={f[:template_id]}
-      type="select"
-      label="Template"
-      options={@templates}
-      prompt="Select..."
-      required
+    <input
+      type="hidden"
+      id="template_product_template_id"
+      name="template_product[template_id]"
+      value={@template_id}
     />
+
     <.input
       hx-on:change="triggerEvent('', 'load_template_formularies')"
       field={f[:class_id]}

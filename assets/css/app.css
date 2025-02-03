@@ -69,3 +69,7 @@ body {
 .checkox-checked-indicator {
     @apply ring-1 ring-inset ring-gray-400/20 bg-gray-400/10;
 }
+
+.btn-no-styles {
+    @apply p-0 m-0 bg-transparent border-none focus:outline-none;
+}

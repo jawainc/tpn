@@ -2,7 +2,7 @@ defmodule TpnWeb.TemplateController do
   use TpnWeb, :controller
   import Ecto.Query, warn: false
 
-  alias Tpn.{Template, Templates}
+  alias Tpn.{Template, Templates, TemplateProducts}
   alias Tpn.PatientTypes
   alias Tpn.Units
   alias Tpn.Settings
@@ -20,6 +20,16 @@ defmodule TpnWeb.TemplateController do
 
       render(conn, layout, meta: meta, records: records)
     end
+  end
+
+  def show(conn, %{"id" => id}) do
+    record = Templates.get_template_view!(id)
+    products = TemplateProducts.get_template_products_by_template_id(id)
+
+    conn
+    |> assign(:record, record)
+    |> assign(:products, products)
+    |> render(:show)
   end
 
   def new(conn, _params) do
