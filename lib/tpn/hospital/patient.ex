@@ -21,6 +21,7 @@ defmodule Tpn.Patient do
     field :email, :string
     field :notes, :string
     field :tpn_id, :string
+    field :cancelled, :boolean, default: false
 
     belongs_to :local_health_network, Tpn.Accounts.Networks.LocalHealthNetwork
     belongs_to :facility, Tpn.Accounts.Networks.Facility
@@ -41,6 +42,7 @@ defmodule Tpn.Patient do
       :identity_no,
       :dob,
       :tpn_id,
+      :cancelled,
       :gender,
       :address_1,
       :address_2,

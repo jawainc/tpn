@@ -24,6 +24,17 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
     |> render(:new, changeset: new_change())
   end
 
+  def edit(conn, %{"id" => id}) do
+    record = Patients.get_patient_view!(id)
+    changeset = Patients.change_patient(Patients.get_patient!(id))
+
+    conn
+    |> Networks.assign_networks(record.local_health_network_id, record.facility_id)
+    |> assign(:genders, Patients.get_genders())
+    |> assign(:record, record)
+    |> render(:edit, changeset: changeset)
+  end
+
   def show(conn, %{"id" => id}) do
     conn
     |> show_assigns(id)
@@ -34,25 +45,10 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
   end
 
   def create(conn, %{"patient" => patient_params}) do
-    dob = patient_params["dob"]
-    # Convert the date of birth to a date, supplied date string is in format January 1, 2025
-    con_dob =
-      case dob do
-        nil ->
-          ""
-
-        "" ->
-          ""
-
-        date ->
-          date
-          |> Timex.parse!("{Mfull} {D}, {YYYY}")
-          |> Timex.to_date()
-      end
-
     params =
-      Networks.params_assign_networks(conn, patient_params)
-      |> Map.put("dob", con_dob)
+      patient_params
+      |> set_networks(conn)
+      |> set_dob(false)
       |> Map.put("tpn_id", PatientHelper.generate_tpn_number())
 
     case Patients.create_patient(params) do
@@ -77,24 +73,93 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
     end
   end
 
+  def update(conn, %{"id" => id, "patient" => patient_params}) do
+    record = Patients.get_patient!(id)
+
+    params =
+      patient_params
+      |> set_networks(conn)
+      |> set_dob()
+
+    case Patients.update_patient(record, params) do
+      {:ok, _} ->
+        conn
+        |> put_resp_header(
+          "hx-trigger",
+          ClientEvents.generate_client_event(
+            "",
+            "info",
+            "Updated successfully."
+          )
+        )
+        |> send_resp(204, "")
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        record = Patients.get_patient_view!(id)
+
+        conn
+        |> Networks.assign_networks(record.local_health_network_id, record.facility_id)
+        |> assign(:genders, Patients.get_genders())
+        |> assign(:record, record)
+        |> render(:edit, changeset: changeset)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    record = Patients.get_patient!(id)
+    params = %{"cancelled" => true}
+
+    Patients.delete_patient(record, params)
+
+    conn
+    |> put_resp_header(
+      "hx-trigger",
+      ClientEvents.generate_client_event("reloadDataTable", "warning", "Cancelled successfully.")
+    )
+    |> send_resp(204, "")
+  end
+
   defp show_assigns(conn, id) do
-    patient = Patients.get_patient!(id)
+    patient = Patients.get_patient_view!(id)
     age = PatientHelper.calc_age(id)
 
     can_be_discharged =
       PatientHelper.can_be_discharged?(conn.assigns, id)
 
-    IO.inspect("Can be discharged: #{can_be_discharged}")
-
     conn
     |> assign(:can_be_discharged, can_be_discharged)
     |> assign(:age, age)
     |> assign(:patient, patient)
-    |> assign(:admissions, get_admissions(id))
+    |> assign(:admissions, Patients.get_admissions(id))
     |> render(:show)
   end
 
-  defp get_admissions(id) do
-    Patients.get_admissions(id)
+  defp set_dob(params, edit \\ true) do
+    case params["dob"] do
+      nil ->
+        if edit, do: params, else: Map.put(params, "dob", "")
+
+      "" ->
+        if edit, do: params, else: Map.put(params, "dob", "")
+
+      date ->
+        dob =
+          if edit do
+            date
+          else
+            IO.inspect(date)
+            |> Timex.parse!("{Mfull} {D}, {YYYY}")
+            |> Timex.to_date()
+          end
+
+        Map.put(params, "dob", dob)
+    end
+  end
+
+  defp set_networks(params, conn) do
+    case params["local_health_network_id"] do
+      nil -> params
+      _ -> Networks.params_assign_networks(conn, params)
+    end
   end
 end

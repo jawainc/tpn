@@ -4,21 +4,31 @@
       <li class="relative flex items-center space-x-4 py-4">
         <div class="">
           <div class="flex items-center gap-x-3">
-            <%= if record.is_admitted do %>
-              <div class="flex-none rounded-full bg-green-100/10 p-1 text-green-500">
-                <div class="size-2 rounded-full bg-current"></div>
-              </div>
-            <% else %>
-              <div class="flex-none rounded-full bg-gray-100/10 p-1 text-gray-500">
-                <div class="size-2 rounded-full bg-current"></div>
-              </div>
+            <div
+              :if={record.cancelled}
+              class="flex-none rounded-full bg-red-500/20 p-1 text-red-500"
+            >
+              <div class="size-2 rounded-full bg-current"></div>
+            </div>
+            <%= if !record.cancelled do %>
+              <%= if record.is_admitted do %>
+                <div class="flex-none rounded-full bg-green-100/10 p-1 text-green-500">
+                  <div class="size-2 rounded-full bg-current"></div>
+                </div>
+              <% else %>
+                <div class="flex-none rounded-full bg-gray-100/10 p-1 text-gray-500">
+                  <div class="size-2 rounded-full bg-current"></div>
+                </div>
+              <% end %>
             <% end %>
 
             <h2 class="min-w-0 text-sm/6 font-semibold text-white">
               <div class="flex gap-x-2">
-                <span class="truncate">{record.first_name} {record.last_name}</span>
-                <span class="text-gray-400">/</span>
-                <span>{record.gender}</span>
+                <span class={["truncate", record.cancelled && "text-gray-600"]}>
+                  {record.first_name} {record.last_name}
+                </span>
+                <span class={["text-gray-400", record.cancelled && "text-gray-600"]}>/</span>
+                <span class={[record.cancelled && "text-gray-600"]}>{record.gender}</span>
               </div>
             </h2>
           </div>
@@ -28,9 +38,6 @@
               <circle cx="1" cy="1" r="1" />
             </svg>
             <p class="whitespace-nowrap">DOB: {Calendar.strftime(record.dob, "%m/%d/%Y")}</p>
-            <svg viewBox="0 0 2 2" class="size-0.5 flex-none fill-gray-300">
-              <circle cx="1" cy="1" r="1" />
-            </svg>
           </div>
         </div>
         <div class="flex flex-col space-y-2 pl-20 text-xs/5 text-gray-400">
@@ -41,13 +48,45 @@
           <p class="whitespace-nowrap">Phone: {record.phone}</p>
           <p class="whitespace-nowrap">Location: {record.city}</p>
         </div>
-        <div
-          hx-get={"#{get_url()}/#{record.id}"}
-          hx-target="#main-contents"
-          hx-indicator=".main-contents-loader"
-          class="flex-none rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20 cursor-pointer"
-        >
-          Preview
+
+        <div :if={record.cancelled} class="text-right">
+          <.simple_badge state={false} label="Cancelled" />
+        </div>
+
+        <div :if={!record.cancelled} class="flex items-center space-x-2">
+          <div
+            hx-get={"#{get_url()}/#{record.id}"}
+            hx-target="#main-contents"
+            hx-indicator=".main-contents-loader"
+            class="flex-none rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20 cursor-pointer"
+          >
+            Preview
+          </div>
+
+          <button
+            :if={!record.is_admitted && (@is_admin || can_manage?(record, @current_user))}
+            hx-get={"#{get_url()}/#{record.id}/edit"}
+            hx-target="#main-contents"
+            hx-indicator=".main-contents-loader"
+            type="button"
+            class="btn btn-info btn-outline btn-xs"
+          >
+            Edit
+          </button>
+
+          <.simple_form
+            :if={!record.is_admitted && (@is_admin || can_manage?(record, @current_user))}
+            for={%{}}
+            action={"#{get_url()}/#{record.id}"}
+            hx-post={"#{get_url()}/#{record.id}"}
+            hx-confirm="Are you sure to delete?"
+            no_styles={true}
+          >
+            <input name="_method" type="hidden" value="delete" />
+            <button type="submit" class="btn btn-outline btn-xs">
+              Cancel
+            </button>
+          </.simple_form>
         </div>
       </li>
     <% end %>

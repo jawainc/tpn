@@ -3,7 +3,6 @@ defmodule TpnWeb.BedsController do
 
   import Ecto.Query, warn: false
 
-  alias Tpn.Hospital.Ward
   alias Tpn.Hospital.Room
   alias Tpn.Hospital.{Beds, Bed}
   alias TpnWeb.Helpers.ClientEvents

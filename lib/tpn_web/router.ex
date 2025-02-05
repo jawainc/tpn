@@ -92,7 +92,7 @@ defmodule TpnWeb.Router do
     get "/template_products/:id/list", TemplateProductController, :list_template_products
     put "/template_products/sort", TemplateProductController, :sort
     resources "/template_products", TemplateProductController, except: [:show]
-    resources "/patients/dashboard", Hospital.PatientDashboardController, except: [:delete]
+    resources "/patients/dashboard", Hospital.PatientDashboardController
     get "/patients/admissions/search", Hospital.AdmissionsController, :search
     post "/patients/admissions", Hospital.AdmissionsController, :create
     post "/patients/admissions/discharge", Hospital.AdmissionsController, :discharge

@@ -4,7 +4,7 @@ defmodule Tpn.Patients do
   alias Tpn.{Patient, PatientView, Admission, AdmissionView}
   alias Tpn.Helpers.PaginationHelper
 
-  def list_patients(params, _) do
+  def list_patients(params, conn) do
     params =
       case params["filter_by"] do
         "First Name" -> Map.put(params, "filter_by", "first_name")
@@ -19,7 +19,7 @@ defmodule Tpn.Patients do
 
     patients =
       from(a in PatientView)
-      |> PaginationHelper.build_query_params(PatientView, params, false)
+      |> PaginationHelper.build_query_params(PatientView, params, !conn.assigns[:is_admin])
       |> Repo.all()
 
     meta =
@@ -36,6 +36,10 @@ defmodule Tpn.Patients do
   end
 
   def get_patient!(id) do
+    Repo.get!(Patient, id)
+  end
+
+  def get_patient_view!(id) do
     Repo.get!(PatientView, id)
   end
 
@@ -63,7 +67,9 @@ defmodule Tpn.Patients do
     |> Repo.update()
   end
 
-  def delete_patient(patient) do
-    Repo.delete(patient)
+  def delete_patient(patient, params) do
+    patient
+    |> Patient.changeset(params)
+    |> Repo.update()
   end
 end

@@ -26,9 +26,11 @@ defmodule Tpn.PatientView do
     field :campus, :string
     field :user_name, :string
     field :is_admitted, :boolean
+    field :has_admission, :boolean
     field :local_health_network_id, :integer
     field :facility_id, :integer
     field :campus_id, :integer
+    field :cancelled, :boolean
   end
 
   def filter_fields do

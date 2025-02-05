@@ -25,4 +25,16 @@ defmodule TpnWeb.Hospital.PatientDashboardHTML do
       false
     end
   end
+
+  def can_manage?(patient, %{local_health_network_id: id, facility_id: nil, campus_id: nil}) do
+    patient.local_health_network_id == id
+  end
+
+  def can_manage?(patient, %{facility_id: id, campus_id: nil}) do
+    patient.facility_id == id
+  end
+
+  def can_manage?(patient, %{campus_id: id}) do
+    patient.campus_id == id
+  end
 end

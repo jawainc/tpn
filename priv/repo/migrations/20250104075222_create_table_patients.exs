@@ -18,6 +18,7 @@ defmodule Tpn.Repo.Migrations.CreateTablePatients do
       add :email, :string, null: true
       add :notes, :text, null: true
       add :tpn_id, :string, null: false
+      add :cancelled, :boolean, null: false, default: false
 
       add :local_health_network_id, references(:local_health_networks, on_delete: :nilify_all),
         null: false
@@ -76,6 +77,7 @@ defmodule Tpn.Repo.Migrations.CreateTablePatients do
           p.email,
           p.notes,
           p.tpn_id,
+          p.cancelled,
           p.local_health_network_id,
           p.facility_id,
           p.campus_id,
@@ -86,7 +88,8 @@ defmodule Tpn.Repo.Migrations.CreateTablePatients do
           f.name AS facility,
           c.name AS campus,
           u.first_name as user_name,
-          COALESCE(admission_status.is_admitted, FALSE) as is_admitted
+          COALESCE(admission_status.is_admitted, FALSE) as is_admitted,
+          COALESCE(has_admissions.has_admission, FALSE) as has_admission
       FROM patients p
       LEFT JOIN local_health_networks lhn ON p.local_health_network_id = lhn.id
       LEFT JOIN facilities f ON p.facility_id = f.id
@@ -98,7 +101,14 @@ defmodule Tpn.Repo.Migrations.CreateTablePatients do
           WHERE a.patient_id = p.id  -- Changed from f.id to p.id
           AND a.discharged_at IS NULL
           LIMIT 1
-      ) admission_status ON TRUE;
+      ) admission_status ON TRUE
+      LEFT JOIN LATERAL (
+              SELECT TRUE as has_admission
+              FROM admissions a
+              WHERE a.patient_id = p.id
+              LIMIT 1
+          ) has_admissions ON TRUE;
+
     """
   end
 end

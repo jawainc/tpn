@@ -66,7 +66,7 @@ defmodule Tpn.Repo.Migrations.CreateTablePatientMrns do
             LEFT JOIN rooms r ON a.room_id = r.id
             LEFT JOIN beds b ON a.bed_id = b.id
             LEFT JOIN users u ON a.user_id = u.id
-            LEFT JOIN patient_mrns mr ON a.campus_id = mr.campus_id
+            LEFT JOIN patient_mrns mr ON a.campus_id = mr.campus_id AND a.patient_id = mr.patient_id
             LEFT JOIN units wu ON a.weight_unit_id = wu.id
             LEFT JOIN units hu ON a.height_unit_id = hu.id
     """
