@@ -63,6 +63,8 @@ defmodule TpnWeb.Router do
 
     get "/dashboard", DashBoardController, :index
 
+    live "/groups/:id", GroupChatLive
+
     pipe_through [:no_layout, :aes_pieline, :decrypt]
     get "/dash", DashBoardController, :dash
     get "/dash/key", DashBoardController, :key

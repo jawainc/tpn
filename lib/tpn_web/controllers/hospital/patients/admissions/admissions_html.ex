@@ -1,6 +1,9 @@
 defmodule TpnWeb.Hospital.AdmissionsHTML do
   use TpnWeb, :html
 
+  import TpnWeb.Admission.Components.PatientComponent
+  import TpnWeb.Admission.Components.AdmissionComponent
+
   @url "/patients/admissions"
   embed_templates "admissions_html/*"
 

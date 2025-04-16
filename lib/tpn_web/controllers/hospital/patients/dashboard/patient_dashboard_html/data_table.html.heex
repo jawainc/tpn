@@ -75,7 +75,10 @@
           </button>
 
           <.simple_form
-            :if={!record.is_admitted && (@is_admin || can_manage?(record, @current_user))}
+            :if={
+              !record.is_admitted && !record.has_admission &&
+                (@is_admin || can_manage?(record, @current_user))
+            }
             for={%{}}
             action={"#{get_url()}/#{record.id}"}
             hx-post={"#{get_url()}/#{record.id}"}
