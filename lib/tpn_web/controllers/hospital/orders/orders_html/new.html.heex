@@ -1,0 +1,44 @@
+<div class="mx-auto max-w-7xl">
+  <.header>
+    Order
+  </.header>
+
+  <div class="flex items-center justify-between">
+    <div class="breadcrumbs text-sm">
+      <ul>
+        <li>
+          <a
+            hx-get="/patients/dashboard"
+            hx-target="#main-contents"
+            hx-indicator=".main-contents-loader"
+          >
+            Patients
+          </a>
+        </li>
+        <li>
+        <a
+            hx-get={"/patients/dashboard/#{@patient_id}"}
+            hx-target="#main-contents"
+            hx-indicator=".main-contents-loader"
+          >
+        Patient Details
+        </a>
+        </li>
+        <li>
+        New Order
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <.order_patient_details patient={@patient} admission={@admission} />
+  <.order_form_new 
+    patient_id={@patient_id}
+    admission={@admission}
+    changeset={@changeset} 
+    vascular_accesses={@vascular_accesses} 
+    formularies={@formularies} 
+    templates={@templates}
+    />
+
+</div>

@@ -17,6 +17,7 @@
 import { differenceBy } from "lodash";
 import SnackBar from "../vendor/js-snackbar.js";
 import flatpickr from "../vendor/flatpickr.min.js";
+import "./xData.js";
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html";

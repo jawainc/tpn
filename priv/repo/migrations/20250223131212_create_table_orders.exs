@@ -5,7 +5,6 @@ defmodule Tpn.Repo.Migrations.CreateTableOrders do
     create table(:orders) do
       add :order_type, :string, default: "patient", null: false
       add :status, :string, default: "draft", null: false
-      add :order_id, :string, null: false
       add :bag_id, :string, null: false
       add :order_date, :naive_datetime, default: fragment("NOW()"), null: false
       add :copy_order, :boolean, default: false, null: false
@@ -27,6 +26,7 @@ defmodule Tpn.Repo.Migrations.CreateTableOrders do
       add :vascular_access_id, references(:vascular_accesses, on_delete: :nilify_all), null: true
       add :copied_from_order_id, references(:orders, on_delete: :nilify_all), null: true
       add :admission_id, references(:admissions, on_delete: :nilify_all), null: true
+      add :patient_id, references(:patients, on_delete: :nilify_all), null: true
       add :user_id, references(:users, on_delete: :nothing), null: false
 
       add :total_price, :decimal, precision: 10, scale: 2
@@ -35,5 +35,7 @@ defmodule Tpn.Repo.Migrations.CreateTableOrders do
     end
 
     create index(:orders, [:user_id])
+    create index(:orders, [:admission_id])
+    create index(:orders, [:patient_id])
   end
 end

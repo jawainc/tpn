@@ -3,6 +3,7 @@ defmodule TpnWeb.Hospital.AdmissionsHTML do
 
   import TpnWeb.Admission.Components.PatientComponent
   import TpnWeb.Admission.Components.AdmissionComponent
+  import TpnWeb.Admission.Components.AdmissionsRecordsComponent
 
   @url "/patients/admissions"
   embed_templates "admissions_html/*"

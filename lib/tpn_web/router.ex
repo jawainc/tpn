@@ -99,8 +99,14 @@ defmodule TpnWeb.Router do
     post "/patients/admissions", Hospital.AdmissionsController, :create
     post "/patients/admissions/discharge", Hospital.AdmissionsController, :discharge
 
-    get "/patients/:id/admissions", Hospital.AdmissionsController, :index
+    get "/patients/:patient_id/admissions/list", Hospital.AdmissionsController, :search
+    get "/patients/:patient_id/orders/list", Hospital.OrdersController, :index
+    get "/patients/:patient_id/orders/new", Hospital.OrdersController, :new
     get "/patients/:id/admissions/new", Hospital.AdmissionsController, :new
+
+    get "/patients/:id/admissions/:admission_id", Hospital.AdmissionsController, :show
+
+    get "/order/template_products", Hospital.OrdersController, :template_products
 
     get "/settings", SettingsController, :index
     post "/settings", SettingsController, :update

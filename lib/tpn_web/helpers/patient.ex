@@ -67,9 +67,6 @@ defmodule TpnWeb.Helpers.PatientHelper do
   end
 
   defp patient_in_campus?(patient_id, campus_id) do
-    IO.inspect("Patient ID: #{patient_id}")
-    IO.inspect("Campus ID: #{campus_id}")
-
     with admission when not is_nil(admission) <-
            Tpn.Admissions.get_admission_by_campus_id(patient_id, campus_id) do
       true

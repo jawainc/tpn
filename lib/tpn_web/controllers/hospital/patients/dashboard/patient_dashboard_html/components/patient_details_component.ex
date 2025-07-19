@@ -91,6 +91,16 @@ defmodule TpnWeb.Hospital.Components.PatientDetailsComponent do
                 end
               }
             />
+            <%= if @patient.is_admitted do %>
+              <button
+                class="btn btn-primary btn-xs rounded"
+                hx-get={"/patients/#{@patient.id}/orders/new/"}
+                hx-target="#main-contents"
+                hx-indicator=".main-contents-loader"
+              >
+                New Order
+              </button>
+            <% end %>
           </div>
         </div>
 

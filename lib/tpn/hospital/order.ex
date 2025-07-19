@@ -5,7 +5,6 @@ defmodule Tpn.Order do
   schema "orders" do
     field :order_type, :string
     field :status, :string
-    field :order_id, :string
     field :bag_id, :string
     field :order_date, :naive_datetime
     field :copy_order, :boolean, default: false
@@ -13,7 +12,7 @@ defmodule Tpn.Order do
     field :enteral_dose, :float
     field :tpn_infusion_type, :string
     field :infusion_duration_type, :string
-    field :infusion_duration_hours, :integer
+    field :tpn_infusion_duration_hours, :integer
     field :lipid_infusion_duration_hours, :integer
     field :dosing_weight, :string
     field :template_fluids, :map, default: %{}
@@ -27,6 +26,7 @@ defmodule Tpn.Order do
     belongs_to :vascular_access, Tpn.VascularAccess
     belongs_to :order, Tpn.Order, foreign_key: :copied_from_order_id
     belongs_to :admission, Tpn.Admission
+    belongs_to :patient, Tpn.Patient
     belongs_to :user, Tpn.User
 
     timestamps(type: :utc_datetime)
@@ -37,7 +37,7 @@ defmodule Tpn.Order do
     |> cast(attrs, [
       :order_type,
       :status,
-      :order_id,
+      :copied_from_order_id,
       :bag_id,
       :order_date,
       :copy_order,
@@ -45,7 +45,7 @@ defmodule Tpn.Order do
       :enteral_dose,
       :tpn_infusion_type,
       :infusion_duration_type,
-      :infusion_duration_hours,
+      :tpn_infusion_duration_hours,
       :lipid_infusion_duration_hours,
       :dosing_weight,
       :template_fluids,
@@ -58,10 +58,10 @@ defmodule Tpn.Order do
       :vascular_access_id,
       :copied_from_order_id,
       :admission_id,
+      :patient_id,
       :user_id
     ])
     |> validate_required([
-      :order_id,
       :bag_id,
       :order_type,
       :order_date,
@@ -72,7 +72,7 @@ defmodule Tpn.Order do
       :enteral_dose,
       :tpn_infusion_type,
       :infusion_duration_type,
-      :infusion_duration_hours,
+      :tpn_infusion_duration_hours,
       :lipid_infusion_duration_hours,
       :dosing_weight
     ])

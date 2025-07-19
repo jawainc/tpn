@@ -32,6 +32,14 @@ defmodule Tpn.TemplateProducts do
     )
     |> Repo.all()
   end
+  
+  def list_template_products_for_order(template_id) do
+    from(a in TemplateProductView,
+      where: a.template_id == ^template_id,
+      order_by: [asc: :position]
+    )
+    |> Repo.all()
+  end
 
   def create_template_product(params) do
     max_position_query =

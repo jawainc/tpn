@@ -19,7 +19,7 @@ defmodule Tpn.TemplateProductView do
 
   schema "template_products_view" do
     field :position, :integer
-    field :template_id, :id
+    field :template_id, :integer
     field :dose, :decimal
     field :additional_dose, :decimal
     field :additional_dose_allowed, :boolean
@@ -32,7 +32,9 @@ defmodule Tpn.TemplateProductView do
     field :filling_method_name, :string
     field :user_name, :string
     field :formulary_name, :string
+    field :formulary_id, :integer
     field :class_name, :string
+    field :class_id, :integer
     field :inserted_at, :utc_datetime
   end
 

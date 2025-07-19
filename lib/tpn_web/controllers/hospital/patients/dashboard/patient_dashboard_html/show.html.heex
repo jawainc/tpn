@@ -22,7 +22,28 @@
 
   <.patient_details patient={@patient} age={@age} can_be_discharged={@can_be_discharged} />
 
-  <.patient_admissions admissions={@admissions} patient_id={@patient.id} />
+  <div class="flex items-center my-10 space-x-2">
+    <button
+            hx-get={"/patients/#{@patient.id}/admissions/list"}
+            hx-target="#patient_details_container"
+            hx-indicator="#patient_details_loader"
+            type="button"
+            class="btn btn-soft btn-xs btn-neutral rounded-sm"
+    >Admissions</button>
+
+    <button
+            hx-get={"/patients/#{@patient.id}/orders/list"}
+            hx-target="#patient_details_container"
+            hx-indicator="#patient_details_loader"
+            type="button"
+            class="btn btn-soft btn-xs btn-success rounded-sm"
+    >Orders</button>
+  </div>
+
+  <div class="mt-10">
+    <span id="patient_details_loader" class="loading loading-spinner loading-lg mx-auto mt10 block htmx-indicator "></span>
+    <div id="patient_details_container"></div>
+  </div>
 </div>
 
 <.form_modal classes="max-w-3xl" />

@@ -9,6 +9,8 @@ defmodule Tpn.Class do
     field :name, :string
     belongs_to :user, Tpn.Accounts.User
 
+    has_many :formularies, Tpn.Formulary
+
     timestamps(type: :utc_datetime)
   end
 

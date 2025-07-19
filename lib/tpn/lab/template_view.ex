@@ -26,7 +26,9 @@ defmodule Tpn.TemplateView do
     field :fluid_unit, :string
     field :patient_type_name, :string
     field :user_name, :string
-    field :inserted_at, :utc_datetime
+    field :fluid_unit_id, :id
+    field :patient_type_id, :id
+    field :user_id, :id
   end
 
   def filter_fields do

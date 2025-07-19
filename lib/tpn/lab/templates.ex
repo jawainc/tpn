@@ -21,6 +21,14 @@ defmodule Tpn.Templates do
     {:ok, {templates, meta}}
   end
 
+  def list_templates_for_patient_type(patient_type_id) do
+    from(t in Template, order_by: [asc: :name])
+    |> where([t], t.active == true)
+    |> where([t], t.patient_type_id == ^patient_type_id)
+    |> Repo.all()
+    |> Enum.map(&{&1.name, &1.id})
+  end
+
   def templates_for_select do
     from(t in Template, order_by: [asc: :name])
     |> where([t], t.active == true)
@@ -29,11 +37,8 @@ defmodule Tpn.Templates do
   end
 
   def create_template(params) do
-    IO.inspect(params)
-
     %Template{}
     |> Template.changeset(params)
-    |> IO.inspect()
     |> Repo.insert()
   end
 

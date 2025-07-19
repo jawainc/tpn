@@ -2,7 +2,7 @@ defmodule TpnWeb.Hospital.AdmissionsController do
   use TpnWeb, :controller
 
   import Ecto.Query, warn: false
-  alias Tpn.{Admissions, Admission, Units, Settings, PatientTypes}
+  alias Tpn.{Admissions, Admission, Units, Settings, PatientTypes, Patients, Orders}
   alias Tpn.Hospital.Wards
   alias TpnWeb.Helpers.{ClientEvents, Networks, PatientHelper}
 
@@ -11,8 +11,15 @@ defmodule TpnWeb.Hospital.AdmissionsController do
 
   def search(conn, params) do
     with {:ok, admissions} <- Admissions.list_admissions(params) do
-      render(conn, :list, admissions: admissions)
+      render(conn, :list, admissions: admissions, patient_id: params["patient_id"])
     end
+  end
+
+  def show(conn, %{"id" => id, "admission_id" => admission_id}) do
+    patient = Patients.get_patient_view(id)
+    admission = Admissions.get_admission_view(admission_id)
+    orders = Orders.list_orders_by_admission_id(admission_id)
+    render(conn, :show, patient: patient, admission: admission, orders: orders)
   end
 
   def new(conn, %{"id" => id}) do

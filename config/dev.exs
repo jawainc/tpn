@@ -5,7 +5,7 @@ config :tpn, Tpn.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "tpn_dev",
+  database: "tpn_htmx_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

@@ -9,7 +9,6 @@ defmodule Tpn.Repo.Migrations.CreateTableTemplateProducts do
       add :additional_dose_allowed, :boolean, default: false
       add :max_allowed_limit, :decimal, null: true
       add :substance_locked_on_order, :boolean, default: false
-      add :position, :integer, null: false, default: 0
 
       add :dose_unit_id, references(:units, on_delete: :nilify_all), null: true
       add :additional_dose_unit_id, references(:units, on_delete: :nilify_all), null: true

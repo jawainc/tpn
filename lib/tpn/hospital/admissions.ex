@@ -6,10 +6,11 @@ defmodule Tpn.Admissions do
   alias Tpn.PatientMrn
   alias Tpn.Helpers.PaginationHelper
 
-  def list_admissions(params) do
+  def list_admissions(%{"patient_id" => patient_id} = params) do
     admissions =
       from(a in AdmissionView)
-      |> PaginationHelper.build_query_params(AdmissionView, params, false)
+      |> where([a], a.patient_id == ^patient_id)
+      |> order_by([a], desc: a.inserted_at)
       |> Repo.all()
 
     {:ok, admissions}
@@ -21,6 +22,7 @@ defmodule Tpn.Admissions do
     |> where([a], a.local_health_network_id == ^lhn_id)
     |> where([a], a.discharged == false)
     |> order_by([a], desc: a.inserted_at)
+    |> limit(1)
     |> Repo.one()
   end
 
@@ -30,6 +32,7 @@ defmodule Tpn.Admissions do
     |> where([a], a.facility_id == ^facility_id)
     |> where([a], a.discharged == false)
     |> order_by([a], desc: a.inserted_at)
+    |> limit(1)
     |> Repo.one()
   end
 
@@ -39,6 +42,15 @@ defmodule Tpn.Admissions do
     |> where([a], a.campus_id == ^campus_id)
     |> where([a], a.discharged == false)
     |> order_by([a], desc: a.inserted_at)
+    |> limit(1)
+    |> Repo.one()
+  end
+
+  def get_admission_view_by_patient_id(patient_id) do
+    from(a in AdmissionView)
+    |> where([a], a.patient_id == ^patient_id)
+    |> order_by([a], desc: a.inserted_at)
+    |> limit(1)
     |> Repo.one()
   end
 
@@ -82,6 +94,10 @@ defmodule Tpn.Admissions do
 
   def get_admission!(id) do
     Repo.get!(Admission, id)
+  end
+
+  def get_admission_view(id) do
+    Repo.get!(AdmissionView, id)
   end
 
   def discharge_admission(patient_id) do

@@ -68,6 +68,20 @@ defmodule Tpn.Formularies do
     |> Repo.preload([:formulary_patient_types, :ingredients])
   end
 
+  def list_enteral_products_for_patient_type(patient_type_id) do
+    query =
+      from f in Formulary,
+        join: fpt in FormularyPatientType,
+        on: f.id == fpt.formulary_id,
+        where: fpt.patient_type_id == ^patient_type_id,
+        preload: [:patient_types]
+
+    query
+    |> where([f], f.is_enteral == true)
+    |> Repo.all()
+    |> Enum.map(&{&1.name, &1.id})
+  end
+
   def change_formulary(formulary) do
     Formulary.changeset(formulary, %{})
   end

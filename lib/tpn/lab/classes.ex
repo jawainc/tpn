@@ -2,6 +2,7 @@ defmodule Tpn.Classes do
   import Ecto.Query, warn: false
   alias Tpn.Repo
   alias Tpn.Class
+  alias Tpn.{Formulary, FormularyPatientType}
   alias Tpn.Helpers.PaginationHelper
 
   def classes() do
@@ -26,6 +27,20 @@ defmodule Tpn.Classes do
     from(c in Class, order_by: [asc: :name])
     |> Repo.all()
     |> Enum.map(&{&1.name, &1.id})
+  end
+
+  def classes_with_formularies_for_patient_type(patient_type_id) do
+    from(c in Class,
+      join: f in Formulary,
+      on: c.id == f.class_id,
+      join: fpt in FormularyPatientType,
+      on: f.id == fpt.formulary_id,
+      where: fpt.patient_type_id == ^patient_type_id,
+      distinct: c.id,
+      order_by: [asc: c.name],
+      preload: [formularies: f]
+    )
+    |> Repo.all()
   end
 
   def create_class(params) do

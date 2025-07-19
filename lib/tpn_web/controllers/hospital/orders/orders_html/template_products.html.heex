@@ -1,0 +1,131 @@
+<%= if is_nil(@template) do %>
+<div class="text-center">Select a template to view products</div>
+<% else %>
+<script>
+    const templateProducts = <%= raw @products %>;
+    const preMixed = <%= @template.pre_mixed_standard %>;
+    const additionalSubstances = <%= @template.additional_substances_allowed %>;
+    const classesData = <%= raw @classes %>;
+</script>
+    <div x-data="orderTemplateProducts" 
+        x-init="productsData = templateProducts; 
+        preMixedStandard = preMixed; 
+        additionalSubstancesAllowed = additionalSubstances; 
+        classes = classesData;
+    ">
+        <div class="grid grid-cols-6 gap-2 my-6">
+            <label class="form-control w-full max-w-xs" for="template_fluids">
+                <div class="label">
+                    <span class="label-text">Total Fluids (<i><%= @template.fluid_unit %></i>) <span class="text-error">*</span></span>
+                </div>
+                <input name="template_fluids" type="number" step=".01" class="input input-sm input-bordered" value={@template.fluids} readonly={@template.pre_mixed_standard} />
+            </label>
+            <%= if @template.pre_mixed_standard do %>
+            <label class="form-control w-full max-w-xs" for="template_tpn_dose">
+                <div class="label">
+                    <span class="label-text">TPN Dose (<i>ml</i>)</span>
+                </div>
+                <input name="template_tpn_dose" type="number" step=".01" class="input input-sm input-bordered" value="0.0" />
+            </label>
+            <% end %>
+            <%= if @template.pre_mixed_standard do %>
+            <label class="form-control w-full max-w-xs" for="template_lipid_dose">
+                <div class="label">
+                    <span class="label-text">Lipid Dose (<i>ml</i>)</span>
+                </div>
+                <input name="template_lipid_dose" type="number" step=".01" class="input input-sm input-bordered" value="0.0" />
+            </label>
+            <% end %>
+            <%= if @template.pre_mixed_standard do %>
+            <label class="form-control w-full max-w-xs" for="template_tpn_rate">
+                <div class="label">
+                    <span class="label-text">TPN Rate</span>
+                </div>
+                <input name="template_tpn_rate" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+            <% end %>
+            <%= if @template.pre_mixed_standard do %>
+            <label class="form-control w-full max-w-xs" for="template_lipid_rate">
+                <div class="label">
+                    <span class="label-text">Lipid Rate</span>
+                </div>
+                <input name="template_lipid_rate" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+            <% end %>
+            <label class="form-control w-full max-w-xs" for="template_gir">
+                <div class="label">
+                    <span class="label-text">GIR</span>
+                </div>
+                <input name="template_gir" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+            <label class="form-control w-full max-w-xs" for="template_amino_acid">
+                <div class="label">
+                    <span class="label-text">Amino Acid %</span>
+                </div>
+                <input name="template_amino_acid" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+            <label class="form-control w-full max-w-xs" for="template_dextrose">
+                <div class="label">
+                    <span class="label-text">Dextrose %</span>
+                </div>
+                <input name="template_dextrose" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+            <label class="form-control w-full max-w-xs" for="template_fat_infusion_rate">
+                <div class="label">
+                    <span class="label-text">Fat Infusion Rate</span>
+                </div>
+                <input name="template_fat_infusion_rate" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+            <label class="form-control w-full max-w-xs" for="template_osmolarity">
+                <div class="label">
+                    <span class="label-text">Osmolarity</span>
+                </div>
+                <input name="template_osmolarity" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+            </label>
+        </div>
+        <h2 class="font-semibold mt-10 mb-4">Substances</h2>
+        <div x-sort="handleSort">
+            <template x-for="(product, index) in productsData">
+                <div 
+                x-sort:item="product.id"
+                class="flex p-5 space-x-5 bg-gray-300/10 dark:bg-gray-700/10 pb-10 mt-5 border border-white/5 rounded-md">
+                    <div x-sort:handle class="cursor-move group">
+                        <.icon
+                            name="hero-arrows-pointing-out"
+                            class="flex-shrink h-4 w-4 text-gray-600 group-hover:text-gray-400"
+                        />
+                    </div>
+                    <div class="flex-grow flex flex-col gap-2">
+                        <div><.badge><span x-text="product.class_name"></span></.badge></div>
+                        <div class="flex-grow grid grid-cols-5 gap-4">
+                        <label class="form-control w-full max-w-xs" for="template_dose">
+                            <div class="label">
+                                <span class="label-text" x-text="`Dose (${product.dose_unit})`"></span>
+                            </div>
+                            <input name="template_dose" x-model="product.dose" type="number" step=".01" class="input input-sm input-bordered" />
+                        </label>
+                        <label class="form-control w-full max-w-xs" for="template_product">
+                            <div class="label">
+                                <span class="label-text">Product</span>
+                            </div>
+                            <select name="template_product" class="input input-sm input-bordered leading-none" x-model="product.formulary_id">
+                                <option value="">Select Product</option>
+                                <template x-for="formulary in getClassFormularies(product.class_id)">
+                                    <option x-bind:value="formulary.id" x-bind:selected="formulary.id === product.formulary_id">
+                                        <span x-text="`${formulary.name} (${formulary.id} === ${product.formulary_id})`"></span>
+                                    </option>
+                                </template>
+                            </select>                            
+                        </label>
+                    </div>
+                    </div>                    
+                    <div class="flex-shrink">
+                        <template x-if="!product.substance_locked_on_order">
+                            <.icon name="hero-trash" class="text-gray-500" />
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>  
+<% end %>
