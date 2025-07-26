@@ -6,12 +6,19 @@
     const preMixed = <%= @template.pre_mixed_standard %>;
     const additionalSubstances = <%= @template.additional_substances_allowed %>;
     const classesData = <%= raw @classes %>;
+    const fillingMethodsData = <%= raw @filling_methods %>;
+    const formulariesData = <%= raw @formularies %>;
+    const currencyData = <%= raw @currency %>;
 </script>
     <div x-data="orderTemplateProducts" 
         x-init="productsData = templateProducts; 
         preMixedStandard = preMixed; 
         additionalSubstancesAllowed = additionalSubstances; 
         classes = classesData;
+        fillingMethods = fillingMethodsData;
+        formularies = formulariesData;
+        currency = currencyData;
+        initialized();
     ">
         <div class="grid grid-cols-6 gap-2 my-6">
             <label class="form-control w-full max-w-xs" for="template_fluids">
@@ -41,7 +48,7 @@
                 <div class="label">
                     <span class="label-text">TPN Rate</span>
                 </div>
-                <input name="template_tpn_rate" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_tpn_rate" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
             <% end %>
             <%= if @template.pre_mixed_standard do %>
@@ -49,41 +56,45 @@
                 <div class="label">
                     <span class="label-text">Lipid Rate</span>
                 </div>
-                <input name="template_lipid_rate" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_lipid_rate" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
             <% end %>
             <label class="form-control w-full max-w-xs" for="template_gir">
                 <div class="label">
                     <span class="label-text">GIR</span>
                 </div>
-                <input name="template_gir" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_gir" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
             <label class="form-control w-full max-w-xs" for="template_amino_acid">
                 <div class="label">
                     <span class="label-text">Amino Acid %</span>
                 </div>
-                <input name="template_amino_acid" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_amino_acid" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
             <label class="form-control w-full max-w-xs" for="template_dextrose">
                 <div class="label">
                     <span class="label-text">Dextrose %</span>
                 </div>
-                <input name="template_dextrose" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_dextrose" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
             <label class="form-control w-full max-w-xs" for="template_fat_infusion_rate">
                 <div class="label">
                     <span class="label-text">Fat Infusion Rate</span>
                 </div>
-                <input name="template_fat_infusion_rate" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_fat_infusion_rate" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
             <label class="form-control w-full max-w-xs" for="template_osmolarity">
                 <div class="label">
                     <span class="label-text">Osmolarity</span>
                 </div>
-                <input name="template_osmolarity" type="number" step=".01" class="input input-sm input-bordered" value="0.0" readonly />
+                <input name="template_osmolarity" type="number" step=".01" class="input input-sm input-read-only" value="0.0" readonly />
             </label>
         </div>
-        <h2 class="font-semibold mt-10 mb-4">Substances</h2>
+        <div class="mt-10 mb-4 flex items-center gap-4">
+            <h2 class="font-semibold">Substances</h2>
+            <button :if={@template.additional_substances_allowed} type="button" class="btn btn-xs btn-outline rounded-md" @click="addProduct">Add More</button>
+        </div>
+        
         <div x-sort="handleSort">
             <template x-for="(product, index) in productsData">
                 <div 
@@ -102,30 +113,167 @@
                             <div class="label">
                                 <span class="label-text" x-text="`Dose (${product.dose_unit})`"></span>
                             </div>
-                            <input name="template_dose" x-model="product.dose" type="number" step=".01" class="input input-sm input-bordered" />
+                            <input name="template_dose" id="template_dose" x-model="product.dose" type="number" step=".01" class="input input-sm input-bordered" />
                         </label>
                         <label class="form-control w-full max-w-xs" for="template_product">
                             <div class="label">
                                 <span class="label-text">Product</span>
+                                <span x-show="product.formulary_id" class="label-text-alt" @click="openFormularyInfo(product.id)"><.icon name="hero-information-circle-mini" class="text-gray-500 cursor-pointer hover:text-gray-400" /></span>
                             </div>
-                            <select name="template_product" class="input input-sm input-bordered leading-none" x-model="product.formulary_id">
+                            <select name="template_product" id="template_product" class="input input-sm input-bordered leading-none" @change="handleProductChange($event, product.id)">
                                 <option value="">Select Product</option>
                                 <template x-for="formulary in getClassFormularies(product.class_id)">
                                     <option x-bind:value="formulary.id" x-bind:selected="formulary.id === product.formulary_id">
-                                        <span x-text="`${formulary.name} (${formulary.id} === ${product.formulary_id})`"></span>
+                                        <span x-text="`${formulary.name}`"></span>
                                     </option>
                                 </template>
                             </select>                            
                         </label>
+                        <label class="form-control w-full max-w-xs" for="template_filling_method">
+                            <div class="label">
+                                <span class="label-text">Filling Method</span>
+                            </div>
+                            <select name="template_filling_method" id="template_filling_method" class="input input-sm input-bordered leading-none" x-model="product.filling_method_id">
+                                <option value="">Select Filling Method</option>
+                                <template x-for="methods in fillingMethods">
+                                    <option x-bind:value="methods.id" x-bind:selected="methods.id === product.filling_method_id">
+                                        <span x-text="`${methods.name}`"></span>
+                                    </option>
+                                </template>
+                            </select>                            
+                        </label>
+                        <label class="form-control w-full max-w-xs" for="template_volume">
+                            <div class="label">
+                                <span class="label-text">Volume</span>
+                            </div>
+                            <input name="template_volume" id="template_volume" x-model="product.volume" type="number" step=".01" class="input input-sm input-read-only" readonly />
+                        </label>
+                        <label class="form-control w-full max-w-xs" for="template_fill_volume">
+                            <div class="label">
+                                <span class="label-text">Fill Volume</span>
+                            </div>
+                            <input name="template_fill_volume" id="template_fill_volume" x-model="product.fill_volume" type="number" step=".01" class="input input-sm input-read-only" readonly />
+                        </label>
+                        <template x-if="product.additional_dose_allowed && preMixedStandard">
+                            <label class="form-control w-full max-w-xs" for="template_additional_dose">
+                                <div class="label">
+                                    <span class="label-text">Additional Dose (<span x-text="product.additional_dose_unit"></span>)</span>
+                                </div>
+                                <input name="template_additional_dose" id="template_additional_dose" x-model="product.additional_dose" type="number" step=".01" class="input input-sm input-bordered" />
+                            </label>
+                        </template>
+                        <template x-if="product.additional_dose_allowed && preMixedStandard">
+                            <label class="form-control w-full max-w-xs" for="template_max_allowed">
+                                <div class="label">
+                                    <span class="label-text">Max Allowed Limit (<span x-text="product.max_allowed_unit"></span>)</span>
+                                </div>
+                                <input name="template_max_allowed" id="template_max_allowed" x-model="product.max_allowed_limit" type="number" step=".01" class="input input-sm input-bordered" />
+                            </label>
+                        </template>
                     </div>
                     </div>                    
                     <div class="flex-shrink">
                         <template x-if="!product.substance_locked_on_order">
-                            <.icon name="hero-trash" class="text-gray-500" />
+                            <button type="button" class="btn btn-sm btn-circle btn-outline cursor-pointer" @click="removeProduct(product.id)">
+                                <.icon name="hero-trash-mini" />
+                            </button>
                         </template>
                     </div>
                 </div>
             </template>
         </div>
+        <dialog id="formulary_info" class="modal">
+            <div class="modal-box w-11/12 max-w-4xl">
+                <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                <h3 class="text-lg font-bold" x-text="selectedFormulary?.name"></h3>
+                    <div class="mt-6 border-t border-white/10 divide-y divide-white/10">
+                        <div class="grid grid-cols-3 gap-4 py-4">
+                            <div>
+                                <div class="font-medium text-gray-500">Code</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.code"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-500">Label</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.label_friendly_name"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-500">Cost per Container (<span x-text="currency.code"></span>)</div>
+                                <div class="text-sm/6 text-gray-200" x-text="currency.symbol + ' ' + selectedFormulary?.cost_per_container"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 py-4">
+                            <div>
+                                <div class="font-medium text-gray-500">Container Size</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.container_size"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-500">Solution Type</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.solution_type_name"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-500">UOM Unit</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.uom_unit_name"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 py-4">
+                            <div>
+                                <div class="font-medium text-gray-500">Concentration (<span x-text="selectedFormulary?.concentration_unit_name"></span>)</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.concentration"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-500">Calories (<span x-text="selectedFormulary?.calories_unit_name"></span>)</div>
+                                <div class="text-sm/6 text-gray-200" x-text="selectedFormulary?.calories"></div>
+                            </div>
+                            <div>
+                                <div class="flex gap-3">
+                                    <div class="flex gap-3">
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    x-bind:class="{ 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 ring-green-600/20 dark:ring-green-500/20': selectedFormulary?.is_enteral, 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-red-600/20 dark:ring-red-500/20': !selectedFormulary?.is_enteral }"
+                                    >
+                                        Enteral
+                                    </span>
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    x-bind:class="{ 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 ring-green-600/20 dark:ring-green-500/20': selectedFormulary?.print_on_label, 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-red-600/20 dark:ring-red-500/20': !selectedFormulary?.print_on_label }"
+                                    >
+                                        Print On Label
+                                    </span>                                    
+                                </div>
+                                </div>
+                                <div class="flex gap-3 mt-2">
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    x-bind:class="{ 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 ring-green-600/20 dark:ring-green-500/20': selectedFormulary?.include_in_overfill, 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-red-600/20 dark:ring-red-500/20': !selectedFormulary?.include_in_overfill }"
+                                    >
+                                        Include In Overfill
+                                    </span>
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    x-bind:class="{ 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 ring-green-600/20 dark:ring-green-500/20': selectedFormulary?.universal_fluid, 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-red-600/20 dark:ring-red-500/20': !selectedFormulary?.universal_fluid }"
+                                    >
+                                        Universal Fluid
+                                    </span>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+
+                    <h3 class="text-lg font-bold mt-8">Ingredients</h3>
+                    <div class="mt-6 grid grid-cols-2 gap-4">
+                        <template x-for="ingredient in selectedFormulary.ingredients">
+                            <div class="py-4 border-t border-white/10">
+                                <div class="flex items-center gap-3">
+                                    <span class="font-medium text-gray-500" x-text="ingredient.name"></span>
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    x-bind:class="{ 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 ring-green-600/20 dark:ring-green-500/20': ingredient.print_on_label, 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-red-600/20 dark:ring-red-500/20': !ingredient.print_on_label }"
+                                    >
+                                        Print On Label
+                                    </span> 
+                                </div>
+                                <div class="text-sm/6 text-gray-200 mt-2"><span x-text="ingredient.amount"></span>/<span x-text="ingredient.unit_name"></span></div>
+                            </div>
+                        </template>
+                    </div>
+            </div>
+        </dialog>
     </div>  
 <% end %>

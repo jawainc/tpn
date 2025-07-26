@@ -82,6 +82,57 @@ defmodule Tpn.Formularies do
     |> Enum.map(&{&1.name, &1.id})
   end
 
+  def list_formularies_for_classes(class_ids) do
+    formularies = Repo.all(from f in FormularyView,
+      where: f.class_id in ^class_ids
+    )
+    # get formularies ids
+    formulary_ids = Enum.map(formularies, & &1.id)
+    ingredients = list_ingredients_for_formularies(formulary_ids)
+
+    Enum.map(formularies, fn formulary ->
+      %{
+        id: formulary.id,
+        name: formulary.name,
+        code: formulary.code,
+        label_friendly_name: formulary.label_friendly_name,
+        is_enteral: formulary.is_enteral,
+        concentration: formulary.concentration,
+        calories: formulary.calories,
+        cost_per_container: formulary.cost_per_container,
+        container_size: formulary.container_size,
+        print_on_label: formulary.print_on_label,
+        include_in_overfill: formulary.include_in_overfill,
+        universal_fluid: formulary.universal_fluid,
+        class_id: formulary.class_id,
+        class_name: formulary.class_name,
+        concentration_unit_name: formulary.concentration_unit_name,
+        calories_unit_name: formulary.calories_unit_name,
+        uom_unit_name: formulary.uom_unit_name,
+        solution_type_name: formulary.solution_type_name,
+        ingredients: Enum.filter(ingredients, fn ingredient -> ingredient.formulary_id == formulary.id end)
+      }
+    end)
+  end
+
+  def list_ingredients_for_formularies(formulary_ids) do
+    Repo.all(from f in FormularyIngredient,
+      where: f.formulary_id in ^formulary_ids,
+      distinct: [f.formulary_id]
+    )
+    |> Repo.preload([:ingredient, :unit])
+    |> Enum.map(fn fi ->
+      %{
+        amount: fi.amount,
+        formulary_id: fi.formulary_id,
+        name: fi.ingredient.name,
+        unit_name: fi.unit.unit,
+        print_on_label: fi.ingredient.print_on_label
+      }
+    end)
+    |> IO.inspect()
+  end
+
   def change_formulary(formulary) do
     Formulary.changeset(formulary, %{})
   end

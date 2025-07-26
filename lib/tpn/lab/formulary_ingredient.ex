@@ -5,7 +5,7 @@ defmodule Tpn.FormularyIngredient do
   schema "formulary_ingredients" do
     field :amount, :decimal
     belongs_to :formulary, Tpn.Formulary
-    belongs_to :ingredient, Tpn.Ingredient
+    belongs_to :ingredient, Tpn.Lab.Ingredient
     belongs_to :unit, Tpn.Unit
   end
 

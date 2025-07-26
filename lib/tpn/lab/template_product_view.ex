@@ -1,6 +1,8 @@
 defmodule Tpn.TemplateProductView do
   use Ecto.Schema
 
+  @derive {Jason.Encoder, except: [:__struct__, :__meta__]}
+
   @filterable_fields [
     :template_name,
     :class_name,
@@ -30,6 +32,7 @@ defmodule Tpn.TemplateProductView do
     field :max_allowed_unit, :string
     field :template_name, :string
     field :filling_method_name, :string
+    field :filling_method_id, :integer
     field :user_name, :string
     field :formulary_name, :string
     field :formulary_id, :integer

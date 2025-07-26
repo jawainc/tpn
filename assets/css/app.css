@@ -73,3 +73,9 @@ body {
 .btn-no-styles {
     @apply p-0 m-0 bg-transparent border-none focus:outline-none;
 }
+
+.input-read-only {
+    @apply focus:outline-none focus:border-none cursor-not-allowed;
+    @apply bg-gray-300/10 dark:bg-gray-700/10;
+}
+

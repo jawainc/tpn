@@ -37,8 +37,7 @@ defmodule Tpn.Classes do
       on: f.id == fpt.formulary_id,
       where: fpt.patient_type_id == ^patient_type_id,
       distinct: c.id,
-      order_by: [asc: c.name],
-      preload: [formularies: f]
+      order_by: [asc: c.name]
     )
     |> Repo.all()
   end

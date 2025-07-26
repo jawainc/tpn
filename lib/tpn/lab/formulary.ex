@@ -2,6 +2,21 @@ defmodule Tpn.Formulary do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [
+    :id,
+    :name,
+    :label_friendly_name,
+    :code,
+    :is_enteral,
+    :concentration,
+    :calories,
+    :cost_per_container,
+    :container_size,
+    :print_on_label,
+    :include_in_overfill,
+    :universal_fluid
+  ]}
+
   schema "formularies" do
     field :name, :string
     field :label_friendly_name, :string

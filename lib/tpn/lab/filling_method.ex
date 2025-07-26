@@ -2,6 +2,8 @@ defmodule Tpn.FillingMethod do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:name, :id]}
+
   @filterable_fields [:name]
   @sortable_fields [:name]
 
