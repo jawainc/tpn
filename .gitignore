@@ -51,5 +51,4 @@ npm-debug.log
 /priv/cert
 
 # ignore lockfile
-mix.lock
 /assets/package-lock.json
