@@ -11,8 +11,8 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
 
   def ingredients(assigns) do
     ~H"""
-    <div
-      class="mx-auto max-w-7xl"
+    <section
+      class="w-full rounded-lg border scroll-mt-16"
       x-data={"{
               ingredients: [],
               all_ingredients: [#{@ingredients |> Enum.map(fn ingredient -> "{name: '#{ingredient.name}', id: '#{ingredient.id}'}" end) |> Enum.join(",")}],
@@ -45,9 +45,19 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
             }"}
       x-init="set_selected_ingredients(); set_ingredients();"
     >
-      <button class="btn btn-neutral btn-sm mb-8" @click="open_ingredients()" type="button">
-        Add Ingredient
-      </button>
+      <header class="flex items-center justify-between border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+        <span>Ingredients</span>
+        <button
+          class="btn-sm-outline text-xs h-xs flex items-center gap-2"
+          @click="open_ingredients()"
+          type="button"
+          aria-label="Add Ingredient"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+          <span>Add Ingredient</span>
+        </button>
+      </header>
+      
 
       <ul role="list" class="divide-y divide-base-300">
         <template x-for="ingredient in selected_ingredients" x-bind:key="ingredient.id">
@@ -112,6 +122,7 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
           </li>
         </template>
       </ul>
+    
 
       <dialog id="ingredients_modal" class="modal">
         <div class="modal-box">
@@ -148,8 +159,8 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
             </template>
           </ul>
         </div>
-      </dialog>
-    </div>
+      </dialog>    
+    </section>
     """
   end
 end

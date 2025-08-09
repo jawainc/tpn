@@ -5,30 +5,7 @@
         <:col :let={record} label="L.H.N" field={:local_health_network_id}><%= record.local_health_network.name %></:col>            
 
         <:action :let={record}>
-            <button
-            hx-get={"#{get_url()}/#{record.id}/edit"}
-            hx-target="#table_modal_contents"
-            hx-indicator="#table_modal_indicator"
-            hx-on:click="table_modal.showModal()"
-            type="button"
-            class="btn btn-info btn-xs"
-            >
-            Edit
-            </button>
-        </:action>
-
-        <:action :let={record}>
-            <.form
-            for={%{}}
-            method="delete"
-            action={"#{get_url()}/#{record.id}"}
-            hx-delete={"#{get_url()}/#{record.id}"}
-            hx-confirm="Are you sure to delete?"
-            >
-            <button class="btn btn-error btn-xs">
-                Delete
-            </button>
-            </.form>
+            <.table_actions_edit_delete record={record} url={get_url()} is_admin={true} />
         </:action>
     </.table>
 

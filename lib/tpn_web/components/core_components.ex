@@ -28,7 +28,7 @@ defmodule TpnWeb.CoreComponents do
         </form>
 
         <div>
-          <.htmx_indicator id="table_modal_indicator" />
+          <.htmx_content_indicator id="table_modal_indicator" />
           <div id="table_modal_contents" class="hide-on-htmx-request"></div>
         </div>
       </div>
@@ -40,12 +40,15 @@ defmodule TpnWeb.CoreComponents do
 
   def empty_badge(assigns) do
     ~H"""
-    <div class={[
-      "badge badge-xs ml-5",
-      @status && "badge-success",
-      !@status && "badge-error"
-    ]}>
-    </div>
+    <%= if @status do %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-brand" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+    <% else %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-destructive" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+    <% end %>
     """
   end
 
@@ -90,9 +93,9 @@ defmodule TpnWeb.CoreComponents do
           hx-get={generate_paging_link(@url, @meta, "prev")}
           hx-target={@target}
           hx-indicator={@indicator}
-          class="btn btn-xs"
+          class="btn-sm-ghost"
         >
-          <.icon name="hero-chevron-left" class="h-4 w-4" /> previous
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg> previous
         </button>
       <% else %>
         <div></div>
@@ -101,12 +104,12 @@ defmodule TpnWeb.CoreComponents do
       <%= if @meta.has_next_page do %>
         <button
           type="button"
-          class="btn btn-xs"
+          class="btn-sm-ghost"
           hx-get={generate_paging_link(@url, @meta, "next")}
           hx-target={@target}
           hx-indicator={@indicator}
         >
-          next <.icon name="hero-chevron-right" class="h-4 w-4" />
+          next <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
         </button>
       <% end %>
     </div>
@@ -118,22 +121,27 @@ defmodule TpnWeb.CoreComponents do
 
   def search(assigns) do
     ~H"""
-    <div class="relative mt-10 mx-auto max-w-7xl">
-      <label class="input input-bordered input-sm flex items-center gap-2 w-72">
-        <.icon name="hero-magnifying-glass" class="w-4 h-4 opacity-70" />
-        <input
-          hx-get={@url}
-          hx-target={@target}
-          hx-trigger="keyup delay:500ms changed"
-          hx-indicator="#search_indicator"
-          type="text"
-          name="filter"
-          class="h-8 input input-sm border-none focus:ring-0"
-          autocomplete="off"
-          placeholder="Search..."
-        />
-        <span id="search_indicator" class="loading loading-spinner loading-xs htmx-indicator"></span>
-      </label>
+    <div class="flex items-center gap-1 max-w-7xl">
+      <div class="relative">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 opacity-70 absolute left-2 top-1/2 -translate-y-1/2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+      </svg>
+
+      <input
+        hx-get={@url}
+        hx-target={@target}
+        hx-trigger="keyup delay:500ms changed"
+        hx-indicator="#search_indicator"
+        type="text"
+        name="filter"
+        class="input pl-8 h-xs text-xs"
+        autocomplete="off"
+        placeholder="Search..."
+      />
+      </div>
+      <svg id="search_indicator" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin htmx-indicator text-white/40 h-4 w-4">
+        <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
+      </svg>
     </div>
     """
   end
@@ -148,26 +156,16 @@ defmodule TpnWeb.CoreComponents do
       id="form-alert"
       role="alert"
       class={[
-        "alert mb-5 p-2 rounded-md ",
-        @type == :info && "alert-info",
-        @type == :error && "alert-error",
-        @type == :success && "alert-success",
-        @type == :warning && "alert-warning"
+        @type == :info && "alert",
+        @type == :error && "alert-destructive border-destructive",
+        @type == :success && "alert text-brand border-brand-default",
+        @type == :warning && "alert text-warning border-warning"
       ]}
     >
-      <.icon :if={@type == :info} name="hero-exclamation-circle" class="h-6 w-6" />
-      <.icon :if={@type == :error} name="hero-x-circle" class="h-6 w-6" />
-      <.icon :if={@type == :warning} name="hero-exclamation-triangle" class="h-6 w-6" />
-      <.icon :if={@type == :success} name="hero-check-circle" class="h-6 w-6" />
-      <span>{msg}</span>
-
-      <button
-        hx-on:click="document.getElementById('form-alert').style.display = 'none'"
-        class="btn btn-square btn-ghost btn-xs"
-        type="button"
-      >
-        <.icon name="hero-x-mark" class="h-4 w-4" />
-      </button>
+      <svg :if={@type == :error} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg>
+      <svg :if={@type == :success} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+      <svg :if={@type == :warning} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+      <section>{msg}</section>
     </div>
     """
   end
@@ -380,50 +378,54 @@ defmodule TpnWeb.CoreComponents do
       end)
 
     ~H"""
-    <div>
-      <label for={@id} class="flex items-center gap-4 text-sm leading-6 mt-4">
-        <input type="hidden" name={@name} value="false" />
-        <input
-          type="checkbox"
-          id={@id}
-          name={@name}
-          value="true"
-          checked={@checked}
-          class="checkbox checkbox-primary bg-transparent"
-          {@rest}
+    <label for={@id} class="label gap-3">
+      <input type="hidden" name={@name} value="false" />
+      <input
+        type="checkbox"
+        id={@id}
+        name={@name}
+        value="true"
+        checked={@checked}
+        class="input"
+        {@rest}
         />
-        {@label}
-      </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
-    </div>
+      {@label}
+    </label>
     """
   end
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div>
-      <label for={@id} class="form-control w-full">
-        <div class="label">
-          <span class="label-text">
-            {@label}
-            <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
-          </span>
+    <div class="grid gap-3" phx-feedback-for={@name}>
+      <label for={@id} class="label">{@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span></label>
+      <div id={"select-#{@id}"} class="select">
+        <button type="button" class="btn-outline justify-between font-normal w-full" id={"select-#{@id}-trigger"} aria-haspopup="listbox" aria-expanded="false" aria-controls={"select-#{@id}-listbox"}>
+          <span class="truncate"></span>
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down text-muted-foreground opacity-50 shrink-0"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+        <div id={"select-#{@id}-popover"} data-popover aria-hidden="true">
+          <header>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input type="text" value="" placeholder="Search entries..." autocomplete="off" autocorrect="off" spellcheck="false" aria-autocomplete="list" role="combobox" aria-expanded="false" aria-controls={"select-#{@id}-listbox"} aria-labelledby={"select-#{@id}-trigger"} />
+          </header>
+          <div role="listbox" class="scrollbar overflow-y-auto max-h-64" id={"select-#{@id}-listbox"} aria-orientation="vertical" aria-labelledby={"select-#{@id}-trigger"}>
+            <div role="group" aria-labelledby={"group-label-select-#{@id}-items-1"}>
+              <div role="heading" id={"group-label-select-#{@id}-items-1"}>{@prompt}</div>
+              <%= for {name, id} <- @options do %>
+                <div role="option" data-value={id} aria-selected={id == @value}>
+                  {name}
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
-        <select
-          id={@id}
-          name={@name}
-          multiple={@multiple}
-          class={[
-            "select select-bordered w-full h-10 p-y-0 min-h-10 leading-none",
-            @errors != [] && "input-error"
-          ]}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
-        <.error :for={msg <- @errors}>{msg}</.error>
-      </label>
+        <input type="hidden" id={"select-#{@id}"} name={@name} value={@value} />
+      </div>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -454,34 +456,26 @@ defmodule TpnWeb.CoreComponents do
 
   def input(%{type: "input-inside-label"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
-      <label for={@id} class="form-control w-full">
-        <div class="label">
-          <span class="label-text">
-            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
-          </span>
+    <div class="grid gap-3" phx-feedback-for={@name}>
+      <label for={@id} class="label">{@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span></label>
+      <div class="flex items-center overflow-hidden rounded w-full relative">
+        <div :if={@label_inside_left != nil} class="opacity-40 flex items-center justify-center shrink-0 border-r border-muted-foreground/50 bg-muted absolute px-2 left-0 h-full text-sm">
+          {@label_inside_left}
         </div>
-        <div class="input input-bordered flex items-center gap-2 h-10 overflow-hidden">
-          <span :if={@label_inside_left != nil} class="opacity-50 shrink-0">
-            {@label_inside_left}
-          </span>
-          <input
-            type={@input_type}
-            name={@name}
-            id={@id}
-            value={Phoenix.HTML.Form.normalize_value(@input_type, @value)}
-            class={[
-              "grow h-10 border-0 focus:ring-0 px-0",
-              @errors != [] && "input-error"
-            ]}
-            {@rest}
-          />
-          <span :if={@label_inside_right != nil} class="opacity-50 shrink-0">
-            {@label_inside_right}
-          </span>
+
+        <input
+          type={@input_type}
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@input_type, @value)}
+          class={["input", @label_inside_right != nil && "pr-14", @label_inside_left != nil && "pl-8"]}
+          {@rest}
+        />
+        <div :if={@label_inside_right != nil} class="opacity-40 flex items-center justify-center shrink-0 border-l border-muted-foreground/50 bg-muted absolute px-2 right-0 h-full text-sm">
+          {@label_inside_right}
         </div>
-        <.error :for={msg <- @errors}>{msg}</.error>
-      </label>
+      </div>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -496,35 +490,46 @@ defmodule TpnWeb.CoreComponents do
       |> assign_new(:value_2, fn -> field_2.value end)
 
     ~H"""
-    <div phx-feedback-for={@name}>
-      <label for={@id} class="form-control w-full">
-        <div class="label">
-          <span class="label-text">
-            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
-          </span>
+    <div class="grid gap-3" phx-feedback-for={@name}>
+    <label for={@id} class="label">{@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span></label>
+    <div class="flex items-center rounded w-full relative">
+      <input
+        type={@input_type}
+        name={@name}
+        id={@id}
+        value={Phoenix.HTML.Form.normalize_value(@input_type, @value)}
+        class="input pr-32"
+        {@rest}
+      />
+      <div id={"select-#{@id_2}"} class="select absolute right-0 top-[1px] w-32">
+        <button type="button" class="btn-outline justify-between font-normal h-[34px] w-full border-t-0 border-b-0 rounded-l-none" id={"select-#{@id_2}-trigger"} aria-haspopup="listbox" aria-expanded="false" aria-controls={"select-#{@id_2}-listbox"}>
+          <span class="truncate"></span>
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down text-muted-foreground opacity-50 shrink-0"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+        <div id={"select-#{@id_2}-popover"} data-popover data-side="bottom" data-align="end" aria-hidden="true" class="w-40">
+          <header>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input type="text" value="" placeholder="Search ..." autocomplete="off" autocorrect="off" spellcheck="false" aria-autocomplete="list" role="combobox" aria-expanded="false" aria-controls={"select-#{@id}-listbox"} aria-labelledby={"select-#{@id}-trigger"} />
+          </header>
+          <div role="listbox" class="scrollbar overflow-y-auto max-h-64" id={"select-#{@id}-listbox"} aria-orientation="vertical" aria-labelledby={"select-#{@id}-trigger"}>
+            <div role="group" aria-labelledby={"group-label-select-#{@id}-items-1"}>
+              <div role="heading" id={"group-label-select-#{@id}-items-1"}>{@prompt}</div>
+              <%= for {name, id} <- @options do %>
+                <div role="option" data-value={id} aria-selected={id == @value}>
+                  {name}
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
-        <div class={[
-          "input input-bordered flex items-center h-10 overflow-hidden pr-0",
-          @errors != [] && "input-error"
-        ]}>
-          <input
-            type={@input_type}
-            name={@name}
-            id={@id}
-            value={Phoenix.HTML.Form.normalize_value(@input_type, @value)}
-            class="w-9/12 h-10 border-0 focus:ring-0 pl-0 pr-2 focus:outline-0"
-            {@rest}
-          />
-          <select
-            name={@name_2}
-            id={@id_2}
-            class="select h-10 join-item border-0 focus:ring-0 focus:outline-0 border-l border-neutral grow"
-          >
-            {Phoenix.HTML.Form.options_for_select(@options, @value_2)}
-          </select>
-        </div>
-        <.error :for={msg <- @errors}>{msg}</.error>
-      </label>
+        <input type="hidden" id={"select-#{@id_2}"} name={@name_2} value={@value_2} />
+      </div>
+    </div>
+    <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -532,26 +537,20 @@ defmodule TpnWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
-      <label for={@id} class="form-control w-full">
-        <div class="label">
-          <span class="label-text">
-            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
-          </span>
-        </div>
-        <input
+    <div class="grid gap-3" phx-feedback-for={@name}>
+      <label for={@id} class="label">{@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span></label>
+      <input
           type={@type}
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "input input-bordered w-full h-10",
+            "input input-bordered w-full",
             @errors != [] && "input-error"
           ]}
           {@rest}
         />
         <.error :for={msg <- @errors}>{msg}</.error>
-      </label>
     </div>
     """
   end
@@ -569,26 +568,21 @@ defmodule TpnWeb.CoreComponents do
 
   def simple_input(assigns) do
     ~H"""
-    <label for={@id} class="form-control w-full">
-      <div class="label">
-        <span class="label-text">
-          {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
-        </span>
-      </div>
-
+    <div class="grid gap-3">
+      <label for={@id} class="label">{@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span></label>
       <input
         type={@type}
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "input input-bordered w-full h-10",
+          "input",
           @errors != [] && "input-error"
         ]}
         {@rest}
       />
       <.error :for={msg <- @errors}>{msg}</.error>
-    </label>
+    </div>
     """
   end
 
@@ -613,14 +607,91 @@ defmodule TpnWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <div class="label">
-      <span class="label-text-alt text-error">
-        {render_slot(@inner_block)}
-      </span>
+    <div class="text-destructive text-xs">
+      {render_slot(@inner_block)}
     </div>
     """
   end
 
+  @doc """
+  Renders a modal form new button
+  """
+  attr :class, :string, default: nil
+  attr :hx_get, :string, required: true
+  slot :inner_block, required: true
+
+  def new_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      hx-get={@hx_get}
+      hx-target="#table_modal_form_contents"
+      hx-swap="innerHTML"
+      hx-indicator="#table_modal_contents_indicator"
+      hx-on:click="document.getElementById('table_modal_contents').showModal()"
+      type="button"
+      class="btn-sm btn-brand text-xs h-xs flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-default/70 h-4 w-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+      {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  @doc """
+  Renders a page form new button
+  """
+  attr :class, :string, default: nil
+  attr :hx_get, :string, required: true
+  slot :inner_block, required: true
+
+  def page_form_new_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      hx-get={@hx_get}
+      hx-target="#main-contents"
+      hx-swap="innerHTML"
+      hx-indicator="#main-contents-indicator"
+      type="button"
+      class="btn-sm btn-brand text-xs h-xs flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-default/70 h-4 w-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+      {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  @doc """
+  table modal
+  """
+  def table_form_modal(assigns) do
+    ~H"""
+    <dialog id="table_modal_contents" class="dialog w-full sm:max-w-[425px] max-h-[612px]">
+      <article class="bg-dialog-background text-foreground">
+        <.htmx_content_indicator id="table_modal_contents_indicator" />
+        <div id="table_modal_form_contents" class="hide-on-htmx-request"></div>
+        <button type="button" aria-label="Close dialog" onclick="this.closest('dialog').close()" class="absolute top-4 right-4 opacity-50 hover:opacity-70">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </article>
+    </dialog>
+    """
+  end
+
+  @doc """
+  form modal buttons
+  """
+  def form_modal_buttons(assigns) do
+    ~H"""
+    <button type="button" class="btn-sm-outline text-xs h-xs" onclick="this.closest('dialog').close()">Cancel</button>
+    <button id="form-button" type="submit" class="btn-sm btn-brand text-xs h-xs flex items-center gap-2" >
+      Submit
+      <.htmx_indicator id="form-button-indicator" />
+    </button>
+    """
+  end
   @doc """
   Renders a header with title.
   """
@@ -632,16 +703,16 @@ defmodule TpnWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
+    <header class="flex flex-col gap-14">
       <div>
-        <h1 class="text-lg font-semibold leading-8">
+        <h3 class="text-xl">
           {render_slot(@inner_block)}
-        </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-base-content">
+        </h3>
+        <p :if={@subtitle != []} class="mt-2 text-sm text-muted-foreground">
           {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none">{render_slot(@actions)}</div>
+      <div class="flex items-center justify-between">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -683,11 +754,11 @@ defmodule TpnWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="table bg-neutral rounded-md">
+    <div class="rounded border border-card-foreground/10">
+      <table class="w-full text-sm text-foreground-light">
         <thead>
           <tr>
-            <th :for={col <- @col} class="text-left">
+            <th :for={col <- @col} class="py-3 px-4 bg-card font-normal text-left">
               <%= if Enum.member?(@meta.sortable_fields, col[:field]) do %>
                 <.sortable_field
                   meta={@meta}
@@ -701,21 +772,21 @@ defmodule TpnWeb.CoreComponents do
                 {col[:label]}
               <% end %>
             </th>
-            <th :if={@action != []}>
+            <th :if={@action != []} class="py-3 px-4 bg-card">
               <span class="sr-only">{gettext("Actions")}</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-base-100">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
             <td
               :for={{col, _i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["", @row_click && "hover:cursor-pointer"]}
+              class={["py-3 px-4 border-t border-card-foreground/5 bg-card/60", @row_click && "hover:cursor-pointer"]}
             >
               {render_slot(col, @row_item.(row))}
             </td>
-            <td :if={@action != []} class="flex justify-end gap-3">
+            <td :if={@action != []} class="flex justify-end gap-3 py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <%= for action <- @action do %>
                 {render_slot(action, @row_item.(row))}
               <% end %>
@@ -724,6 +795,47 @@ defmodule TpnWeb.CoreComponents do
         </tbody>
       </table>
     </div>
+    """
+  end
+
+  attr :record, :any, required: true
+  attr :url, :string, required: true
+  attr :is_admin, :boolean, default: false, doc: "the admin status"
+  attr :can_update, :boolean, default: false, doc: "the update permission"
+  attr :can_delete, :boolean, default: false, doc: "the delete permission"
+  def table_actions_edit_delete(assigns) do
+    ~H"""
+    <div class="dropdown-menu text-xs">
+                <button type="button" aria-haspopup="menu" aria-controls="demo-dropdown-menu-menu" aria-expanded="false" class="btn-sm-icon-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                </button>
+                <div data-popover data-align="end" aria-hidden="true" class="w-32 border border-card-foreground/10 rounded">
+                    <div role="menu" aria-labelledby="demo-dropdown-menu-trigger">
+                        <div
+                            :if={@is_admin || @can_update}
+                            hx-get={"#{@url}/#{@record.id}/edit"}
+                            hx-target="#table_modal_form_contents"
+                            hx-indicator="#table_modal_contents_indicator"
+                            hx-on:click="document.getElementById('table_modal_contents').showModal()"
+                            role="menuitem"
+                            class="flex items-center gap-3"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"></path></svg>
+                            Edit
+                        </div>
+                        <div
+                            :if={@is_admin || @can_delete}
+                            hx-delete={"#{@url}/#{@record.id}"}
+                            hx-confirm="Are you sure to delete?"
+                            role="menuitem"
+                            class="flex items-center gap-3"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" class="text-destructive" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            <span>Delete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
     """
   end
 
@@ -745,14 +857,12 @@ defmodule TpnWeb.CoreComponents do
       <span>{@label}</span>
       <%= if(@meta.order_by == Atom.to_string(@field)) do %>
         <div class="flex flex-col items-center">
-          <.icon
-            name="hero-chevron-up"
-            class={["w-2 h-2", @meta.order_direction == "asc" && "text-white"]}
-          />
-          <.icon
-            name="hero-chevron-down"
-            class={["w-2 h-2", @meta.order_direction == "desc" && "text-white"]}
-          />
+          <svg xmlns="http://www.w3.org/2000/svg" class={["w-2 h-2", @meta.order_direction == "asc" && "text-white"]} fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class={["w-2 h-2", @meta.order_direction == "desc" && "text-white"]} fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
         </div>
       <% end %>
     </div>
@@ -845,13 +955,35 @@ defmodule TpnWeb.CoreComponents do
 
   def htmx_indicator(assigns) do
     ~H"""
-    <span id={@id} class="loading loading-spinner loading-lg mx-auto mt10 block htmx-indicator " />
+    <svg id="form-button-indicator" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin htmx-indicator">
+      <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
+    </svg>
+    """
+  end
+
+  attr :id, :string, default: ""
+
+  def htmx_content_indicator(assigns) do
+    ~H"""
+    <div id={@id} class="w-full htmx-indicator my-10">
+    <div class="flex mx-auto w-[200px] items-center gap-4">
+      <div class="bg-accent animate-pulse size-10 shrink-0 rounded-full"></div>
+      <div class="grid gap-2">
+        <div class="bg-accent animate-pulse rounded-md h-4 w-[150px]"></div>
+        <div class="bg-accent animate-pulse rounded-md h-4 w-[100px]"></div>
+      </div>
+    </div>
+    </div>
     """
   end
 
   def loader(assigns) do
     ~H"""
-    <span class="loading loading-spinner loading-lg mx-auto mt10 block" />
+    <div class="flex items-center justify-center w-full main-contents-loader htmx-indicator my-10">
+      <svg id="form-button-indicator" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin htmx-indicator">
+        <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
+      </svg>
+    </div>
     """
   end
 

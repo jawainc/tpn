@@ -1,28 +1,17 @@
 <.simple_form :let={f} 
     for={@changeset} action={@action}
     hx-post={@action}
-    hx-target="#form_container"
-    hx-disabled-elt="#form-button"
+    hx-target="#table_modal_form_contents"
     hx-on::config-request="formConfigRequest(event)"
     autocomplete="off"
     >
-    
-    <.flash_group flash={@flash} />
+    <section class="space-y-6">
+        <.flash_group flash={@flash} />
 
-    <div class="grid grid-cols-2 gap-4">
         <.input field={f[:name]} type="text" label="Name" required />
-    </div>    
-   
-    
-    
-    <:actions>
-        <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3" >
-            <%= if(@edit) do %> Update <% else %> Create <% end %>
-            <span class="loading loading-spinner loading-md htmx-indicator"></span>
-        </button>
-    </:actions>
+
+        <footer class="flex justify-end space-x-3">
+            <.form_modal_buttons />
+        </footer>
+    </section>
 </.simple_form>
-
-
-
-  

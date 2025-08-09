@@ -10,7 +10,11 @@
 >
   <.flash_group flash={@flash} />
 
-  <div class="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+  <section class="w-full rounded-lg border scroll-mt-16">
+    <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+      Formulary Data
+    </header>
+    <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
     <.input field={f[:name]} type="text" label="Name" required />
     <.input field={f[:code]} type="text" label="Code" required />
     <.input field={f[:label_friendly_name]} type="text" label="Label Friendly Name" required />
@@ -73,42 +77,39 @@
       step=".01"
       required
     />
-
-    <div class="pt-7 pl-1">
+    </div>
+    <div class="p-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-10">
       <.input type="checkbox" label="Is Enteral" field={f[:is_enteral]} />
-    </div>
-    <div class="pt-7 pl-1">
       <.input type="checkbox" label="Print on Label" field={f[:print_on_label]} />
-    </div>
-    <div class="pt-7 pl-1">
       <.input type="checkbox" label="Include in Overfill" field={f[:include_in_overfill]} />
+      <.input type="checkbox" label="Universal Fluid" field={f[:universal_fluid]} />      
     </div>
-    <div class="pt-7 pl-1">
-      <.input type="checkbox" label="Universal Fluid" field={f[:universal_fluid]} />
+  </section>
+  
+  <section class="w-full rounded-lg border scroll-mt-16">
+    <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+      Patient Types
+    </header>
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 p-4">
+      <label :for={{name, id} <- @patient_types} class="label gap-3">
+        <input
+          type="checkbox"
+          checked={is_selected?(@edit, id, @selected_patient_types)}
+          class="input"
+          id={"checkbox-#{id}"}
+        />
+        <span class="label-text ml-2"><%= name %></span>
+      </label>
     </div>
-  </div>
+  
+    <input
+      type="hidden"
+      name="formulary[patient_types]"
+      id="types"
+      value={types_value(@selected_patient_types)}
+    />
+  </section>
 
-  <div class="divider">Patient Types</div>
-
-  <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 ">
-    <label :for={{name, id} <- @patient_types} class="label justify-start cursor-pointer">
-      <input
-        type="checkbox"
-        checked={is_selected?(@edit, id, @selected_patient_types)}
-        class="patient-type-checks checkbox checkbox-primary bg-transparent"
-        id={"checkbox-#{id}"}
-      />
-      <span class="label-text ml-2"><%= name %></span>
-    </label>
-  </div>
-  <input
-    type="hidden"
-    name="formulary[patient_types]"
-    id="types"
-    value={types_value(@selected_patient_types)}
-  />
-
-  <div class="divider">Ingredients</div>
   <.ingredients
     ingredients={@ingredients}
     selected={@selected_ingredients}

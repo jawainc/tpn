@@ -1,9 +1,7 @@
-<div id="form_container">
-  <.header>
-    New Class
-  </.header>
-  
-  <.data_form 
+<header>
+    <h2>New Class</h2>
+</header>
+<.data_form 
     changeset={@changeset} 
     action={"#{get_url()}"} 
     flash={@flash} 
@@ -11,6 +9,3 @@
     is_admin={@is_admin}
     current_user={@current_user}
     />
-</div>
-
-  

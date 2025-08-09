@@ -17,6 +17,7 @@ defmodule Tpn.Accounts.Networks.Facility do
     facility
     |> cast(attrs, [:name, :code, :local_health_network_id])
     |> validate_required([:name, :code, :local_health_network_id])
+    |> unique_constraint([:name, :code], name: :facilities_name_code_index)
   end
 
   def filter_fields do

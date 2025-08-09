@@ -1,16 +1,14 @@
-<div id="form_container">
-    <.header>
-      Update Solution Type
-    </.header>
+<header>
+    <h2>Update Solution Type</h2>
+</header>
     
-    <.data_form 
-      changeset={@changeset} 
-      action={"#{get_url()}/#{@record.id}"} 
-      flash={@flash} 
-      edit={true} 
-      is_admin={@is_admin}
-      current_user={@current_user}
-      />
-</div>
+<.data_form 
+  changeset={@changeset} 
+  action={"#{get_url()}/#{@record.id}"} 
+  flash={@flash} 
+  edit={true} 
+  is_admin={@is_admin}
+  current_user={@current_user}
+/>
   
     

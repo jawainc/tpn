@@ -1,9 +1,8 @@
-<div id="form_container">
-  <.header>
-    New Filling Method
-  </.header>
+<header>
+    <h2>New Filling Method</h2>
+</header>
   
-  <.data_form 
+<.data_form 
     changeset={@changeset} 
     action={"#{get_url()}"} 
     flash={@flash} 
@@ -11,6 +10,5 @@
     is_admin={@is_admin}
     current_user={@current_user}
     />
-</div>
 
   

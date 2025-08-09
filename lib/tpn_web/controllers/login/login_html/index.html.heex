@@ -8,6 +8,7 @@
     hx-post={~p'/login'} 
     hx-swap="outerHTML"
     hx-disabled-elt="#form-button"
+    hx-indicator="#form-button-indicator"
     >
         <.alert flash={@flash} type={:error} />
         <div>
@@ -17,9 +18,9 @@
             <.simple_input label="Password" type="password" id="password" name="password" required autocomplete="new-password" />            
         </div>
         <div>
-            <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3" >
+            <button id="form-button" type="submit" class="w-full btn btn-brand flex space-x-3" >
                 Sign in
-                <span class="loading loading-spinner loading-md htmx-indicator"></span>
+                <.htmx_indicator id="form-button-indicator" />                
             </button>
         </div> 
     </.form>

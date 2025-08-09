@@ -2,21 +2,16 @@
   <.header>
     Formularies
     <:actions>
-      <button
-        hx-get={"#{get_url()}/new"}
-        hx-target="#main-contents"
-        hx-indicator=".main-contents-loader"
-        type="button"
-        class="btn btn-sm btn-primary"
-      >
+      <.search url={"#{get_url()}?table=1"} />
+      <.page_form_new_button hx_get={"#{get_url()}/new"}>
         Create New
-      </button>
+      </.page_form_new_button>
     </:actions>
   </.header>
 </div>
-<.search url={"#{get_url()}?table=1"} />
-<div class="mx-auto max-w-7xl mt-10 ">
-  <.htmx_indicator id="data-table-indicator" />
+
+<div class="mx-auto max-w-7xl mt-5 ">
+  <.htmx_content_indicator id="data-table-indicator" />
   <div
     id="data-table"
     class="hide-on-htmx-request"

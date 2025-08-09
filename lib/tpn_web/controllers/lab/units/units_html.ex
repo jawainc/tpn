@@ -14,6 +14,9 @@ defmodule TpnWeb.UnitsHTML do
   attr :is_admin, :boolean, default: false
   attr :can, :map, default: %{}
   attr :current_user, :map, default: %{}
+  attr :types, :list, default: [], doc: "the list of unit types"
+  attr :selected_types, :list, default: [], doc: "the list of selected unit types"
+  attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   def data_form(assigns)
 
   def get_url, do: @url

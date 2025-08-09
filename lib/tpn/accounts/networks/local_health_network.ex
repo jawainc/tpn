@@ -19,6 +19,7 @@ defmodule Tpn.Accounts.Networks.LocalHealthNetwork do
     local_health_network
     |> cast(attrs, [:name, :code])
     |> validate_required([:name, :code])
+    |> unique_constraint([:name, :code], name: :local_health_networks_name_code_index)
   end
 
   def filter_fields do

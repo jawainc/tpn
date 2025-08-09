@@ -1,9 +1,25 @@
-<div id="form_container" class="mx-auto max-w-7xl">
-  <.header>
-    New Formulary
-  </.header>
+<div class="mx-auto max-w-5xl">
+<header>
+    <h2>New Formulary</h2>
+    <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
+  <li class="inline-flex items-center gap-1.5">
+    <a href=""
+    hx-get={"#{get_url()}"}
+    hx-target="#main-contents"
+    hx-indicator="#main-contents-indicator"
+    class="hover:text-foreground transition-colors">Formularies</a>
+  </li>
+  <li>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><path d="m9 18 6-6-6-6" /></svg>
+  </li>
+  <li class="inline-flex items-center gap-1.5">
+    <span class="text-foreground font-normal">New Formulary</span>
+  </li>
+</ol>
 
-  <.data_form
+</header>
+
+<.data_form
     changeset={@changeset}
     action={"#{get_url()}"}
     flash={@flash}
@@ -21,5 +37,5 @@
     selected_patient_types={@selected_patient_types}
     ingredients={@ingredients}
     selected_ingredients={@selected_ingredients}
-  />
+/>
 </div>

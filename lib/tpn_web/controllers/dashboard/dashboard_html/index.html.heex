@@ -1,8 +1,8 @@
-<%!-- Mobile Menu --%> <.app_menu is_admin={@is_admin} user_access_level={@user_access_level} />
-<div class="lg:pl-72">
+<.app_menu is_admin={@is_admin} user_access_level={@user_access_level} />
+<main>
   <.app_header name={@current_user.first_name} />
-  <main class="py-10">
-    <span class="loading loading-spinner loading-lg mx-auto mt10 main-contents-loader block htmx-indicator " />
+  <div class="py-10">
+    <.htmx_content_indicator id="main-contents-indicator" />
     <div id="main-contents" class="px-4 sm:px-6 lg:px-8 main-contents hide-on-htmx-request">
       <div class="mx-auto max-w-7xl">
         <.header>
@@ -30,5 +30,5 @@
         </div>
       </div>
     </div>
-  </main>
-</div>
+  </div>
+</main>

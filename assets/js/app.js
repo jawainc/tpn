@@ -16,6 +16,7 @@
 //
 import { differenceBy } from "lodash";
 import SnackBar from "../vendor/js-snackbar.js";
+import "basecoat-css/all";
 import flatpickr from "../vendor/flatpickr.min.js";
 import "./xData.js";
 

@@ -1,16 +1,13 @@
-<div id="form_container">
-    <.header>
-      Update Ingredient
-    </.header>
+<header>
+  <h2>Update Ingredient</h2>
+</header>
     
-    <.data_form 
-      changeset={@changeset} 
-      action={"#{get_url()}/#{@record.id}"} 
-      flash={@flash} 
-      edit={true} 
-      is_admin={@is_admin} 
-      unit_types={@unit_types}
-      />
-</div>
-  
+<.data_form 
+  changeset={@changeset} 
+  action={"#{get_url()}/#{@record.id}"} 
+  flash={@flash} 
+  edit={true} 
+  is_admin={@is_admin} 
+  unit_types={@unit_types}
+  />
     

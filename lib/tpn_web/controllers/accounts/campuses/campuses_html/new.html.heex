@@ -1,9 +1,5 @@
-<div id="form_container">
-  <.header>
-    New Campus
-  </.header>
-  
-  <.data_form changeset={@changeset} action={"#{get_url()}"} flash={@flash} facilities={@facilities} />
-</div>
-
-  
+<header>
+    <h2>New Campus</h2>
+</header>
+    
+<.data_form changeset={@changeset} action={"#{get_url()}"} flash={@flash} facilities={@facilities} />

@@ -5,12 +5,19 @@ export function events(params) {
     const message = evt.detail.message || null;
     // Show snackbar if needed
     if (status) {
-      new SnackBar({
-        message: message,
-        status: status,
-        timeout: 5000,
-      });
-    }
+      document.dispatchEvent(new CustomEvent('basecoat:toast', {
+      detail: {
+        config: {
+          category: status,
+          title: status === 'success' ? 'Success' : 'Error',
+          description: message,
+          cancel: {
+            label: 'Dismiss'
+          }
+        }
+      }
+    }))
+  }
 
     // Dispatch event if needed
     if (dispatchEvent) {
@@ -90,14 +97,25 @@ export async function formConfigRequest(evt) {
         values._method = method;
       }
 
+      // disbale the submit button
+      const submitButton = evt.detail.elt.querySelector("button[type='submit']");
+      submitButton.disabled = true;
+      // show the indicator
+      const indicator = evt.detail.elt.querySelector(".htmx-indicator");
+      indicator.classList.add("htmx-request");
+
       htmx.ajax("POST", evt.detail.path, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "Hx-Key": iv,
         },
         values: values,
-        target: evt.detail.target,
-      });
+        target: evt.detail.target        
+      })
+      .then(() => {
+        submitButton.disabled = false;
+        indicator.classList.remove("htmx-request");
+      })
     }
   } catch (error) {
     console.log(error);

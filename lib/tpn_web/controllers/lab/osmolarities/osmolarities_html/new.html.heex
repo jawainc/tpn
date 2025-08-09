@@ -1,9 +1,8 @@
-<div id="form_container">
-  <.header>
-    New Osmolarity
-  </.header>
+<header>
+    <h2>New Osmolarity</h2>
+</header>
   
-  <.data_form 
+<.data_form 
     changeset={@changeset} 
     action={"#{get_url()}"} 
     flash={@flash} 
@@ -14,6 +13,5 @@
     vascular_accesses={@vascular_accesses}
     current_user={@current_user}
     />
-</div>
 
   

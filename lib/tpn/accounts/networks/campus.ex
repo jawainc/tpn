@@ -17,6 +17,7 @@ defmodule Tpn.Accounts.Networks.Campus do
     campus
     |> cast(attrs, [:name, :code, :facility_id])
     |> validate_required([:name, :code, :facility_id])
+    |> unique_constraint([:name, :code], name: :campuses_name_code_index)
   end
 
   def filter_fields do
