@@ -77,23 +77,23 @@ defmodule TpnWeb.Hospital.OrdersController do
   defp formularies(class_ids) do
     Formularies.list_formularies_for_classes(class_ids)
     |> Jason.encode!()
-    |> IO.inspect()
   end
 
   defp get_currency() do
-    currency = Settings.get_settings()
+    currency =
+      Settings.get_settings()
       |> Enum.find(fn setting -> setting.key == "currency" end)
       |> Map.get(:value)
 
-    code = Jason.decode!(currency)
+    code =
+      Jason.decode!(currency)
       |> Map.get("code")
 
-    symbol = Jason.decode!(currency)
+    symbol =
+      Jason.decode!(currency)
       |> Map.get("symbol")
 
     %{:code => code, :symbol => symbol}
     |> Jason.encode!()
   end
-
-
 end

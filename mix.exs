@@ -5,7 +5,7 @@ defmodule Tpn.MixProject do
     [
       app: :tpn,
       version: "0.1.0",
-      elixir: "~> 1.17.3",
+      elixir: "~> 1.18.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -44,13 +44,6 @@ defmodule Tpn.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.1.1",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
       {:swoosh, "~> 1.5"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
@@ -60,7 +53,8 @@ defmodule Tpn.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:nebulex, "~> 2.6.4"},
-      {:timex, "~> 3.7.11"}
+      {:timex, "~> 3.7.11"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 

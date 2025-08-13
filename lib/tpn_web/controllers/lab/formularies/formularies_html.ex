@@ -1,5 +1,4 @@
 defmodule TpnWeb.FormulariesHTML do
-  alias Plug.Parsers.JSON
   use TpnWeb, :html
   import TpnWeb.Formularies.Components.IngredientsComponent
 

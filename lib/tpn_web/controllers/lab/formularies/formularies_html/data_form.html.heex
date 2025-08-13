@@ -15,77 +15,77 @@
       Formulary Data
     </header>
     <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-    <.input field={f[:name]} type="text" label="Name" required />
-    <.input field={f[:code]} type="text" label="Code" required />
-    <.input field={f[:label_friendly_name]} type="text" label="Label Friendly Name" required />
-    <.input
-      field={f[:cost_per_container]}
-      type="input-inside-label"
-      label="Cost per Container"
-      label_inside_left={get_currency_symbol(@currency)}
-      label_inside_right={get_currency_code(@currency)}
-      placeholder="0.00"
-      step=".01"
-      input_type="number"
-    />
-    <.input field={f[:container_size]} type="number" label="Container Size" step=".01" />
-    <.input
-      field={f[:class_id]}
-      type="select"
-      label="Class"
-      options={@classes}
-      prompt="Select..."
-      required
-    />
-    <.input
-      field={f[:solution_type_id]}
-      type="select"
-      label="Solution Type"
-      options={@solution_types}
-      prompt="Select..."
-      required
-    />
-    <.input
-      field={f[:uom_unit_id]}
-      type="select"
-      label="UOM Unit"
-      options={@uom_units}
-      prompt="Select..."
-      required
-    />
-    <.input
-      field={f[:concentration]}
-      field_2={f[:concentration_unit_id]}
-      type="input-with-select"
-      label="Concentration"
-      options={@concentration_units}
-      options_label="Unit..."
-      placeholder="0.00"
-      input_type="number"
-      step=".01"
-      required
-    />
-    <.input
-      field={f[:calories]}
-      field_2={f[:calories_unit_id]}
-      type="input-with-select"
-      label="Calories"
-      options={@calories_units}
-      options_label="Unit..."
-      placeholder="0.00"
-      input_type="number"
-      step=".01"
-      required
-    />
+      <.input field={f[:name]} type="text" label="Name" required />
+      <.input field={f[:code]} type="text" label="Code" required />
+      <.input field={f[:label_friendly_name]} type="text" label="Label Friendly Name" required />
+      <.input
+        field={f[:cost_per_container]}
+        type="input-inside-label"
+        label="Cost per Container"
+        label_inside_left={get_currency_symbol(@currency)}
+        label_inside_right={get_currency_code(@currency)}
+        placeholder="0.00"
+        step=".01"
+        input_type="number"
+      />
+      <.input field={f[:container_size]} type="number" label="Container Size" step=".01" />
+      <.input
+        field={f[:class_id]}
+        type="select"
+        label="Class"
+        options={@classes}
+        prompt="Select..."
+        required
+      />
+      <.input
+        field={f[:solution_type_id]}
+        type="select"
+        label="Solution Type"
+        options={@solution_types}
+        prompt="Select..."
+        required
+      />
+      <.input
+        field={f[:uom_unit_id]}
+        type="select"
+        label="UOM Unit"
+        options={@uom_units}
+        prompt="Select..."
+        required
+      />
+      <.input
+        field={f[:concentration]}
+        field_2={f[:concentration_unit_id]}
+        type="input-with-select"
+        label="Concentration"
+        options={@concentration_units}
+        options_label="Unit..."
+        placeholder="0.00"
+        input_type="number"
+        step=".01"
+        required
+      />
+      <.input
+        field={f[:calories]}
+        field_2={f[:calories_unit_id]}
+        type="input-with-select"
+        label="Calories"
+        options={@calories_units}
+        options_label="Unit..."
+        placeholder="0.00"
+        input_type="number"
+        step=".01"
+        required
+      />
     </div>
     <div class="p-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-10">
       <.input type="checkbox" label="Is Enteral" field={f[:is_enteral]} />
       <.input type="checkbox" label="Print on Label" field={f[:print_on_label]} />
       <.input type="checkbox" label="Include in Overfill" field={f[:include_in_overfill]} />
-      <.input type="checkbox" label="Universal Fluid" field={f[:universal_fluid]} />      
+      <.input type="checkbox" label="Universal Fluid" field={f[:universal_fluid]} />
     </div>
   </section>
-  
+
   <section class="w-full rounded-lg border scroll-mt-16">
     <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
       Patient Types
@@ -98,10 +98,10 @@
           class="input"
           id={"checkbox-#{id}"}
         />
-        <span class="label-text ml-2"><%= name %></span>
+        <span class="label-text ml-2">{name}</span>
       </label>
     </div>
-  
+
     <input
       type="hidden"
       name="formulary[patient_types]"
@@ -109,27 +109,27 @@
       value={types_value(@selected_patient_types)}
     />
   </section>
+  <script>
+    const allIngredients = <%= raw @ingredients %>;
+    const selectedIngredients = <%= raw @selected_ingredients %>;
+    const allUnits = <%= raw @ingredients_units %>;
+  </script>
+  <.ingredients />
 
-  <.ingredients
-    ingredients={@ingredients}
-    selected={@selected_ingredients}
-    units={
-      @ingredients_units
-      |> Enum.map(fn {name, id} -> "{name: '#{name}', id: '#{id}'}" end)
-      |> Enum.join(",")
-    }
-  />
-
-  <:actions>
-    <button id="form-button" type="submit" class="btn btn-primary w-44 flex space-x-3 mt-20">
+  <div class="flex justify-end items-center gap-4">
+    <button
+      id="form-button"
+      type="submit"
+      class="btn-sm btn-brand text-xs h-xs flex items-center gap-2"
+    >
       <%= if(@edit) do %>
         Update
       <% else %>
         Create
       <% end %>
-      <span class="loading loading-spinner loading-md htmx-indicator"></span>
+      <.htmx_indicator id="form-button-indicator" />
     </button>
-  </:actions>
+  </div>
 </.simple_form>
 
 <script>

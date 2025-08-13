@@ -34,7 +34,7 @@ defmodule TpnWeb.FormulariesController do
     conn
     |> set_assigns()
     |> assign(:selected_patient_types, [])
-    |> assign(:selected_ingredients, [])
+    |> assign(:selected_ingredients, Jason.encode!([]))
     |> assign(:changeset, new_change())
     |> render(:new)
   end
@@ -123,8 +123,16 @@ defmodule TpnWeb.FormulariesController do
     settings = get_settings()
     calories_units = Units.units_by_type_for_select(settings[@calories_unit_type])
     concentration_units = Units.units_by_type_for_select(settings[@concentration_unit_type])
-    ingredients_units = Units.units_by_type_for_select(settings[@ingredients_unit_type])
-    ingredients = Ingredients.ingredients_for_select_by_type(settings[@ingredients_unit_type])
+
+    ingredients_units =
+      Units.units_by_type_for_select(settings[@ingredients_unit_type])
+      |> Enum.map(fn {name, id} -> %{name: name, id: id} end)
+      |> Jason.encode!()
+
+    ingredients =
+      Ingredients.ingredients_for_select_by_type(settings[@ingredients_unit_type])
+      |> Jason.encode!()
+
     uom_units = Units.units_by_type_for_select(settings[@uom_unit_type])
     classes = Classes.classes_for_select()
     patient_types = PatientTypes.patient_types_for_select()
