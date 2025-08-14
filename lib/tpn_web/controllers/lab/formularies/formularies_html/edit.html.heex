@@ -1,35 +1,67 @@
-<div id="form_container" class="mx-auto max-w-7xl">
+<div id="form-contents" class="mx-auto max-w-5xl">
   <.header>
-    Update Formulary
-    <:actions>
-      <button
-        hx-get={"#{get_url()}/new"}
-        hx-target="#main-contents"
-        hx-indicator=".main-contents-loader"
-        type="button"
-        class="btn btn-sm btn-primary"
-      >
-        Create New
-      </button>
-    </:actions>
+    <h2>Update Formulary</h2>
+    <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
+      <li class="inline-flex items-center gap-1.5">
+        <a
+          href=""
+          hx-get={"#{get_url()}"}
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+          class="hover:text-foreground transition-colors"
+        >
+          Formularies
+        </a>
+      </li>
+      <li>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="size-3.5"
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </li>
+      <li class="inline-flex items-center gap-1.5">
+        <span class="text-foreground font-normal">{@record.name}</span>
+      </li>
+    </ol>
   </.header>
-  <div class="flex items-center justify-between">
-    <div class="breadcrumbs text-sm">
-      <ul>
-        <li>
-          <a
-            hx-get={"#{get_url()}"}
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
-          >
-            Formularies
-          </a>
-        </li>
-        <li><%= @record.name %></li>
-      </ul>
-    </div>
+  <div class="flex justify-end -mb-6">
+    <button
+      type="button"
+      hx-get={"#{get_url()}/new"}
+      hx-target="#main-contents"
+      hx-swap="innerHTML"
+      hx-indicator="#main-contents-indicator"
+      type="button"
+      class="btn-sm text-xs h-xs flex items-center gap-2"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-4 w-4"
+      >
+        <path d="M5 12h14"></path>
+        <path d="M12 5v14"></path>
+      </svg>
+      Create new formulary
+    </button>
   </div>
-
   <.data_form
     changeset={@changeset}
     action={"#{get_url()}/#{@record.id}"}

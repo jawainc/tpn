@@ -41,6 +41,8 @@ defmodule Tpn.Formularies do
   end
 
   def create_formulary(params) do
+    IO.inspect(params)
+
     multi =
       Multi.new()
       |> Multi.insert(:formulary, %Formulary{} |> Formulary.changeset(params))
@@ -83,9 +85,12 @@ defmodule Tpn.Formularies do
   end
 
   def list_formularies_for_classes(class_ids) do
-    formularies = Repo.all(from f in FormularyView,
-      where: f.class_id in ^class_ids
-    )
+    formularies =
+      Repo.all(
+        from f in FormularyView,
+          where: f.class_id in ^class_ids
+      )
+
     # get formularies ids
     formulary_ids = Enum.map(formularies, & &1.id)
     ingredients = list_ingredients_for_formularies(formulary_ids)
@@ -110,15 +115,17 @@ defmodule Tpn.Formularies do
         calories_unit_name: formulary.calories_unit_name,
         uom_unit_name: formulary.uom_unit_name,
         solution_type_name: formulary.solution_type_name,
-        ingredients: Enum.filter(ingredients, fn ingredient -> ingredient.formulary_id == formulary.id end)
+        ingredients:
+          Enum.filter(ingredients, fn ingredient -> ingredient.formulary_id == formulary.id end)
       }
     end)
   end
 
   def list_ingredients_for_formularies(formulary_ids) do
-    Repo.all(from f in FormularyIngredient,
-      where: f.formulary_id in ^formulary_ids,
-      distinct: [f.formulary_id]
+    Repo.all(
+      from f in FormularyIngredient,
+        where: f.formulary_id in ^formulary_ids,
+        distinct: [f.formulary_id]
     )
     |> Repo.preload([:ingredient, :unit])
     |> Enum.map(fn fi ->

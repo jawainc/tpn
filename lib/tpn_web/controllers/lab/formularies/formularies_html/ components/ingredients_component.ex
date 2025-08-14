@@ -1,22 +1,27 @@
 defmodule TpnWeb.Formularies.Components.IngredientsComponent do
   use Phoenix.Component
+  use TpnWeb, :html
   import TpnWeb.CoreComponents
 
   @doc """
   defines the ingredients selecter
   """
+  attr :ingredients, :string, required: true
+  attr :selected_ingredients, :string, required: true
+  attr :ingredients_units, :string, required: true
+
   def ingredients(assigns) do
     ~H"""
     <section
       class="w-full rounded-lg border scroll-mt-16"
       x-data="formulariesIngredients"
-      x-init="
-      all_ingredients = allIngredients;
-      units = allUnits;
-      old_selected_ingredients = selectedIngredients;
-      set_selected_ingredients();
+      x-init={"
+      all_ingredients = #{@ingredients};
+      units = #{@ingredients_units};
+      old_selected_ingredients = #{@selected_ingredients};
       set_ingredients();
-      "
+      set_selected_ingredients();
+      "}
     >
       <header class="flex items-center justify-between border-b px-4 py-3 font-semibold bg-card text-card-foreground">
         <span>Ingredients</span>

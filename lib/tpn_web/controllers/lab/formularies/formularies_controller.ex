@@ -60,7 +60,7 @@ defmodule TpnWeb.FormulariesController do
         )
         |> set_assigns()
         |> assign(:selected_patient_types, [])
-        |> assign(:selected_ingredients, [])
+        |> assign(:selected_ingredients, Jason.encode!([]))
         |> assign(:changeset, new_change())
         |> render(:new)
 
@@ -68,7 +68,7 @@ defmodule TpnWeb.FormulariesController do
         conn
         |> set_assigns()
         |> assign(:selected_patient_types, [])
-        |> assign(:selected_ingredients, [])
+        |> assign(:selected_ingredients, Jason.encode!([]))
         |> assign(:changeset, changeset)
         |> render(:new)
     end
@@ -79,11 +79,13 @@ defmodule TpnWeb.FormulariesController do
     changeset = Formularies.change_formulary(record)
     selected_patient_types = Enum.map(record.formulary_patient_types, & &1.patient_type_id)
 
+    IO.inspect(selected_patient_types)
+
     conn
     |> set_assigns()
     |> assign(:record, record)
     |> assign(:selected_patient_types, selected_patient_types)
-    |> assign(:selected_ingredients, record.ingredients)
+    |> assign(:selected_ingredients, parse_selected_ingredients(record.ingredients))
     |> assign(:changeset, changeset)
     |> render(:edit)
   end
@@ -113,10 +115,22 @@ defmodule TpnWeb.FormulariesController do
         |> set_assigns()
         |> assign(:record, record)
         |> assign(:selected_patient_types, selected_patient_types)
-        |> assign(:selected_ingredients, record.ingredients)
+        |> assign(:selected_ingredients, parse_selected_ingredients(record.ingredients))
         |> assign(:changeset, changeset)
         |> render(:edit)
     end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    Formularies.get_formulary!(id)
+    |> Formularies.delete_formulary()
+
+    conn
+    |> put_resp_header(
+      "hx-trigger",
+      ClientEvents.generate_client_event("reloadDataTable", "success", "Deleted successfully.")
+    )
+    |> send_resp(204, "")
   end
 
   defp set_assigns(conn) do
@@ -148,6 +162,14 @@ defmodule TpnWeb.FormulariesController do
     |> assign(:classes, classes)
     |> assign(:patient_types, patient_types)
     |> assign(:solution_types, solution_types)
+  end
+
+  defp parse_selected_ingredients(ingredients) do
+    ingredients
+    |> Enum.map(fn ing ->
+      %{ingredient_id: ing.ingredient_id, amount: ing.amount, unit_id: ing.unit_id}
+    end)
+    |> Jason.encode!()
   end
 
   defp get_settings() do

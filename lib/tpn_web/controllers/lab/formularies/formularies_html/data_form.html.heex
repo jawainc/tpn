@@ -3,8 +3,9 @@
   for={@changeset}
   action={@action}
   hx-post={@action}
-  hx-target="#form_container"
+  hx-target="#form-contents"
   hx-disabled-elt="#form-button"
+  hx-indicator="#form-button-indicator"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
 >
@@ -95,7 +96,7 @@
         <input
           type="checkbox"
           checked={is_selected?(@edit, id, @selected_patient_types)}
-          class="input"
+          class="input patient-type-checks"
           id={"checkbox-#{id}"}
         />
         <span class="label-text ml-2">{name}</span>
@@ -109,12 +110,12 @@
       value={types_value(@selected_patient_types)}
     />
   </section>
-  <script>
-    const allIngredients = <%= raw @ingredients %>;
-    const selectedIngredients = <%= raw @selected_ingredients %>;
-    const allUnits = <%= raw @ingredients_units %>;
-  </script>
-  <.ingredients />
+
+  <.ingredients
+    ingredients={@ingredients}
+    selected_ingredients={@selected_ingredients}
+    ingredients_units={@ingredients_units}
+  />
 
   <div class="flex justify-end items-center gap-4">
     <button
@@ -123,9 +124,9 @@
       class="btn-sm btn-brand text-xs h-xs flex items-center gap-2"
     >
       <%= if(@edit) do %>
-        Update
+        Update formulary
       <% else %>
-        Create
+        Create new formulary
       <% end %>
       <.htmx_indicator id="form-button-indicator" />
     </button>

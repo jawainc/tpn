@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-5xl">
+<div id="form-contents" class="mx-auto max-w-5xl">
   <header>
     <h2>New Formulary</h2>
     <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
@@ -36,22 +36,23 @@
   </header>
 
   <.data_form
-    changeset={@changeset}
-    action={"#{get_url()}"}
-    flash={@flash}
-    edit={false}
-    is_admin={@is_admin}
-    current_user={@current_user}
-    currency={@currency}
-    calories_units={@calories_units}
-    concentration_units={@concentration_units}
-    ingredients_units={@ingredients_units}
-    uom_units={@uom_units}
-    classes={@classes}
-    patient_types={@patient_types}
-    solution_types={@solution_types}
-    selected_patient_types={@selected_patient_types}
-    ingredients={@ingredients}
-    selected_ingredients={@selected_ingredients}
-  />
+      changeset={@changeset}
+      action={"#{get_url()}"}
+      flash={@flash}
+      edit={false}
+      is_admin={@is_admin}
+      current_user={@current_user}
+      currency={@currency}
+      calories_units={@calories_units}
+      concentration_units={@concentration_units}
+      ingredients_units={@ingredients_units}
+      uom_units={@uom_units}
+      classes={@classes}
+      patient_types={@patient_types}
+      solution_types={@solution_types}
+      selected_patient_types={@selected_patient_types}
+      ingredients={@ingredients}
+      selected_ingredients={@selected_ingredients}
+    />
+  
 </div>

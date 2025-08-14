@@ -124,6 +124,9 @@ window.formulariesIngredients = function () {
           amount: i.amount,
         };
       });
+      if (this.selected_ingredients.length) {
+        this.set_ingredients();
+      }
     },
     add_ingredient(ingredient) {
       this.selected_ingredients.push(ingredient);
