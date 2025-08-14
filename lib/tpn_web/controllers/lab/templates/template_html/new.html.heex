@@ -1,16 +1,14 @@
-<div id="form_container">
-  <.header>
-    New Template
-  </.header>
+<header>
+  <h2>New Template</h2>
+</header>
 
-  <.data_form
-    changeset={@changeset}
-    action={"#{get_url()}"}
-    flash={@flash}
-    edit={false}
-    is_admin={@is_admin}
-    units={@fluid_units}
-    patient_types={@patient_types}
-    current_user={@current_user}
-  />
-</div>
+<.data_form
+  changeset={@changeset}
+  action={"#{get_url()}"}
+  flash={@flash}
+  edit={false}
+  is_admin={@is_admin}
+  units={@fluid_units}
+  patient_types={@patient_types}
+  current_user={@current_user}
+/>

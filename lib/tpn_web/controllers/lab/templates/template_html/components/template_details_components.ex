@@ -24,6 +24,7 @@ defmodule TpnWeb.Templates.TemplateDetailsComponent do
               "Inactive"
             end
           }
+          type="outline"
         />
       </div>
 
@@ -56,6 +57,7 @@ defmodule TpnWeb.Templates.TemplateDetailsComponent do
                   "Inactive"
                 end
               }
+              type="outline"
             />
           </div>
         </div>
@@ -71,6 +73,7 @@ defmodule TpnWeb.Templates.TemplateDetailsComponent do
                   "Inactive"
                 end
               }
+              type="outline"
             />
           </div>
         </div>

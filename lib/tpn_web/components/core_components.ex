@@ -68,11 +68,12 @@ defmodule TpnWeb.CoreComponents do
     """
   end
 
+  attr :type, :string, required: false, default: nil
   slot :inner_block, required: true
 
   def badge(assigns) do
     ~H"""
-    <span class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20">
+    <span class={"badge#{if @type, do: "-#{@type}", else: ""}"}>
       {render_slot(@inner_block)}
     </span>
     """
@@ -80,16 +81,14 @@ defmodule TpnWeb.CoreComponents do
 
   attr :state, :boolean, required: true
   attr :label, :string, required: true
+  attr :type, :string, required: false, default: nil
 
   def simple_badge(assigns) do
     ~H"""
-    <span class={[
-      "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-      @state &&
-        "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 ring-green-600/20 dark:ring-green-500/20",
-      !@state &&
-        "bg-pink-50 dark:bg-pink-400/10 text-pink-700 dark:text-pink-400 ring-pink-700/10 dark:ring-pink-400/20"
-    ]}>
+    <span class={"badge#{if @type, do: "-#{@type}", else: ""}"}>
+      <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg">
+        <circle r="4" cx="5" cy="5" fill={if @state, do: "green", else: "red"} />
+      </svg>
       {@label}
     </span>
     """
@@ -883,6 +882,45 @@ defmodule TpnWeb.CoreComponents do
   end
 
   @doc """
+  Renders a modal form new button
+  """
+  attr :class, :string, default: nil
+  attr :hx_get, :string, required: true
+  slot :inner_block, required: true
+
+  def view_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      hx-get={@hx_get}
+      hx-target="#main-contents"
+      hx-swap="innerHTML"
+      hx-indicator="#main-contents-indicator"
+      type="button"
+      class="btn-sm-outline text-xs h-xs flex items-center gap-2"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+        />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      </svg>
+
+      {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  @doc """
   Renders a page form new button
   """
   attr :class, :string, default: nil
@@ -1131,9 +1169,27 @@ defmodule TpnWeb.CoreComponents do
           <div
             :if={@is_admin || @can_update}
             hx-get={"#{@url}/#{@record.id}/edit"}
-            hx-target={if(!@edit_popup) do "#main-contents" else "#table_modal_form_contents" end}
-            hx-indicator={if(!@edit_popup) do "#main-contents-indicator" else "#table_modal_contents_indicator" end}
-            hx-on:click={if(!@edit_popup) do "return;" else "document.getElementById('table_modal_contents').showModal()" end}
+            hx-target={
+              if(!@edit_popup) do
+                "#main-contents"
+              else
+                "#table_modal_form_contents"
+              end
+            }
+            hx-indicator={
+              if(!@edit_popup) do
+                "#main-contents-indicator"
+              else
+                "#table_modal_contents_indicator"
+              end
+            }
+            hx-on:click={
+              if(!@edit_popup) do
+                "return;"
+              else
+                "document.getElementById('table_modal_contents').showModal()"
+              end
+            }
             role="menuitem"
             class="flex items-center gap-3"
           >

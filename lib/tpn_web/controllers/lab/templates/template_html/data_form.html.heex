@@ -3,71 +3,65 @@
   for={@changeset}
   action={@action}
   hx-post={@action}
-  hx-target="#form_container"
-  hx-disabled-elt="#form-button"
+  hx-target="#table_modal_form_contents"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
 >
-  <.flash_group flash={@flash} />
+  <section class="space-y-6">
+    <.flash_group flash={@flash} />
 
-  <div class="grid grid-cols-2 gap-4">
-    <.input field={f[:name]} type="text" label="Name" required />
-    <.input
-      field={f[:patient_type_id]}
-      type="select"
-      label="Patient Type"
-      options={@patient_types}
-      prompt="Select..."
-      required
-    />
-    <.input
-      field={f[:bag_over_fill_volume]}
-      type="number"
-      step=".01"
-      placeholder="0.00"
-      label="Bag Over Fill Volume(mL)"
-      required
-    />
-    <.input
-      field={f[:lipid_over_fill_volume]}
-      type="number"
-      step=".01"
-      placeholder="0.00"
-      label="Lipid Over Fill Volume(mL)"
-    />
-    <.input field={f[:fluids]} type="number" step=".01" placeholder="0.00" label="Fluids" />
-    <.input
-      field={f[:fluid_unit_id]}
-      type="select"
-      label="Fluid Unit"
-      options={@units}
-      prompt="Select..."
-      required
-    />
-
-    <div class="pt-7 pl-1">
-      <.input type="checkbox" label="Active" field={f[:active]} />
-    </div>
-    <div class="pt-7 pl-1">
-      <.input type="checkbox" label="Pre Mixed Standard" field={f[:pre_mixed_standard]} />
-    </div>
-    <div class="pt-7 pl-1">
+    <div class="grid grid-cols-2 gap-4">
+      <.input field={f[:name]} type="text" label="Name" required />
       <.input
-        type="checkbox"
-        label="Additional Substances Allowed"
-        field={f[:additional_substances_allowed]}
+        field={f[:patient_type_id]}
+        type="select"
+        label="Patient Type"
+        options={@patient_types}
+        prompt="Select..."
+        required
       />
-    </div>
-  </div>
+      <.input
+        field={f[:bag_over_fill_volume]}
+        type="number"
+        step=".01"
+        placeholder="0.00"
+        label="Bag Over Fill Volume(mL)"
+        required
+      />
+      <.input
+        field={f[:lipid_over_fill_volume]}
+        type="number"
+        step=".01"
+        placeholder="0.00"
+        label="Lipid Over Fill Volume(mL)"
+      />
+      <.input field={f[:fluids]} type="number" step=".01" placeholder="0.00" label="Fluids" />
+      <.input
+        field={f[:fluid_unit_id]}
+        type="select"
+        label="Fluid Unit"
+        options={@units}
+        prompt="Select..."
+        required
+      />
 
-  <:actions>
-    <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3">
-      <%= if(@edit) do %>
-        Update
-      <% else %>
-        Create
-      <% end %>
-      <span class="loading loading-spinner loading-md htmx-indicator"></span>
-    </button>
-  </:actions>
+      <div class="pt-7 pl-1">
+        <.input type="checkbox" label="Active" field={f[:active]} />
+      </div>
+      <div class="pt-7 pl-1">
+        <.input type="checkbox" label="Pre Mixed Standard" field={f[:pre_mixed_standard]} />
+      </div>
+      <div class="pt-7 pl-1">
+        <.input
+          type="checkbox"
+          label="Additional Substances Allowed"
+          field={f[:additional_substances_allowed]}
+        />
+      </div>
+    </div>
+
+    <footer class="flex justify-end space-x-3">
+      <.form_modal_buttons />
+    </footer>
+  </section>
 </.simple_form>
