@@ -1,18 +1,16 @@
-<div id="form_container">
-  <.header>
-    New Template Product
-  </.header>
+<header>
+  New Template Product
+</header>
 
-  <.data_form
-    changeset={@changeset}
-    action={"#{get_url()}"}
-    flash={@flash}
-    edit={false}
-    templates={@templates}
-    substances={@substances}
-    filling_methods={@filling_methods}
-    dose_units={@dose_units}
-    formularies={@formularies}
-    template_id={@template_id}
-  />
-</div>
+<.data_form
+  changeset={@changeset}
+  action={"#{get_url()}"}
+  flash={@flash}
+  edit={false}
+  templates={@templates}
+  substances={@substances}
+  filling_methods={@filling_methods}
+  dose_units={@dose_units}
+  formularies={@formularies}
+  template_id={@template_id}
+/>

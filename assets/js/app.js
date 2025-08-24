@@ -19,6 +19,7 @@ import SnackBar from "../vendor/js-snackbar.js";
 import "basecoat-css/all";
 import flatpickr from "../vendor/flatpickr.min.js";
 import "./xData.js";
+import "./custom.js";
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html";
@@ -52,11 +53,11 @@ window.SnackBar = SnackBar;
 window.flatpickr = flatpickr;
 
 import { events, formConfigRequest } from "./events.js";
-import { selectRemoveOptions, applyCheckboxSelector, triggerEvent, filterPatients } from "./custom.js";
+// import { selectRemoveOptions, applyCheckboxSelector, triggerEvent, filterPatients } from "./custom.js";
 
 events();
 window.formConfigRequest = formConfigRequest;
-window.selectRemoveOptions = selectRemoveOptions;
-window.applyCheckboxSelector = applyCheckboxSelector;
-window.triggerEvent = triggerEvent;
-window.filterPatients = filterPatients;
+// window.selectRemoveOptions = selectRemoveOptions;
+// window.applyCheckboxSelector = applyCheckboxSelector;
+// window.triggerEvent = triggerEvent;
+// window.filterPatients = filterPatients;

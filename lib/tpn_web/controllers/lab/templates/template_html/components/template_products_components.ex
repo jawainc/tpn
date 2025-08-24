@@ -3,6 +3,8 @@ defmodule TpnWeb.Templates.TemplateProductsComponent do
   module for defining template products
   """
   use Phoenix.Component
+  import TpnWeb.IconComponents
+  import TpnWeb.CoreComponents
 
   @doc """
     defines the template products component
@@ -12,30 +14,33 @@ defmodule TpnWeb.Templates.TemplateProductsComponent do
 
   def template_products(assigns) do
     ~H"""
-    <div class="mt-20">
-      <div class="flex justify-between">
-        <div class="font-semibold">Products</div>
+    <section class="w-full rounded-lg border mt-16">
+      <header class="flex items-center justify-between border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+        <span>Products</span>
         <button
+          class="btn-sm-outline btn-xs"
           hx-get={"/template_products/#{@template_id}/new"}
-          hx-target="#table_modal_contents"
-          hx-on:click="table_modal.showModal()"
-          class="btn btn-primary btn-sm"
+          hx-target="#template_table_form_modal_contents"
+          hx-indicator="#template_table_modal_loader"
+          hx-on:click="document.getElementById('template_table_modal_contents').showModal()"
+          type="button"
+          aria-label="Add Product"
         >
-          Add Product
+          <.icon_plus />
+          <span>Add Product</span>
         </button>
-      </div>
-
+      </header>
       <div
         hx-get={"/template_products/#{@template_id}/list"}
         hx-trigger="load, reloadProductsTable from:body"
         hx-indicator="#products_loader"
         hx-target="#products_container"
-        class="mt-10"
+        class="flex flex-col items-center justify-center"
       >
-        <span id="products_loader" class="loading loading-spinner loading-md htmx-indicator"></span>
-        <div id="products_container"></div>
+        <.loader id="products_loader" class="text-muted-foreground my-24" />
+        <div id="products_container" class="hide-on-htmx-request"></div>
       </div>
-    </div>
+    </section>
     """
   end
 end

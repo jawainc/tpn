@@ -1,7 +1,6 @@
 defmodule TpnWeb.TemplateHTML do
   use TpnWeb, :html
 
-  import TpnWeb.Templates.TemplateDetailsComponent
   import TpnWeb.Templates.TemplateProductsComponent
 
   alias TpnWeb.Auth.UserAccessLevel

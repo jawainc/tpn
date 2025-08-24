@@ -5,6 +5,7 @@ defmodule TpnWeb.Settings.Components.SettingComponents do
   alias Plug.Parsers.JSON
   use Phoenix.Component
   import TpnWeb.CoreComponents
+  import TpnWeb.IconComponents
 
   @doc """
   defines the currencies dropdown selecter
@@ -60,22 +61,22 @@ defmodule TpnWeb.Settings.Components.SettingComponents do
           class="flex items-center justify-between w-[30rem] h-10 px-2 border border-neutral rounded-md cursor-pointer"
         >
           <div class="flex items-center ml-3 truncate" x-html="currency_label()"></div>
-          <.icon name="hero-chevron-up-down" class="w-4 h-4 opacity-80" />
+          <.icon_chevron_down class="w-4 h-4 opacity-80" />
         </div>
         <div
           x-cloak
           @click.outside="open_currencies = false; reset_search();"
           x-show="open_currencies"
-          class="absolute z-10 bg-base-100 rounded-md border border-neutral w-[30rem] p-2 mt-2 shadow-md flex flex-col gap-3 divide-y divide-neutral"
+          class="absolute z-10 bg-card rounded-md border border-neutral w-[30rem] p-2 mt-2 shadow-md flex flex-col gap-3 divide-y divide-neutral"
         >
-          <div class="input input-bordered input-sm flex items-center gap-1 w-full">
-            <.icon name="hero-magnifying-glass" class="w-4 h-4 opacity-70" />
+          <div class="input border relative input-sm flex items-center gap-1 w-full">
+            <.icon_search class="w-4 h-4 opacity-70" />
             <input
               x-ref="search"
               type="search"
               autocomplete="off"
               placeholder=""
-              class="h-8 input input-sm w-full border-none focus:ring-0"
+              class="h-8 input input-sm pl-8 w-full border-none focus:ring-0"
               @input="(evt) => {
               if (!evt.target.value || evt.target.value === '') {
                 currencies = all_currencies;
@@ -89,7 +90,7 @@ defmodule TpnWeb.Settings.Components.SettingComponents do
             />
           </div>
           <ul
-            class="max-h-56 w-full overflow-auto focus:outline-none sm:text-sm"
+            class="scrollbar max-h-56 w-full overflow-auto focus:outline-none sm:text-sm"
             id="options"
             role="listbox"
           >
@@ -125,28 +126,66 @@ defmodule TpnWeb.Settings.Components.SettingComponents do
   defines the unit types dropdown selecter
   """
   attr :name, :string, required: true
+  attr :id, :string, required: true
   attr :label, :string, required: true
   attr :options, :list, required: true
   attr :value, :string, default: nil
 
   def setting_select(assigns) do
     ~H"""
-    <div>
-      <label for={@name} class="form-control w-full max-w-xs">
-        <div class="label">
-          <span class="label-text">
-            <%= @label %>
-          </span>
+    <div class="grid gap-3 w-[200px]">
+      <label for={@id} class="label flex items-center gap-2">
+        <div>
+          {@label}
         </div>
-        <select
-          id={@name}
-          name={@name}
-          class="select select-bordered w-full max-w-xs h-10 p-y-0 min-h-10 leading-none"
-        >
-          <option value=""></option>
-          <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
-        </select>
       </label>
+      <div id={"select-container-#{@id}"} class="select">
+        <button
+          type="button"
+          class="btn-outline justify-between font-normal w-full"
+          id={"select-#{@id}-trigger"}
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls={"select-#{@id}-listbox"}
+        >
+          <span class="truncate"></span>
+          <.icon_chevron_down />
+        </button>
+        <div id={"select-#{@id}-popover"} data-popover aria-hidden="true">
+          <header>
+            <.icon_select_search />
+            <input
+              type="text"
+              value=""
+              placeholder="Search entries..."
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              aria-autocomplete="list"
+              role="combobox"
+              aria-expanded="false"
+              aria-controls={"select-#{@id}-listbox"}
+              aria-labelledby={"select-#{@id}-trigger"}
+            />
+          </header>
+          <div
+            role="listbox"
+            class="scrollbar overflow-y-auto max-h-64"
+            id={"select-#{@id}-listbox"}
+            aria-orientation="vertical"
+            aria-labelledby={"select-#{@id}-trigger"}
+          >
+            <div id={"#{@id}_options"}>
+              <%= for {name, id} <- @options do %>
+                <div role="option" data-value={id} aria-selected={id == @value}>
+                  {name}
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id={"#{@id}"} name={@name} value={@value} />
+      </div>
     </div>
     """
   end

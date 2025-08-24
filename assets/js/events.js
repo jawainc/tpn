@@ -5,23 +5,27 @@ export function events(params) {
     const message = evt.detail.message || null;
     // Show snackbar if needed
     if (status) {
-      document.dispatchEvent(new CustomEvent('basecoat:toast', {
-      detail: {
-        config: {
-          category: status,
-          title: status === 'success' ? 'Success' : 'Error',
-          description: message,
-          cancel: {
-            label: 'Dismiss'
-          }
-        }
-      }
-    }))
-  }
+      document.dispatchEvent(
+        new CustomEvent("basecoat:toast", {
+          detail: {
+            config: {
+              category: status,
+              title: status === "success" ? "Success" : "Error",
+              description: message,
+              cancel: {
+                label: "Dismiss",
+              },
+            },
+          },
+        }),
+      );
+    }
 
     // Dispatch event if needed
     if (dispatchEvent) {
-      document.body.dispatchEvent(new CustomEvent(dispatchEvent, { detail: {} }));
+      document.body.dispatchEvent(
+        new CustomEvent(dispatchEvent, { detail: {} }),
+      );
     }
   });
 
@@ -53,9 +57,13 @@ export function events(params) {
 
         if (key && iv) {
           const body = await decryptData(evt.detail.xhr.response, key, iv);
-          htmx.swap(evt.detail.target, body, { swapStyle: "innerHTML" });
+          htmx.swap(evt.detail.target, body, {
+            swapStyle: swapElementStyle(evt.detail.target.id),
+          });
         } else {
-          htmx.swap(evt.detail.target, evt.detail.xhr.response, { swapStyle: "innerHTML" });
+          htmx.swap(evt.detail.target, evt.detail.xhr.response, {
+            swapStyle: "innerHTML",
+          });
         }
       }
     } catch (error) {
@@ -98,24 +106,27 @@ export async function formConfigRequest(evt) {
       }
 
       // disbale the submit button
-      const submitButton = evt.detail.elt.querySelector("button[type='submit']");
+      const submitButton = evt.detail.elt.querySelector(
+        "button[type='submit']",
+      );
       submitButton.disabled = true;
       // show the indicator
       const indicator = evt.detail.elt.querySelector(".htmx-indicator");
       indicator.classList.add("htmx-request");
 
-      htmx.ajax("POST", evt.detail.path, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Hx-Key": iv,
-        },
-        values: values,
-        target: evt.detail.target        
-      })
-      .then(() => {
-        submitButton.disabled = false;
-        indicator.classList.remove("htmx-request");
-      })
+      htmx
+        .ajax("POST", evt.detail.path, {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Hx-Key": iv,
+          },
+          values: values,
+          target: evt.detail.target,
+        })
+        .then(() => {
+          submitButton.disabled = false;
+          indicator.classList.remove("htmx-request");
+        });
     }
   } catch (error) {
     console.log(error);
@@ -128,10 +139,18 @@ async function decryptData(encryptedData, key, iv) {
     // Convert the key and IV from Base64 to ArrayBuffer
     const keyBuffer = Uint8Array.from(atob(key), (c) => c.charCodeAt(0));
     const ivBuffer = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0));
-    const encryptedBuffer = Uint8Array.from(atob(encryptedData), (c) => c.charCodeAt(0));
+    const encryptedBuffer = Uint8Array.from(atob(encryptedData), (c) =>
+      c.charCodeAt(0),
+    );
 
     // Import the key
-    const cryptoKey = await window.crypto.subtle.importKey("raw", keyBuffer, { name: "AES-CBC" }, false, ["decrypt"]);
+    const cryptoKey = await window.crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      { name: "AES-CBC" },
+      false,
+      ["decrypt"],
+    );
 
     // Decrypt the data
     const decryptedBuffer = await window.crypto.subtle.decrypt(
@@ -157,7 +176,13 @@ async function encryptData(data, key) {
   const iv = window.crypto.getRandomValues(new Uint8Array(16));
   const ivBase64 = btoa(String.fromCharCode(...iv));
 
-  const cryptoKey = await window.crypto.subtle.importKey("raw", keyBuffer, { name: "AES-CBC" }, false, ["encrypt"]);
+  const cryptoKey = await window.crypto.subtle.importKey(
+    "raw",
+    keyBuffer,
+    { name: "AES-CBC" },
+    false,
+    ["encrypt"],
+  );
 
   const encoder = new TextEncoder();
   const dataBuffer = encoder.encode(data);
@@ -171,7 +196,9 @@ async function encryptData(data, key) {
     dataBuffer,
   );
 
-  const encryptedData = btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)));
+  const encryptedData = btoa(
+    String.fromCharCode(...new Uint8Array(encryptedBuffer)),
+  );
 
   return { iv: ivBase64, encryptedData };
 }

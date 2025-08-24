@@ -2,7 +2,7 @@
  * remove options from a select element
  * @param {*} id
  */
-export function selectRemoveOptions(arg) {
+window.selectRemoveOptions = function (arg) {
   if (Array.isArray(arg)) {
     arg.forEach((id) => {
       const select = document.getElementById(id);
@@ -21,13 +21,13 @@ export function selectRemoveOptions(arg) {
       select.remove(1);
     }
   }
-}
+};
 
 /**
  * trigger events
  * @param {*} events
  */
-export function triggerEvent(value, event, type, elm = "") {
+window.triggerEvent = function (value, event, type, elm = "") {
   switch (event) {
     case "load_wards":
       load_wards(value, type, elm);
@@ -51,9 +51,9 @@ export function triggerEvent(value, event, type, elm = "") {
     default:
       document.body.dispatchEvent(new CustomEvent(event, { detail: value }));
   }
-}
+};
 
-export function filterPatients() {
+window.filterPatients = function () {
   const filter = document.querySelector("input[name=filter]").value || "";
   const filter_by = document.querySelector("input[name=by_filter]").value || "";
 
@@ -61,53 +61,57 @@ export function filterPatients() {
     filter: filter,
     filter_by: filter_by,
   };
-}
+};
 
 /**
  * adds/removes a class to an element based on the checked state of a checkbox
  * @param {*} element
  */
-export function applyCheckboxSelector(element) {
+window.applyCheckboxSelector = function (element) {
   if (element.querySelector("input").checked) {
     element.classList.add("checkox-checked-indicator");
   } else {
     element.classList.remove("checkox-checked-indicator");
   }
-}
+};
 
-function load_wards(value, type, elm) {
+window.load_wards = function (value, type, elm) {
   if (!value) {
     selectRemoveOptions([elm + "_ward_id", elm + "_room_id", elm + "_bed_id"]);
     return;
   }
 
-  document.body.dispatchEvent(new CustomEvent("load_wards", { detail: { id: value, type: type } }));
-}
+  document.body.dispatchEvent(
+    new CustomEvent("load_wards", { detail: { id: value, type: type } }),
+  );
+};
 
-function load_rooms(value, elm) {
+window.load_rooms = function (value, elm) {
   if (!value) {
     selectRemoveOptions([elm + "_room_id", elm + "_bed_id"]);
     return;
   }
-  document.body.dispatchEvent(new CustomEvent("load_rooms", { detail: { id: value } }));
-}
+  document.body.dispatchEvent(
+    new CustomEvent("load_rooms", { detail: { id: value } }),
+  );
+};
 
-function load_beds(value, elm) {
+window.load_beds = function (value, elm) {
   if (!value) {
     selectRemoveOptions(elm + "_bed_id");
     return;
   }
-  document.body.dispatchEvent(new CustomEvent("load_beds", { detail: { id: value } }));
-}
+  document.body.dispatchEvent(
+    new CustomEvent("load_beds", { detail: { id: value } }),
+  );
+};
 
-function load_template_formularies(value) {
-  const template_id = document.getElementById("template_product_template_id").value;
+window.load_template_formularies = function (value) {
+  const template_id = document.getElementById(
+    "template_product_template_id",
+  ).value;
+
   const class_id = document.getElementById("template_product_class_id").value;
-
-  if (!template_id || !class_id) {
-    selectRemoveOptions("template_product_formulary_id");
-    return;
-  }
 
   document.body.dispatchEvent(
     new CustomEvent("load_template_formularies", {
@@ -117,9 +121,9 @@ function load_template_formularies(value) {
       },
     }),
   );
-}
+};
 
-function load_mrn(value) {
+window.load_mrn = function (value) {
   if (!value) {
     document.getElementById("mrn").value = "";
   }
@@ -131,9 +135,9 @@ function load_mrn(value) {
       },
     }),
   );
-}
+};
 
-function sort_products(value) {
+window.sort_products = function (value) {
   const conatiner_div = document.getElementById("products_table");
   if (!conatiner_div) {
     return;
@@ -150,4 +154,23 @@ function sort_products(value) {
   }
 
   document.body.dispatchEvent(new CustomEvent("updateProductsPositions"));
-}
+};
+
+window.reinitializeSelect = function (select_id) {
+  const select = document.getElementById(select_id);
+  if (!select) {
+    return;
+  }
+
+  // remove attribute, data-select-initialized="true"
+  //select.removeAttribute("data-select-initialized");
+};
+
+window.swapElementStyle = function (id) {
+  if (!id) {
+    return "innerHTML";
+  }
+
+  const ids = ["select-container-template_product_formulary_id"];
+  return ids.includes(id) ? "outerHTML" : "innerHTML";
+};

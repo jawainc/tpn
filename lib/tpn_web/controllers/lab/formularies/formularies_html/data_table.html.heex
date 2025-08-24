@@ -1,28 +1,32 @@
 <%= if(!Enum.empty?(@records)) do %>
   <.table id="unit_types" rows={@records} url={get_url()} meta={@meta}>
-    <:col :let={record} label="Name" field={:name}><%= record.name %></:col>
-    <:col :let={record} label="Code" field={:code}><%= record.code %></:col>
-    <:col :let={record} label="Cost" field={:cost_per_container}>
-      <%= record.cost_per_container %>
+    <:col :let={record} label="Name" field={:name}>{record.name}</:col>
+    <:col :let={record} label="Class" field={:class_name}>{record.class_name}</:col>
+    <:col :let={record} label="Code" field={:code}>{record.code}</:col>
+    <:col :let={record} label="Solution" field={:solution_type_name}>
+      {record.solution_type_name}
     </:col>
-    <:col :let={record} label="Size" field={:container_size}><%= record.container_size %></:col>
+    <:col :let={record} label="Cost" field={:cost_per_container}>
+      {record.cost_per_container}
+    </:col>
+    <:col :let={record} label="Size" field={:container_size}>{record.container_size}</:col>
     <:col :let={record} label="Print" field={:print_on_label}>
       <.empty_badge status={record.print_on_label} />
     </:col>
 
     <:col :let={record} :if={@is_admin} label="Added By" field={:user_name}>
-      <%= record.user_name %>
+      {record.user_name}
     </:col>
 
     <:action :let={record} :if={@is_admin || @can.update || @can.delete}>
-    <.table_actions_edit_delete 
-                record={record} 
-                url={get_url()} 
-                is_admin={@is_admin} 
-                can_update={@can.update} 
-                can_delete={@can.delete} 
-                edit_popup={false}
-            />
+      <.table_actions_edit_delete
+        record={record}
+        url={get_url()}
+        is_admin={@is_admin}
+        can_update={@can.update}
+        can_delete={@can.delete}
+        edit_popup={false}
+      />
     </:action>
   </.table>
 

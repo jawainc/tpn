@@ -93,7 +93,7 @@ defmodule TpnWeb.Router do
     get "/template_products/:id/new", TemplateProductController, :new
     get "/template_products/:id/list", TemplateProductController, :list_template_products
     put "/template_products/sort", TemplateProductController, :sort
-    resources "/template_products", TemplateProductController, except: [:show]
+    resources "/template_products", TemplateProductController, except: [:show, :delete]
     resources "/patients/dashboard", Hospital.PatientDashboardController
     get "/patients/admissions/search", Hospital.AdmissionsController, :search
     post "/patients/admissions", Hospital.AdmissionsController, :create
@@ -141,7 +141,7 @@ defmodule TpnWeb.Router do
     delete "/ingredients/:id", IngredientsController, :delete
     delete "/formularies/:id", FormulariesController, :delete
     delete "/templates/:id", TemplateController, :delete
-    # delete "/template_products/:id", TemplateProductController, :delete
+    delete "/template_products/:id", TemplateProductController, :delete
 
     # admin
     pipe_through :require_authenticated_admin

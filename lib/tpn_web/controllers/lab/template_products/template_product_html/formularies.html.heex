@@ -1,4 +1,50 @@
-<option value="">Select...</option>
-<%= for {name, id} <- @data do %>
-  <option value={id}><%= name %></option>
-<% end %>
+<div id={"select-container-#{@select_id}"} class="select">
+  <button
+    type="button"
+    class="btn-outline justify-between font-normal w-full"
+    id={"select-#{@select_id}-trigger"}
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls={"select-#{@select_id}-listbox"}
+  >
+    <span class="truncate"></span>
+    <.icon_chevron_down />
+  </button>
+  <div id={"select-#{@select_id}-popover"} data-popover aria-hidden="true">
+    <header>
+      <.icon_select_search />
+      <input
+        type="text"
+        value=""
+        placeholder="Search entries..."
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        aria-autocomplete="list"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls={"select-#{@select_id}-listbox"}
+        aria-labelledby={"select-#{@select_id}-trigger"}
+      />
+    </header>
+    <div
+      role="listbox"
+      class="scrollbar overflow-y-auto max-h-64"
+      id={"select-#{@select_id}-listbox"}
+      aria-orientation="vertical"
+      aria-labelledby={"select-#{@select_id}-trigger"}
+    >
+      <div role="option" disabled hidden data-value="" aria-selected="true">
+        &nbsp;
+      </div>
+      <div id={"#{@select_id}_options"}>
+        <%= for {name, id} <- @data do %>
+          <div role="option" data-value={id}>
+            {name}
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id={"#{@select_id}"} name={@name} value="" />
+</div>

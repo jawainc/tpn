@@ -138,7 +138,13 @@ defmodule TpnWeb.TemplateProductController do
   end
 
   def formularies(conn, %{"class_id" => class_id, "template_id" => template_id} = _params) do
-    render(conn, :formularies, data: formularies_data(template_id, class_id))
+    render(
+      conn,
+      :formularies,
+      data: formularies_data(template_id, class_id),
+      select_id: "template_product_formulary_id",
+      name: "template_product[formulary_id]"
+    )
   end
 
   def formularies_data(template_id, class_id) do

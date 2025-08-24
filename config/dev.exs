@@ -11,6 +11,7 @@ config :tpn, Tpn.Repo,
   password: "0,T2Yo+t4-^D",
   hostname: "aws-0-ap-southeast-1.pooler.supabase.com",
   database: "postgres",
+  pool_mode: "session",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

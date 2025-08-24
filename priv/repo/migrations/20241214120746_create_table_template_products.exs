@@ -13,7 +13,7 @@ defmodule Tpn.Repo.Migrations.CreateTableTemplateProducts do
       add :dose_unit_id, references(:units, on_delete: :nilify_all), null: true
       add :additional_dose_unit_id, references(:units, on_delete: :nilify_all), null: true
       add :max_allowed_unit_id, references(:units, on_delete: :nilify_all), null: true
-      add :template_id, references(:templates, on_delete: :nilify_all), null: false
+      add :template_id, references(:templates, on_delete: :delete_all), null: false
       add :filling_method_id, references(:filling_methods, on_delete: :nilify_all), null: true
       add :user_id, references(:users, on_delete: :nilify_all), null: true
 

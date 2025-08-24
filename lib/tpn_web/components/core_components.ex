@@ -16,6 +16,7 @@ defmodule TpnWeb.CoreComponents do
   """
   use Phoenix.Component, global_prefixes: ~w(hx-)
   import TpnWeb.Gettext
+  import TpnWeb.IconComponents
 
   attr :classes, :string, default: "max-w-xl", doc: "the classes to apply to the modal"
 
@@ -85,7 +86,7 @@ defmodule TpnWeb.CoreComponents do
 
   def simple_badge(assigns) do
     ~H"""
-    <span class={"badge#{if @type, do: "-#{@type}", else: ""}"}>
+    <span class="badge-outline flex items-center gap-1 border border-muted-foreground/30">
       <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg">
         <circle r="4" cx="5" cy="5" fill={if @state, do: "green", else: "red"} />
       </svg>
@@ -164,21 +165,7 @@ defmodule TpnWeb.CoreComponents do
     ~H"""
     <div class="flex items-center gap-1 max-w-7xl">
       <div class="relative">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-4 w-4 opacity-70 absolute left-2 top-1/2 -translate-y-1/2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-          />
-        </svg>
-
+        <.icon_search />
         <input
           hx-get={@url}
           hx-target={@target}
@@ -191,21 +178,7 @@ defmodule TpnWeb.CoreComponents do
           placeholder="Search..."
         />
       </div>
-      <svg
-        id="search_indicator"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="animate-spin htmx-indicator text-white/40 h-4 w-4"
-      >
-        <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
-      </svg>
+      <.icon_spinner id="search_indicator" />
     </div>
     """
   end
@@ -226,53 +199,9 @@ defmodule TpnWeb.CoreComponents do
         @type == :warning && "alert text-warning border-warning"
       ]}
     >
-      <svg
-        :if={@type == :error}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line
-          x1="12"
-          x2="12.01"
-          y1="16"
-          y2="16"
-        />
-      </svg>
-      <svg
-        :if={@type == :success}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" />
-      </svg>
-      <svg
-        :if={@type == :warning}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M12 8v4" /><path d="M12 16h.01" />
-      </svg>
+      <.icon_error :if={@type == :error} />
+      <.icon_success :if={@type == :success} />
+      <.icon_warning :if={@type == :warning} />
       <section>{msg}</section>
     </div>
     """
@@ -446,6 +375,16 @@ defmodule TpnWeb.CoreComponents do
   attr :options_label, :string, default: nil
   attr :input_type, :string, values: ~w(text number)
   attr :value, :any
+  attr :event_name, :string, default: nil, doc: "the event name for select elements"
+  attr :event_attribute, :string, default: nil, doc: "the event attribute for select elements"
+
+  attr :label_loader, :boolean,
+    default: false,
+    doc: "whether to include a label loader for select elements"
+
+  attr :include_empty, :boolean,
+    default: false,
+    doc: "whether to include an empty option for select elements"
 
   attr :type, :string,
     default: "text",
@@ -504,11 +443,16 @@ defmodule TpnWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="grid gap-3" phx-feedback-for={@name}>
-      <label for={@id} class="label">
-        {@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span>
+    <div class="grid gap-3" phx-feedback-for={@name} {@rest}>
+      <label for={@id} class="label flex items-center gap-2">
+        <div>
+          {@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span>
+        </div>
+        <%= if (@label_loader) do %>
+          <.icon_spinner id={"select-loader-#{@id}"} class="size-3" />
+        <% end %>
       </label>
-      <div id={"select-#{@id}"} class="select">
+      <div id={"select-container-#{@id}"} class="select">
         <button
           type="button"
           class="btn-outline justify-between font-normal w-full"
@@ -518,39 +462,11 @@ defmodule TpnWeb.CoreComponents do
           aria-controls={"select-#{@id}-listbox"}
         >
           <span class="truncate"></span>
-
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-chevron-down-icon lucide-chevron-down text-muted-foreground opacity-50 shrink-0"
-          >
-            <path d="m6 9 6 6 6-6"></path>
-          </svg>
+          <.icon_chevron_down />
         </button>
         <div id={"select-#{@id}-popover"} data-popover aria-hidden="true">
           <header>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-search-icon lucide-search"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
+            <.icon_select_search />
             <input
               type="text"
               value=""
@@ -572,8 +488,12 @@ defmodule TpnWeb.CoreComponents do
             aria-orientation="vertical"
             aria-labelledby={"select-#{@id}-trigger"}
           >
-            <div role="group" aria-labelledby={"group-label-select-#{@id}-items-1"}>
-              <div role="heading" id={"group-label-select-#{@id}-items-1"}>{@prompt}</div>
+            <%= if (@include_empty) do %>
+              <div role="option" disabled hidden data-value="" aria-selected="true">
+                &nbsp;
+              </div>
+            <% end %>
+            <div id={"#{@id}_options"}>
               <%= for {name, id} <- @options do %>
                 <div role="option" data-value={id} aria-selected={id == @value}>
                   {name}
@@ -582,10 +502,17 @@ defmodule TpnWeb.CoreComponents do
             </div>
           </div>
         </div>
-        <input type="hidden" id={"select-#{@id}"} name={@name} value={@value} />
+        <input type="hidden" id={"#{@id}"} name={@name} value={@value} />
       </div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
+    <%= if (@event_name) do %>
+      <script>
+        document.querySelector("#select-container-<%= @id %>").addEventListener("change", (event) => {
+          window.triggerEvent(event.detail.value, "<%= @event_name %>");
+        });
+      </script>
+    <% end %>
     """
   end
 
@@ -681,20 +608,7 @@ defmodule TpnWeb.CoreComponents do
           >
             <span class="truncate"></span>
 
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-chevron-down-icon lucide-chevron-down text-muted-foreground opacity-50 shrink-0"
-            >
-              <path d="m6 9 6 6 6-6"></path>
-            </svg>
+            <.icon_chevron_down />
           </button>
           <div
             id={"select-#{@id_2}-popover"}
@@ -705,21 +619,7 @@ defmodule TpnWeb.CoreComponents do
             class="w-40"
           >
             <header>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-search-icon lucide-search"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
+              <.icon_select_search />
               <input
                 type="text"
                 value=""
@@ -861,21 +761,7 @@ defmodule TpnWeb.CoreComponents do
       type="button"
       class="btn-sm btn-brand text-xs h-xs flex items-center gap-2"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="text-brand-default/70 h-4 w-4"
-      >
-        <path d="M5 12h14"></path>
-        <path d="M12 5v14"></path>
-      </svg>
+      <.icon_plus class="text-brand-default/70 h-4 w-4" />
       {render_slot(@inner_block)}
     </button>
     """
@@ -899,22 +785,7 @@ defmodule TpnWeb.CoreComponents do
       type="button"
       class="btn-sm-outline text-xs h-xs flex items-center gap-2"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="size-4"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-        />
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-      </svg>
-
+      <.icon_eye />
       {render_slot(@inner_block)}
     </button>
     """
@@ -938,21 +809,7 @@ defmodule TpnWeb.CoreComponents do
       type="button"
       class="btn-sm btn-brand text-xs h-xs flex items-center gap-2"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="text-brand-default/70 h-4 w-4"
-      >
-        <path d="M5 12h14"></path>
-        <path d="M12 5v14"></path>
-      </svg>
+      <.icon_plus class="text-brand-default/70 h-4 w-4" />
       {render_slot(@inner_block)}
     </button>
     """
@@ -961,34 +818,23 @@ defmodule TpnWeb.CoreComponents do
   @doc """
   table modal
   """
+  attr :id, :string, default: "table_modal_contents"
+  attr :form_id, :string, default: "table_modal_form_contents"
+  attr :loader_id, :string, default: "table_modal_contents_indicator"
+
   def table_form_modal(assigns) do
     ~H"""
-    <dialog id="table_modal_contents" class="dialog w-full sm:max-w-[425px] max-h-[612px]">
+    <dialog id={@id} class="dialog w-full sm:max-w-[425px] max-h-[612px]">
       <article class="bg-dialog-background text-foreground">
-        <.htmx_content_indicator id="table_modal_contents_indicator" />
-        <div id="table_modal_form_contents" class="hide-on-htmx-request"></div>
+        <.htmx_content_indicator id={@loader_id} />
+        <div id={@form_id} class="hide-on-htmx-request"></div>
         <button
           type="button"
           aria-label="Close dialog"
           onclick="this.closest('dialog').close()"
           class="absolute top-4 right-4 opacity-50 hover:opacity-70"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="size-5"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-x-icon lucide-x"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
+          <.icon_cross />
         </button>
       </article>
     </dialog>
@@ -1127,6 +973,9 @@ defmodule TpnWeb.CoreComponents do
 
   attr :record, :any, required: true
   attr :url, :string, required: true
+  attr :target, :string, default: "table_modal_form_contents"
+  attr :indicator, :string, default: "table_modal_contents_indicator"
+  attr :model_id, :string, default: "table_modal_contents"
   attr :is_admin, :boolean, default: false, doc: "the admin status"
   attr :can_update, :boolean, default: false, doc: "the update permission"
   attr :can_delete, :boolean, default: false, doc: "the delete permission"
@@ -1142,22 +991,7 @@ defmodule TpnWeb.CoreComponents do
         aria-expanded="false"
         class="btn-sm-icon-outline"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-ellipsis-vertical"
-        >
-          <circle cx="12" cy="12" r="1"></circle>
-          <circle cx="12" cy="5" r="1"></circle>
-          <circle cx="12" cy="19" r="1"></circle>
-        </svg>
+        <.icon_v_ellipsis />
       </button>
       <div
         data-popover
@@ -1173,43 +1007,27 @@ defmodule TpnWeb.CoreComponents do
               if(!@edit_popup) do
                 "#main-contents"
               else
-                "#table_modal_form_contents"
+                "##{@target}"
               end
             }
             hx-indicator={
               if(!@edit_popup) do
                 "#main-contents-indicator"
               else
-                "#table_modal_contents_indicator"
+                "##{@indicator}"
               end
             }
             hx-on:click={
               if(!@edit_popup) do
                 "return;"
               else
-                "document.getElementById('table_modal_contents').showModal()"
+                "document.getElementById('#{@model_id}').showModal()"
               end
             }
             role="menuitem"
             class="flex items-center gap-3"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-square-pen"
-            >
-              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z">
-              </path>
-            </svg>
-            Edit
+            <.icon_square_pen /> Edit
           </div>
           <div
             :if={@is_admin || @can_delete}
@@ -1218,23 +1036,7 @@ defmodule TpnWeb.CoreComponents do
             role="menuitem"
             class="flex items-center gap-3"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              class="text-destructive"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="red"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class=""
-            >
-              <path d="M3 6h18"></path>
-              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-            </svg>
+            <.icon_trash />
             <span>Delete</span>
           </div>
         </div>
@@ -1397,7 +1199,7 @@ defmodule TpnWeb.CoreComponents do
 
   def htmx_content_indicator(assigns) do
     ~H"""
-    <div id={@id} class="w-full htmx-indicator my-10">
+    <div id={@id} class="w-full htmx-indicator py-24">
       <div class="flex mx-auto w-[200px] items-center gap-4">
         <div class="bg-accent animate-pulse size-10 shrink-0 rounded-full"></div>
         <div class="grid gap-2">
@@ -1409,34 +1211,34 @@ defmodule TpnWeb.CoreComponents do
     """
   end
 
+  attr :class, :string, default: ""
+  attr :id, :string, default: ""
+
   def loader(assigns) do
     ~H"""
-    <div class="flex items-center justify-center w-full main-contents-loader htmx-indicator my-10">
-      <svg
-        id="form-button-indicator"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="animate-spin htmx-indicator"
-      >
-        <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
-      </svg>
-    </div>
+    <svg
+      id={@id}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class={[@class, "animate-spin htmx-indicator "]}
+    >
+      <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
+    </svg>
     """
   end
 
   def no_records(assigns) do
     ~H"""
-    <div class="text-center mt-20">
-      <.icon name="hero-folder-plus" class="mx-auto h-12 w-12 text-gray-400" />
+    <div class="text-center my-24">
       <h3 class="mt-2 text-sm font-semibold">No Data</h3>
-      <p class="mt-1 text-sm text-gray-500">Get started by creating a new.</p>
+      <p class="mt-1 text-sm text-muted-foreground">Get started by creating a new.</p>
     </div>
     """
   end

@@ -88,6 +88,7 @@ defmodule TpnWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import TpnWeb.CoreComponents
+      import TpnWeb.IconComponents
       import TpnWeb.Gettext
 
       # Shortcut for generating JS commands

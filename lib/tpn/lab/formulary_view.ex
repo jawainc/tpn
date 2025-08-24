@@ -6,13 +6,17 @@ defmodule Tpn.FormularyView do
   @filterable_fields [
     :name,
     :code,
-    :user_name
+    :user_name,
+    :solution_type_name,
+    :class_name
   ]
 
   @sortable_fields [
     :name,
     :code,
-    :user_name
+    :solution_type_name,
+    :user_name,
+    :class_name
   ]
 
   schema "formularies_view" do
