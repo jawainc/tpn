@@ -1,19 +1,28 @@
-<.simple_form :let={f} 
-    for={@changeset} action={@action}
-    hx-post={@action}
-    hx-target="#form_container"
-    hx-disabled-elt="#form-button"
-    hx-on::config-request="formConfigRequest(event)"
-    autocomplete="off"
-    >
-    
+<.simple_form
+  :let={f}
+  for={@changeset}
+  action={@action}
+  hx-post={@action}
+  hx-target="#table_modal_form_contents"
+  hx-disabled-elt="#form-button"
+  hx-on::config-request="formConfigRequest(event)"
+  autocomplete="off"
+>
+  <section class="space-y-6">
     <.flash_group flash={@flash} />
-    
-    <.network_fields :if={@is_admin} form={f} id="ward" lhns={@lhns} facilities={@facilities} campuses={@campuses}   />
+
+    <.network_fields
+      :if={@is_admin}
+      form={f}
+      id="ward"
+      lhns={@lhns}
+      facilities={@facilities}
+      campuses={@campuses}
+    />
     <%= if !@is_admin do %>
-    <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-2 gap-4">
         <.input
-          :if={netwrok_access(false, "facility", @current_user)}  
+          :if={netwrok_access(false, "facility", @current_user)}
           hx-get="/health_networks"
           hx-target="#ward_campus_id"
           field={f[:facility_id]}
@@ -23,29 +32,23 @@
           options={@facilities}
         />
         <.input
-            :if={netwrok_access(false, "campus", @current_user)}  
-            field={f[:campus_id]}
-            type="select"
-            label="Campus"
-            prompt="Select..."
-            options={@campuses}
+          :if={netwrok_access(false, "campus", @current_user)}
+          field={f[:campus_id]}
+          type="select"
+          label="Campus"
+          prompt="Select..."
+          options={@campuses}
         />
-    </div>
+      </div>
     <% end %>
 
-    <div class="grid grid-cols-2 gap-4">
-        <.input field={f[:name]} type="text" label="Name" required />
-        <.input field={f[:code]} type="text" label="Code" required />
-    </div>    
-        
-    <:actions>
-        <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3" >
-            <%= if(@edit) do %> Update <% else %> Create <% end %>
-            <span class="loading loading-spinner loading-md htmx-indicator"></span>
-        </button>
-    </:actions>
+    <div class="grid grid-cols-2 gap-4 pt-6">
+      <.input field={f[:name]} type="text" label="Name" required />
+      <.input field={f[:code]} type="text" label="Code" required />
+    </div>
+
+    <footer class="flex justify-end space-x-3">
+      <.form_modal_buttons />
+    </footer>
+  </section>
 </.simple_form>
-
-
-
-  

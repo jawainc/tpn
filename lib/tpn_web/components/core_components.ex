@@ -165,7 +165,7 @@ defmodule TpnWeb.CoreComponents do
     ~H"""
     <div class="flex items-center gap-1 max-w-7xl">
       <div class="relative">
-        <.icon_search />
+        <.icon_search class="size-3" />
         <input
           hx-get={@url}
           hx-target={@target}
@@ -314,7 +314,7 @@ defmodule TpnWeb.CoreComponents do
         hx-target={"##{@id}_facility_id"}
         hx-on:htmx-after-on-load={"selectRemoveOptions('#{@id}_campus_id');"}
         field={@form[:local_health_network_id]}
-        type="select"
+        type="simple-select"
         label="Local Health Network"
         prompt="Select..."
         options={@lhns}
@@ -324,7 +324,7 @@ defmodule TpnWeb.CoreComponents do
         hx-get="/health_networks"
         hx-target={"##{@id}_campus_id"}
         field={@form[:facility_id]}
-        type="select"
+        type="simple-select"
         label="Facility"
         prompt="Select..."
         options={@facilities}
@@ -332,7 +332,7 @@ defmodule TpnWeb.CoreComponents do
 
       <.input
         field={@form[:campus_id]}
-        type="select"
+        type="simple-select"
         label="Campus"
         prompt="Select..."
         options={@campuses}
@@ -388,8 +388,9 @@ defmodule TpnWeb.CoreComponents do
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+    values:
+      ~w(checkbox color date datetime-local input-inside-label input-with-select email file hidden month number password
+               range radio search select simple-select tel text textarea time url week)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -513,6 +514,30 @@ defmodule TpnWeb.CoreComponents do
         });
       </script>
     <% end %>
+    """
+  end
+
+  def input(%{type: "simple-select"} = assigns) do
+    ~H"""
+    <div class="grid gap-3" phx-feedback-for={@name}>
+      <label for={@id} class="label">
+        {@label} <span :if={Map.has_key?(@rest, :required)} class="text-destructive">*</span>
+      </label>
+      <select
+        id={@id}
+        name={@name}
+        multiple={@multiple}
+        class={[
+          "select w-full",
+          @errors != [] && "input-error"
+        ]}
+        {@rest}
+      >
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
+      </select>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
     """
   end
 
