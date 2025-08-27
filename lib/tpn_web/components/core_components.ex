@@ -14,7 +14,7 @@ defmodule TpnWeb.CoreComponents do
 
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
-  use Phoenix.Component, global_prefixes: ~w(hx-)
+  use Phoenix.Component, global_prefixes: ~w(hx- x-)
   import TpnWeb.Gettext
   import TpnWeb.IconComponents
 
@@ -406,7 +406,9 @@ defmodule TpnWeb.CoreComponents do
 
   attr :rest, :global,
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
-                multiple pattern placeholder readonly required rows size step)
+                multiple pattern placeholder readonly required rows size step hx-target hx-trigger
+                hx-get hx-post hx-put hx-patch hx-delete hx-headers hx-params hx-swap hx-swap-oob hx-select
+                hx-indicator)
 
   slot :inner_block
 

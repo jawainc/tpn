@@ -144,6 +144,25 @@ window.formulariesIngredients = function () {
   };
 };
 
+window.patientSearchFilter = function () {
+  return {
+    open_filter: false,
+    filters: [
+      "First Name",
+      "Last Name",
+      "TPN I.D",
+      "I.D",
+      "Location",
+      "Email",
+      "Phone",
+    ],
+    selected: "First Name",
+    filter_patients: () => {
+      document.body.dispatchEvent(new CustomEvent("reloadDataTable"));
+    },
+  };
+};
+
 // Register with Alpine.js when it's ready
 document.addEventListener("alpine:init", () => {
   Alpine.data("orderForm", window.orderForm);

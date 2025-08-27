@@ -14,6 +14,13 @@ defmodule TpnWeb.TemplateProductHTML do
   attr :is_admin, :boolean, default: false
   attr :can, :map, default: %{}
   attr :current_user, :map, default: %{}
+  attr :flash, :map, default: %{}
+  attr :templates, :list, default: []
+  attr :substances, :list, default: []
+  attr :filling_methods, :list, default: []
+  attr :dose_units, :list, default: []
+  attr :formularies, :list, default: []
+  attr :template_id, :integer, default: nil
   def data_form(assigns)
 
   def get_url, do: @url

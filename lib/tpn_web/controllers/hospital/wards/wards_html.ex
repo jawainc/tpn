@@ -14,6 +14,12 @@ defmodule TpnWeb.WardsHTML do
   attr :is_admin, :boolean, default: false
   attr :can, :map, default: %{}
   attr :current_user, :map, default: %{}
+  attr :wards, :list, default: []
+  attr :rooms, :list, default: []
+  attr :lhns, :list, default: []
+  attr :facilities, :list, default: []
+  attr :campuses, :list, default: []
+  attr :flash, :map, default: %{}
   def data_form(assigns)
 
   def get_url, do: @url

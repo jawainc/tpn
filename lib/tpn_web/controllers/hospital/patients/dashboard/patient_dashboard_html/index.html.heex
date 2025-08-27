@@ -1,91 +1,92 @@
-<div class="mx-auto max-w-7xl">
+<div class="mx-auto max-w-7xl" x-data="patientSearchFilter">
   <.header>
     Patients Dashboard
     <:actions>
-      <button
-        hx-get={"#{get_url()}/new"}
-        hx-target="#main-contents"
-        hx-indicator=".main-contents-loader"
-        type="button"
-        class="btn btn-sm btn-primary"
-      >
-        Create New
-      </button>
-    </:actions>
-  </.header>
-</div>
-
-<div class="mx-auto max-w-7xl mt-10">
-  <div
-    x-data="{
-  open_filter: false,
-  filters: ['First Name', 'Last Name', 'TPN I.D', 'I.D', 'Location', 'Email', 'Phone'],
-  selected: 'First Name',
-  filter_patients: () => {
-      document.body.dispatchEvent(new CustomEvent('reloadDataTable'));
-    }
-  }
-  "
-    class="relative mt-10 w-96"
-  >
-    <input name="by_filter" id="by_filter" x-model="selected" type="hidden" />
-    <label class="input input-bordered input-sm flex items-center gap-2 w-fit pr-0 overflow-hidden">
-      <.icon name="hero-magnifying-glass" class="w-4 h-4 opacity-70" />
-      <input
-        x-on:input.debounce.500ms="filter_patients();"
-        type="text"
-        name="filter"
-        class="h-8 input input-sm border-none focus:ring-0"
-        autocomplete="off"
-        placeholder="Search..."
-      />
-      <span id="search_indicator" class="loading loading-spinner loading-xs htmx-indicator">
-      </span>
-      <div
-        @click="open_filter = !open_filter"
-        class="w-32 h-full bg-neutral text-base-content flex items-center justify-between px-2 cursor-pointer"
-      >
-        <span x-text="`By ${selected}`"></span>
-        <.icon name="hero-chevron-down" class="w-3 h-3 opacity-70" />
-      </div>
-    </label>
-    <div
-      x-cloak
-      x-show="open_filter"
-      @click.outside="open_filter=false"
-      class="absolute top-10 -right-3 rounded bg-neutral shadow-md z-20 w-28"
-    >
-      <template x-for="(filter, index) in filters">
-        <div
-          @click="selected=filter; open_filter=false"
-          class="hover:bg-base-200 cursor-pointer p-2 text-sm flex items-center justify-between"
-        >
-          <span x-text="filter"></span>
-          <div x-show="filter === selected">
-            <.icon name="hero-check" class="w-3 h-3 opacity-70" />
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <.icon_search class="size-3 opacity-70 absolute left-2 top-1/2 -translate-y-1/2" />
+          <input
+            x-on:input.debounce.500ms="filter_patients();"
+            type="text"
+            name="filter"
+            class="input pl-8 h-xs text-xs"
+            autocomplete="off"
+            placeholder="Search..."
+          />
+        </div>
+        <div id="dropdown-menu-radio-group" class="dropdown-menu">
+          <button
+            type="button"
+            id="dropdown-menu-radio-group-trigger"
+            aria-haspopup="menu"
+            aria-controls="dropdown-menu-radio-group-menu"
+            aria-expanded="false"
+            class="btn-sm-outline btn-xs"
+          >
+            <.icon_filter class="size-3 opacity-70" />
+          </button>
+          <div
+            id="dropdown-menu-radio-group-popover"
+            data-popover
+            aria-hidden="true"
+            class="min-w-56"
+          >
+            <div
+              role="menu"
+              id="dropdown-menu-radio-group-menu"
+              aria-labelledby="dropdown-menu-radio-group-trigger"
+            >
+              <div role="group" aria-labelledby="position-options">
+                <span id="position-options" role="heading">Search patients by</span>
+                <hr role="separator" />
+                <template x-for="(filter, index) in filters">
+                  <div
+                    @click="selected=filter;"
+                    role="menuitemradio"
+                    x-bind:aria-checked="filter === selected ? 'true' : 'false'"
+                    class="group"
+                  >
+                    <div class="size-4 flex items-center justify-center">
+                      <div
+                        class="size-2 rounded-full bg-foreground invisible group-aria-checked:visible"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                      </div>
+                    </div>
+                    <span x-text="filter"></span>
+                  </div>
+                </template>
+              </div>
+            </div>
           </div>
         </div>
-      </template>
-    </div>
-  </div>
+      </div>
+      <.new_button hx_get={"#{get_url()}/new"}>
+        Create New Patient
+      </.new_button>
+    </:actions>
+  </.header>
+  <input name="by_filter" id="by_filter" x-model="selected" type="hidden" />
+</div>
 
-  <div>
-    <.htmx_indicator id="data-table-indicator" />
-    <div
-      class="hide-on-htmx-request mt-10"
-      hx-get={"#{get_url()}?table=1"}
-      hx-vals="js:{...filterPatients()}"
-      hx-trigger="reloadDataTable from:body"
-      hx-target="#data-table"
-      hx-indicator="#data-table-indicator"
-    >
-      <.data_table
-        records={@records}
-        meta={@meta}
-        url={get_url()}
-        is_admin={@is_admin}
-        current_user={@current_user}
-      />
-    </div>
+<div class="mx-auto max-w-7xl mt-5">
+  <.htmx_content_indicator id="data-table-indicator" />
+  <div
+    id="data-table"
+    class="hide-on-htmx-request"
+    hx-get={"#{get_url()}?table=1"}
+    hx-vals="js:{...filterPatients()}"
+    hx-trigger="reloadDataTable from:body"
+    hx-target="#data-table"
+    hx-indicator="#data-table-indicator"
+  >
+    <.data_table
+      records={@records}
+      meta={@meta}
+      url={get_url()}
+      is_admin={@is_admin}
+      current_user={@current_user}
+    />
   </div>
 </div>

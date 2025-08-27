@@ -14,6 +14,13 @@ defmodule TpnWeb.BedsHTML do
   attr :is_admin, :boolean, default: false
   attr :can, :map, default: %{}
   attr :current_user, :map, default: %{}
+  attr :flash, :map, default: %{}
+  attr :wards, :list, default: []
+  attr :beds, :list, default: []
+  attr :rooms, :list, default: []
+  attr :lhns, :list, default: []
+  attr :facilities, :list, default: []
+  attr :campuses, :map, default: %{}
   def data_form(assigns)
 
   def get_url, do: @url

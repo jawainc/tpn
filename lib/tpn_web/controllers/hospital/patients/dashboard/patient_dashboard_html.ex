@@ -1,7 +1,6 @@
 defmodule TpnWeb.Hospital.PatientDashboardHTML do
   use TpnWeb, :html
   import TpnWeb.Hospital.Components.PatientDetailsComponent
-  import TpnWeb.Hospital.Components.PatientAdmissionsComponent
 
   @url "/patients/dashboard"
   embed_templates "patient_dashboard_html/*"

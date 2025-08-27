@@ -55,7 +55,8 @@ defmodule TpnWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {TpnWeb.Layouts, :app}
+        layout: {TpnWeb.Layouts, :app},
+        global_prefixes: ~w(hx- x-)
 
       unquote(html_helpers())
     end
@@ -71,7 +72,7 @@ defmodule TpnWeb do
 
   def html do
     quote do
-      use Phoenix.Component, global_prefixes: ~w(hx-)
+      use Phoenix.Component, global_prefixes: ~w(hx- x-)
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

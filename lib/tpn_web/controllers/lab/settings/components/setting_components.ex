@@ -2,9 +2,7 @@ defmodule TpnWeb.Settings.Components.SettingComponents do
   @moduledoc """
   module for defining components for the settings page
   """
-  alias Plug.Parsers.JSON
   use Phoenix.Component
-  import TpnWeb.CoreComponents
   import TpnWeb.IconComponents
 
   @doc """
