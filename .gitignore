@@ -40,15 +40,18 @@ npm-debug.log
 # ignore .env file
 /.env
 .env
+.env.dev
 
 # Ignore .env file
 /.envrc
 .envrc
 
 # Ignore /congig/runtime.exs
-/config/runtime.exs
+# /config/runtime.exs
 
 /priv/cert
 
 # ignore lockfile
 /assets/package-lock.json
+
+# ignore env file

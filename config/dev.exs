@@ -2,15 +2,10 @@ import Config
 
 # Configure your database
 config :tpn, Tpn.Repo,
-  # username: "postgres",
-  # password: "postgres",
-  # hostname: "localhost",
-  # database: "tpn_htmx_dev",
-  # ==============
-  username: "postgres.wyphzxsbludilnfjjool",
-  password: "0,T2Yo+t4-^D",
-  hostname: "aws-0-ap-southeast-1.pooler.supabase.com",
-  database: "postgres",
+  username: System.get_env("DB_USER"),
+  password: System.get_env("DB_PASSWORD"),
+  hostname: System.get_env("DB_HOST"),
+  database: System.get_env("DB"),
   pool_mode: "session",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
