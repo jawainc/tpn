@@ -8,31 +8,31 @@ primary_region = 'sin'
 kill_signal = 'SIGTERM'
 
 [build]
-  dockerfile = "Dockerfile"
-  ignorefile = ".dockerignore"
+dockerfile = "Dockerfile"
+ignorefile = ".dockerignore"
 
 [deploy]
-  release_command = '/app/bin/migrate'
+release_command = '/app/bin/migrate'
 
 [env]
-  PHX_HOST = 'xpr-tpn.fly.dev'
-  PORT = '4000'
+PHX_HOST = 'xpr-tpn.fly.dev'
+PORT = '4000'
 
 [http_service]
-  internal_port = 4000
-  force_https = true
-  auto_stop_machines = 'suspend'
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+internal_port = 4000
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
 
-  [http_service.concurrency]
-    type = 'connections'
-    hard_limit = 1000
-    soft_limit = 1000
+[http_service.concurrency]
+type = 'connections'
+hard_limit = 1000
+soft_limit = 1000
 
 [[vm]]
-  size = 'shared-cpu-1x'
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+size = 'shared-cpu-1x'
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 1
