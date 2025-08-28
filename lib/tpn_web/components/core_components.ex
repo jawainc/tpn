@@ -95,6 +95,33 @@ defmodule TpnWeb.CoreComponents do
     """
   end
 
+  attr :state, :boolean, required: true
+  attr :label, :string, required: true
+  attr :type, :string, required: false, default: nil
+
+  def status_badge(assigns) do
+    ~H"""
+    <div class={[
+      "flex items-center gap-1 rounded-full border py-1 px-1 w-fit",
+      (@state && "border-brand-400 bg-brand-200") || "border-destructive-400 bg-destructive-200"
+    ]}>
+      <span class={["rounded-full p-0.5", (@state && "bg-brand-default") || "bg-destructive-default"]}>
+        <.icon_check
+          :if={@state}
+          class={["size-3", (@state && "text-brand-200") || "text-destructive-200"]}
+        />
+        <.icon_x_mark
+          :if={!@state}
+          class={["size-3", (!@state && "text-brand-200") || "text-destructive-200"]}
+        />
+      </span>
+      <span class={["px-1 text-xs", (@state && "text-brand-default") || "text-destructive-default"]}>
+        {@label}
+      </span>
+    </div>
+    """
+  end
+
   attr :url, :string, required: true
   attr :meta, :map, required: true
   attr :target, :string, default: "#data-table"

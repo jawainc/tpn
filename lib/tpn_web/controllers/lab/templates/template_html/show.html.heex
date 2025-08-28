@@ -65,7 +65,7 @@
         </h2>
       </header>
       <section class="grid grid-cols-1 gap-4">
-        <.simple_badge
+        <.status_badge
           state={@record.active}
           label={
             if(@record.active) do
@@ -74,7 +74,6 @@
               "Inactive"
             end
           }
-          type="outline"
         />
         <.simple_badge
           state={@record.pre_mixed_standard}

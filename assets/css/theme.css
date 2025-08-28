@@ -2,8 +2,26 @@
     --brand: hsl(154.9deg 100% 19%);
     --brand-foreground: hsl(152.7273 19.2982% 88.8235%);
     --brand-default: hsl(153.1deg 60.2% 52.7%);
+    --brand-600: hsl(154.9deg 59.5% 70%);
+    --brand-500: hsl(154.9deg 100% 19.2%);
+    --brand-400: hsl(155.5deg 100% 9.6%);
+    --brand-300: hsl(155.1deg 100% 8%);
+    --brand-200: hsl(162deg 100% 2%);
+    --destructive: hsl(358.7594 101.8439% 69.8357%);
+    --destructive-default: hsl(10.2deg 77.9% 53.9%);
+    --destructive-foreground: hsl(223.8136 0.0004% 98.0256%);
+    --destructive-600: hsl(9.7deg 85.2% 62.9%);
+    --destructive-500: hsl(7.9deg 71.6% 29%);
+    --destructive-400: hsl(6.7deg 60% 20.6%);
+    --destructive-300: hsl(7.5deg 51.3% 15.3%);
+    --destructive-200: hsl(10.9deg 23.4% 9.2%);
     --background: hsl(0deg 0% 9%);
     --background-muted: hsl(0deg 0% 14.1%);
+    --background-surface-400: hsl(0deg 0% 16.1%);
+    --background-surface-300: hsl(0deg 0% 16.1%);
+    --background-surface-200: hsl(0deg 0% 12.9%);
+    --background-surface-100: hsl(0deg 0% 12.2%);
+    --background-surface-75: hsl(0deg 0% 9%);
     /*--dialog-background: oklch(0.145 0 0);*/
     --dialog-background: hsl(0deg 0% 6.6%);
     --foreground: hsl(223.8136 0.0004% 98.0256%);
@@ -21,8 +39,7 @@
     --accent: hsl(223.8136 0% 25.0471%);
     --accent-foreground: hsl(223.8136 0.0004% 98.0256%);
     --warning: hsl(38.9deg 100% 42.9%);
-    --destructive: hsl(358.7594 101.8439% 69.8357%);
-    --destructive-foreground: hsl(223.8136 0.0004% 98.0256%);
+
     --border: hsl(223.8136 0% 15.5096%);
     --input: hsl(223.8136 0% 20.3885%);
     --ring: hsl(0 0% 14.1%);
@@ -128,8 +145,26 @@
 
 @theme inline {
     --color-brand: var(--brand);
+    --color-brand-200: var(--brand-200);
+    --color-brand-300: var(--brand-300);
+    --color-brand-400: var(--brand-400);
+    --color-brand-500: var(--brand-500);
+    --color-brand-600: var(--brand-600);
     --color-brand-foreground: var(--brand-foreground);
     --color-brand-default: var(--brand-default);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive-default: var(--destructive-default);
+    --color-destructive-200: var(--destructive-200);
+    --color-destructive-300: var(--destructive-300);
+    --color-destructive-400: var(--destructive-400);
+    --color-destructive-500: var(--destructive-500);
+    --color-destructive-600: var(--destructive-600);
+    --color-background-surface-400: var(--background-surface-400);
+    --color-background-surface-300: var(--background-surface-300);
+    --color-background-surface-200: var(--background-surface-200);
+    --color-background-surface-100: var(--background-surface-100);
+    --color-background-surface-75: var(--background-surface-75);
     --color-background: var(--background);
     --color-dialog-background: var(--dialog-background);
     --color-foreground: var(--foreground);
@@ -147,8 +182,6 @@
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
     --color-warning: var(--warning);
-    --color-destructive: var(--destructive);
-    --color-destructive-foreground: var(--destructive-foreground);
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
