@@ -26,8 +26,6 @@ FROM ${BUILDER_IMAGE} as builder
 # RUN apt-get update
 # RUN NODE_VERSION=21
 # RUN curl -fsSL https://deb.nodesource.com/setup_21.x | bash - && apt-get install -y nodejs
-RUN ENV ECTO_IPV6=true
-RUN ENV ERL_AFLAGS="-proto_dist inet6_tcp"
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*

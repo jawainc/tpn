@@ -17,6 +17,7 @@ release_command = '/app/bin/migrate'
 [env]
 PHX_HOST = 'xpr-tpn.fly.dev'
 PORT = '4000'
+ERL_AFLAGS = '-proto_dist inet6_tcp'
 
 [http_service]
 internal_port = 4000
