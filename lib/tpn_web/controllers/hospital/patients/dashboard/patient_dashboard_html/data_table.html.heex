@@ -1,97 +1,93 @@
-<div id="data-table">
-  <ul role="list" class="divide-y divide-white/5">
-    <%= for record <- @records do %>
-      <li class="relative flex items-center space-x-4 py-4">
-        <div class="">
-          <div class="flex items-center gap-x-3">
-            <div
-              :if={record.cancelled}
-              class="flex-none rounded-full bg-red-500/20 p-1 text-red-500"
-            >
-              <div class="size-2 rounded-full bg-current"></div>
-            </div>
-            <%= if !record.cancelled do %>
-              <%= if record.is_admitted do %>
-                <div class="flex-none rounded-full bg-green-100/10 p-1 text-green-500">
-                  <div class="size-2 rounded-full bg-current"></div>
-                </div>
-              <% else %>
-                <div class="flex-none rounded-full bg-gray-100/10 p-1 text-gray-500">
-                  <div class="size-2 rounded-full bg-current"></div>
-                </div>
-              <% end %>
-            <% end %>
-
-            <h2 class="min-w-0 text-sm/6 font-semibold text-white">
-              <div class="flex gap-x-2">
-                <span class={["truncate", record.cancelled && "text-gray-600"]}>
-                  {record.first_name} {record.last_name}
-                </span>
-                <span class={["text-gray-400", record.cancelled && "text-gray-600"]}>/</span>
-                <span class={[record.cancelled && "text-gray-600"]}>{record.gender}</span>
+<%= if(!Enum.empty?(@records)) do %>
+  <div class="rounded border border-card-foreground/10">
+    <table class="w-full text-sm text-foreground-light">
+      <thead>
+        <tr>
+          <th class="py-3 px-4 font-normal text-left">Patient</th>
+          <th class="py-3 px-4 font-normal text-left">Status</th>
+          <th class="py-3 px-4 font-normal text-left">ID</th>
+          <th class="py-3 px-4 font-normal text-left">Contacts</th>
+          <th class="py-3 px-4 font-normal text-left"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= for record <- @records do %>
+          <tr>
+            <td class="py-3 px-4 bg-card">
+              <div class="font-semibold text-white">
+                {record.first_name} {record.last_name}
               </div>
-            </h2>
-          </div>
-          <div class="mt-3 flex items-center gap-x-2.5 text-xs/5 text-gray-400">
-            <p class="truncate">TPN ID: {record.tpn_id}</p>
-            <svg viewBox="0 0 2 2" class="size-0.5 flex-none fill-gray-300">
-              <circle cx="1" cy="1" r="1" />
-            </svg>
-            <p class="whitespace-nowrap">DOB: {Calendar.strftime(record.dob, "%m/%d/%Y")}</p>
-          </div>
-        </div>
-        <div class="flex flex-col space-y-2 pl-20 text-xs/5 text-gray-400">
-          <p class="whitespace-nowrap">ID: {record.identity_no}</p>
-          <p class="whitespace-nowrap">Email: {record.email}</p>
-        </div>
-        <div class="min-w-0 flex-auto flex flex-col space-y-2 pl-20 text-xs/5 text-gray-400">
-          <p class="whitespace-nowrap">Phone: {record.phone}</p>
-          <p class="whitespace-nowrap">Location: {record.city}</p>
-        </div>
+              <div class="mt-1 text-sm">
+                {record.gender}, DOB: {Calendar.strftime(record.dob, "%m/%d/%Y")}
+              </div>
+            </td>
+            <td class="py-3 px-4 bg-card">
+              <.simple_badge :if={record.is_admitted} state={true} label="Admitted" />
+              <.simple_badge :if={record.cancelled} state={false} label="Cancelled" />
+            </td>
+            <td class="py-3 px-4 bg-card">
+              <div>
+                TPN ID: {record.tpn_id}
+              </div>
+              <div class="mt-1">
+                ID: {record.identity_no || "--"}
+              </div>
+            </td>
+            <td class="py-3 px-4 text-sm bg-card">
+              <div>
+                Phone: {record.phone}
+              </div>
+              <div class="mt-1">
+                Email: {record.email || "--"}
+              </div>              
+            </td>
+            <td class="py-3 px-4 bg-card">
+              <div :if={!record.cancelled} class="flex items-center justify-end space-x-2">
+                
+                <button
+                  hx-get={"#{get_url()}/#{record.id}"}
+                  hx-target="#main-contents"
+                  hx-indicator=".main-contents-loader"
+                  type="button"
+                  class="btn-icon-outline"
+                >
+                  <.icon_eye />
+                </button>
+                
+                <button 
+                  :if={!record.is_admitted && (@is_admin || can_manage?(record, @current_user))}
+                  class="btn-icon-outline" 
+                  type="button"
+                  hx-get={"#{get_url()}/#{record.id}/edit"}
+                  hx-target="#main-contents"
+                  hx-indicator=".main-contents-loader"
+                  >
+                  <.icon_edit />
+                </button>
 
-        <div :if={record.cancelled} class="text-right">
-          <.simple_badge state={false} label="Cancelled" />
-        </div>
-
-        <div :if={!record.cancelled} class="flex items-center space-x-2">
-          <div
-            hx-get={"#{get_url()}/#{record.id}"}
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
-            class="flex-none rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20 cursor-pointer"
-          >
-            Preview
-          </div>
-
-          <button
-            :if={!record.is_admitted && (@is_admin || can_manage?(record, @current_user))}
-            hx-get={"#{get_url()}/#{record.id}/edit"}
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
-            type="button"
-            class="btn btn-info btn-outline btn-xs"
-          >
-            Edit
-          </button>
-
-          <.simple_form
-            :if={
-              !record.is_admitted && !record.has_admission &&
-                (@is_admin || can_manage?(record, @current_user))
-            }
-            for={%{}}
-            action={"#{get_url()}/#{record.id}"}
-            hx-post={"#{get_url()}/#{record.id}"}
-            hx-confirm="Are you sure to delete?"
-            no_styles={true}
-          >
-            <input name="_method" type="hidden" value="delete" />
-            <button type="submit" class="btn btn-outline btn-xs">
-              Cancel
-            </button>
-          </.simple_form>
-        </div>
-      </li>
-    <% end %>
-  </ul>
-</div>
+                <.simple_form
+                  :if={
+                    !record.is_admitted && !record.has_admission &&
+                      (@is_admin || can_manage?(record, @current_user))
+                  }
+                  for={%{}}
+                  action={"#{get_url()}/#{record.id}"}
+                  hx-post={"#{get_url()}/#{record.id}"}
+                  hx-confirm="Are you sure to delete?"
+                  no_styles={true}
+                >
+                  <input name="_method" type="hidden" value="delete" />
+                  <button type="submit" class="btn-sm-icon-destructive">
+                    <.icon_trash />
+                  </button>
+                </.simple_form>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <.no_records />
+<% end %>

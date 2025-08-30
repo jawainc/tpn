@@ -82,16 +82,16 @@ defmodule TpnWeb.CoreComponents do
 
   attr :state, :boolean, required: true
   attr :label, :string, required: true
-  attr :type, :string, required: false, default: nil
 
   def simple_badge(assigns) do
     ~H"""
-    <span class="badge-outline flex items-center gap-1 border border-muted-foreground/30">
-      <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg">
-        <circle r="4" cx="5" cy="5" fill={if @state, do: "green", else: "red"} />
-      </svg>
+    <div class={[
+      "inline-flex items-center bg-opacity-10 px-2.5 py-0.5 text-xs rounded-md border w-fit",
+      (@state && "bg-brand-300 text-brand-default border-brand-500") ||
+        "bg-destructive-200 text-destructive-600 border-destructive-500"
+    ]}>
       {@label}
-    </span>
+    </div>
     """
   end
 
@@ -103,7 +103,7 @@ defmodule TpnWeb.CoreComponents do
     ~H"""
     <div class={[
       "flex items-center gap-1 rounded-full border py-1 px-1 w-fit",
-      (@state && "border-brand-400 bg-brand-200") || "border-destructive-400 bg-destructive-200"
+      (@state && "border-brand-500 bg-brand-200") || "border-destructive-400 bg-destructive-200"
     ]}>
       <span class={["rounded-full p-0.5", (@state && "bg-brand-default") || "bg-destructive-default"]}>
         <.icon_check
@@ -572,24 +572,18 @@ defmodule TpnWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
-      <label for={@id} class="form-control w-full">
-        <div class="label">
-          <span class="label-text">
+    <div phx-feedback-for={@name} class="grid gap-3">
+      <label for={@id} class="label">
             {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
-          </span>
-        </div>
-        <textarea
-          id={@id}
-          name={@name}
-          class={[
-            "input input-bordered w-full h-24",
-            @errors != [] && "input-error"
-          ]}
-          {@rest}
-        ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
+      <textarea
+        id={@id}
+        name={@name}
+        class="textarea"
+        aria-invalid={@errors != []}
+        {@rest}
+      ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -875,11 +869,12 @@ defmodule TpnWeb.CoreComponents do
   attr :id, :string, default: "table_modal_contents"
   attr :form_id, :string, default: "table_modal_form_contents"
   attr :loader_id, :string, default: "table_modal_contents_indicator"
+  attr :size, :string, default: "small", values: ["small", "large"]
 
   def table_form_modal(assigns) do
     ~H"""
-    <dialog id={@id} class="dialog w-full sm:max-w-[425px] max-h-[612px]">
-      <article class="bg-dialog-background text-foreground">
+    <dialog id={@id} class="dialog sm:max-w-[700px] max-h-[612px]">
+      <article class={["bg-dialog-background text-foreground", (@size == "large" && "max-w-[750px]")]}>
         <.htmx_content_indicator id={@loader_id} />
         <div id={@form_id} class="hide-on-htmx-request"></div>
         <button

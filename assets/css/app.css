@@ -4,9 +4,6 @@
 /* This file is for your main application CSS */
 /* add font Inter to html, body */
 
-@import url("../vendor/js-snackbar.min.css");
-@import url("../vendor/flatpickr-dark.css");
-
 @source "../css";
 @source "../js";
 @source "../../lib/tpn_web";
@@ -61,4 +58,27 @@ body {
 
 .dialog > .article {
     @apply bg-dialog-background text-foreground;
+}
+
+input[type="date"] {
+    position: relative;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    display: block;
+    position: absolute;
+    right: 10px;
+    width: 20px;
+    height: 100%;
+    cursor: pointer;
+}
+
+input[type="date"]:before {
+    content: url('/images/calender.svg');
+    position: absolute;
+    right: 10px;
+    top: 55%;
+    width: 20px;    
+    transform: translateY(-50%);
+    pointer-events: none;
 }

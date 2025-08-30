@@ -1,5 +1,5 @@
 <%= if(!Enum.empty?(@records)) do %>
-  <.table id="wards" rows={@records} url={get_url()} meta={@meta}>
+  <.table id="rooms" rows={@records} url={get_url()} meta={@meta}>
     <:col :let={record} label="Name" field={:name}>{record.name}</:col>
     <:col :let={record} label="Code" field={:code}>{record.code}</:col>
     <:col :let={record} label="Ward" field={:ward}>{record.ward}</:col>

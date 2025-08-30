@@ -240,9 +240,9 @@ defmodule TpnWeb.LayoutComponents.App.Menu do
                       ])
                     }>
                       <a
-                        href={~p"/patients"}
+                        href={~p"/patients/dashboard"}
                         class="cursor-pointer"
-                        hx-get={~p"/patients"}
+                        hx-get={~p"/patients/dashboard"}
                         hx-target="#main-contents"
                         hx-indicator="#main-contents-indicator"
                         class="sub-menu-item"
