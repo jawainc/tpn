@@ -13,7 +13,7 @@
       <tbody>
         <%= for record <- @records do %>
           <tr>
-            <td class="py-3 px-4 bg-card">
+            <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <div class="font-semibold text-white">
                 {record.first_name} {record.last_name}
               </div>
@@ -21,11 +21,11 @@
                 {record.gender}, DOB: {Calendar.strftime(record.dob, "%m/%d/%Y")}
               </div>
             </td>
-            <td class="py-3 px-4 bg-card">
+            <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <.simple_badge :if={record.is_admitted} state={true} label="Admitted" />
               <.simple_badge :if={record.cancelled} state={false} label="Cancelled" />
             </td>
-            <td class="py-3 px-4 bg-card">
+            <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <div>
                 TPN ID: {record.tpn_id}
               </div>
@@ -33,7 +33,7 @@
                 ID: {record.identity_no || "--"}
               </div>
             </td>
-            <td class="py-3 px-4 text-sm bg-card">
+            <td class="py-3 px-4 text-sm border-t border-card-foreground/5 bg-card/60">
               <div>
                 Phone: {record.phone}
               </div>
@@ -41,13 +41,14 @@
                 Email: {record.email || "--"}
               </div>              
             </td>
-            <td class="py-3 px-4 bg-card">
+            <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <div :if={!record.cancelled} class="flex items-center justify-end space-x-2">
                 
                 <button
                   hx-get={"#{get_url()}/#{record.id}"}
                   hx-target="#main-contents"
-                  hx-indicator=".main-contents-loader"
+                  hx-swap="innerHTML"
+                  hx-indicator="#main-contents-indicator"
                   type="button"
                   class="btn-icon-outline"
                 >
@@ -60,7 +61,7 @@
                   type="button"
                   hx-get={"#{get_url()}/#{record.id}/edit"}
                   hx-target="#main-contents"
-                  hx-indicator=".main-contents-loader"
+                  hx-indicator="#main-contents-indicator"
                   >
                   <.icon_edit />
                 </button>
@@ -77,8 +78,8 @@
                   no_styles={true}
                 >
                   <input name="_method" type="hidden" value="delete" />
-                  <button type="submit" class="btn-sm-icon-destructive">
-                    <.icon_trash />
+                  <button type="submit" class="btn-sm-icon-outline">
+                    <.icon_trash class="text-destructive size-4" />
                   </button>
                 </.simple_form>
               </div>

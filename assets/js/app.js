@@ -15,9 +15,7 @@
 //     import "some-package"
 //
 import { differenceBy } from "lodash";
-import SnackBar from "../vendor/js-snackbar.js";
 import "basecoat-css/all";
-import flatpickr from "../vendor/flatpickr.min.js";
 import "./xData.js";
 import "./custom.js";
 
@@ -49,8 +47,6 @@ import "phoenix_html";
 // window.liveSocket = liveSocket
 
 window.differenceBy = differenceBy;
-window.SnackBar = SnackBar;
-window.flatpickr = flatpickr;
 
 import { events, formConfigRequest } from "./events.js";
 // import { selectRemoveOptions, applyCheckboxSelector, triggerEvent, filterPatients } from "./custom.js";

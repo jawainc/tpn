@@ -1,50 +1,65 @@
-<div class="mx-auto max-w-7xl">
-  <.header>
-    Update Patient
-  </.header>
-
-  <div class="flex items-center justify-between">
-    <div class="breadcrumbs text-sm">
-      <ul>
-        <li>
+<div class="mx-auto max-w-4xl">
+  <header class="flex items-center justify-between">
+    <div>
+      <h2>Update Patient</h2>
+      <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
+        <li class="inline-flex items-center gap-1.5">
           <a
+            href=""
             hx-get={"#{get_url()}"}
             hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
+            hx-indicator="#main-contents-indicator"
+            class="hover:text-foreground transition-colors"
           >
             Patients
           </a>
         </li>
-        <li>Update Patient</li>
-      </ul>
+        <li>
+          <.icon_angle_right class="size-3.5" />
+        </li>
+        <li class="inline-flex items-center gap-1.5">
+          <span class="text-foreground font-normal">{@record.first_name} {@record.last_name}</span>
+        </li>
+      </ol>
     </div>
-  </div>
-
+  </header>
+  
   <%= if @record.has_admission do %>
-    <div class="grid grid-cols-2 gap-4 bg-gray-300/10 dark:bg-gray-700/10 px-10 py-4 border border-white/5 mt-10">
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">TPN I.D</span>
-        <span class="text-sm">{@record.tpn_id}</span>
+    <div class="flex gap-6 mt-14">
+      <div class="card">
+        <header>
+          <h2 class="text-lg flex items-center gap-4">
+            <.icon_clipboard_list class="size-6 text-muted-foreground" />
+            {@record.first_name} {@record.last_name}
+          </h2>
+        </header>
+        <section>
+          <dl class="grid grid-cols-2 gap-8">
+            <dt>Local Health Network:</dt>
+            <dd>{@record.local_health_network}</dd>
+            <dt>Facility:</dt>
+            <dd>{@record.facility}</dd>
+            <dt>Campus:</dt>
+            <dd>{@record.campus}</dd>
+          </dl>
+        </section>
       </div>
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Local Health Network</span>
-        <span class="text-sm">{@record.local_health_network}</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Facility</span>
-        <span class="text-sm">{@record.facility}</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Campus</span>
-        <span class="text-sm">{@record.campus}</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Birthday</span>
-        <span class="text-sm">{Calendar.strftime(@record.dob, "%B %d, %Y")}</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Gender</span>
-        <span class="text-sm">{@record.gender}</span>
+      <div class="card w-[395px]">
+        <header>
+          <h2 class="text-lg flex items-center gap-4">
+            &nbsp;
+          </h2>
+        </header>
+        <section class="grid grid-cols-1 gap-4">
+          <dl class="grid grid-cols-2 gap-8">
+            <dt>TPN I.D:</dt>
+            <dd>{@record.tpn_id}</dd>
+            <dt>Birthday:</dt>
+            <dd>{Calendar.strftime(@record.dob, "%B %d, %Y")}</dd>
+            <dt>Gender:</dt>
+            <dd>{@record.gender}</dd>
+          </dl>
+        </section>
       </div>
     </div>
   <% end %>
@@ -55,37 +70,31 @@
     action={"#{get_url()}/#{@record.id}"}
     hx-post={"#{get_url()}/#{@record.id}"}
     hx-disabled-elt="#form-button"
+    hx-indicator="#form-button-indicator"
     hx-target="#main-contents"
     hx-on::config-request="formConfigRequest(event)"
     autocomplete="off"
   >
     <.flash_group flash={@flash} />
+    <section class="w-full rounded-lg border scroll-mt-16">
+      <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+        Patient Data
+      </header>
 
-    <div
-      x-data="{}"
-      x-init="
-    let dob_date = flatpickr('#patient_dob', {
-        altInput: true,
-        maxDate: 'today',
-        altFormat: 'F j, Y',
-        dateFormat: 'Y-m-d'
-    })
-    "
-      class="grid grid-cols-2 gap-4"
-    >
+    <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
       <.input field={f[:first_name]} type="text" label="First Name" required />
       <.input field={f[:last_name]} type="text" label="Last Name" required />
       <.input
         :if={!@record.has_admission}
         field={f[:dob]}
-        type="text"
+        type="date"
         label="Date of Birth"
         required
       />
       <.input
         :if={!@record.has_admission}
         field={f[:gender]}
-        type="select"
+        type="simple-select"
         label="Gender"
         options={@genders}
         required
@@ -96,22 +105,31 @@
       <.input field={f[:address_2]} type="text" label="Address 2" />
       <.input field={f[:city]} type="text" label="City" />
       <.input field={f[:state]} type="text" label="State" />
-      <.input field={f[:country]} type="text" label="State" />
+      <.input field={f[:country]} type="text" label="Country" />
       <.input field={f[:zip]} type="text" label="Zip" />
       <.input field={f[:phone]} type="text" label="Phone" />
-      <.input field={f[:notes]} type="textarea" label="Notes" />
+      
+      <div class="divider col-span-3 ">
+        <.input field={f[:notes]} type="textarea" label="Notes" />
+      </div>
     </div>
+    </section>
+
+    
 
     <%= if !@record.has_admission do %>
-      <div class="divider col-span-2 ">Networks</div>
-      <div class="grid grid-cols-2 gap-4">
+      <section class="w-full rounded-lg border scroll-mt-16">
+      <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+        Networks
+      </header>
+      <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         <.input
           :if={@is_admin}
           hx-get="/health_networks"
           hx-target="#patient_facility_id"
           hx-on:htmx-after-on-load="selectRemoveOptions('patient_campus_id');"
           field={f[:local_health_network_id]}
-          type="select"
+          type="simple-select"
           label="Local Health Network"
           prompt="Select..."
           options={@lhns}
@@ -124,7 +142,7 @@
           hx-target="#patient_campus_id"
           hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'bed')"
           field={f[:facility_id]}
-          type="select"
+          type="simple-select"
           label="Facility"
           prompt="Select..."
           options={@facilities}
@@ -134,18 +152,19 @@
         <.input
           :if={netwrok_access(@is_admin, "campus", @current_user)}
           field={f[:campus_id]}
-          type="select"
+          type="simple-select"
           label="Campus"
           prompt="Select..."
           options={@campuses}
           required
         />
       </div>
+    </section>
     <% end %>
 
     <:actions>
-      <button id="form-button" type="submit" class="w-28 btn btn-primary flex space-x-3">
-        Update <span class="loading loading-spinner loading-md htmx-indicator"></span>
+      <button id="form-button" type="submit" class="btn-sm btn-brand">
+        Update <.htmx_indicator id="form-button-indicator" />
       </button>
     </:actions>
   </.simple_form>

@@ -870,11 +870,12 @@ defmodule TpnWeb.CoreComponents do
   attr :form_id, :string, default: "table_modal_form_contents"
   attr :loader_id, :string, default: "table_modal_contents_indicator"
   attr :size, :string, default: "small", values: ["small", "large"]
+  attr :has_scroll, :boolean, default: false
 
   def table_form_modal(assigns) do
     ~H"""
     <dialog id={@id} class="dialog sm:max-w-[700px] max-h-[612px]">
-      <article class={["bg-dialog-background text-foreground", (@size == "large" && "max-w-[750px]")]}>
+      <article class={["bg-dialog-background text-foreground", (@size == "large" && "max-w-[750px]"), (@has_scroll && "scrollbar overflow-y-auto")]}>
         <.htmx_content_indicator id={@loader_id} />
         <div id={@form_id} class="hide-on-htmx-request"></div>
         <button

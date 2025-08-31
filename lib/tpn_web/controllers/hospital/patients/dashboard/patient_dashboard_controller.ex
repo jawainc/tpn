@@ -52,17 +52,16 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
       |> Map.put("tpn_id", PatientHelper.generate_tpn_number())
 
     case Patients.create_patient(params) do
-      {:ok, patient} ->
+      {:ok, _} ->
         conn
+        |> put_flash(:success, "Created successfully.")
         |> put_resp_header(
           "hx-trigger",
-          ClientEvents.generate_client_event(
-            "",
-            "success",
-            "Created successfully."
-          )
+          ClientEvents.generate_client_event("reloadDataTable")
         )
-        |> show_assigns(patient.id)
+        |> Networks.assign_networks()
+        |> assign(:genders, Patients.get_genders())
+        |> render(:new, changeset: new_change())
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
@@ -88,7 +87,7 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
           "hx-trigger",
           ClientEvents.generate_client_event(
             "",
-            "info",
+            "success",
             "Updated successfully."
           )
         )
@@ -114,7 +113,7 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
     conn
     |> put_resp_header(
       "hx-trigger",
-      ClientEvents.generate_client_event("reloadDataTable", "warning", "Cancelled successfully.")
+      ClientEvents.generate_client_event("reloadDataTable", "success", "Cancelled successfully.")
     )
     |> send_resp(204, "")
   end
@@ -147,8 +146,8 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
           if edit do
             date
           else
-            IO.inspect(date)
-            |> Timex.parse!("{Mfull} {D}, {YYYY}")
+            date
+            |> Timex.parse!("{YYYY}-{M}-{D}")
             |> Timex.to_date()
           end
 
