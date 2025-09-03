@@ -86,7 +86,7 @@ defmodule TpnWeb.CoreComponents do
   def simple_badge(assigns) do
     ~H"""
     <div class={[
-      "inline-flex items-center bg-opacity-10 px-2.5 py-0.5 text-xs rounded-md border w-fit",
+      "inline-flex items-center bg-opacity-10 px-2.5 py-0.5 text-xs font-thin rounded-md border w-fit",
       (@state && "bg-brand-300 text-brand-default border-brand-500") ||
         "bg-destructive-200 text-destructive-600 border-destructive-500"
     ]}>

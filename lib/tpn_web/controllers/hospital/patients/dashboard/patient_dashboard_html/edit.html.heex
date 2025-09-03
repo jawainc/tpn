@@ -23,6 +23,20 @@
       </ol>
     </div>
   </header>
+  <div class="flex justify-end -mb-6 mt-6">
+    <button
+      type="button"
+      hx-get={"#{get_url()}/#{@record.id}"}
+      hx-target="#main-contents"
+      hx-swap="innerHTML"
+      hx-indicator="#main-contents-indicator"
+      type="button"
+      class="btn-sm text-xs h-xs flex items-center gap-2"
+    >
+      <.icon_eye class="size-3" />
+      View Patient Details
+    </button>
+  </div>
   
   <%= if @record.has_admission do %>
     <div class="flex gap-6 mt-14">

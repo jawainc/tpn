@@ -82,3 +82,17 @@ input[type="date"]:before {
     transform: translateY(-50%);
     pointer-events: none;
 }
+
+.tab {
+    @apply px-5 py-3 gap-2 text-xs font-semibold text-muted-foreground flex items-center border-t-2 border-t-background-surface-300;
+    @apply border-l-1 border-l-background-surface-100 border-r-1 border-r-background-surface-100 cursor-pointer bg-background-surface-100/50;
+}
+
+.tab.active {
+    @apply border-t-white border-l-background-surface-300 border-r-background-surface-300;
+    @apply bg-background-surface-200 text-white cursor-default;
+}
+
+.tab:hover {
+    @apply text-white;
+}

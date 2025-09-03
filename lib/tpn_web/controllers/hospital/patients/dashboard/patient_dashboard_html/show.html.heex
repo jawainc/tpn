@@ -1,26 +1,108 @@
-<div class="mx-auto max-w-7xl">
+<div class="max-w-6xl mx-auto">
   <.header>
-    Patient
+    <h2>Patient Details</h2>
+    <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
+      <li class="inline-flex items-center gap-1.5">
+        <a
+          href=""
+          hx-get={"#{get_url()}"}
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+          class="hover:text-foreground transition-colors"
+        >
+          Patients
+        </a>
+      </li>
+      <li>
+        <.icon_angle_right class="size-3.5" />
+      </li>
+      <li class="inline-flex items-center gap-1.5">
+        <span class="text-foreground font-normal">{@patient.first_name} {@patient.last_name}</span>
+      </li>
+    </ol>
   </.header>
 
-  <div class="flex items-center justify-between">
-    <div class="breadcrumbs text-sm">
-      <ul>
-        <li>
-          <a
-            hx-get={"#{get_url()}"}
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
+  <div class="tab-container w-full">
+    <div class="flex justify-between items-center">
+      <div class="flex">
+        <div class="tab rounded-tl-sm active"><.icon_clipboard_list /> Patient <.simple_badge :if={@patient.is_admitted} state={true} label="Admitted" /></div>
+        <div class="tab"><.icon_in /> Admissions</div>
+        <div class="tab rounded-tr-sm"><.icon_squares /> Orders</div>       
+      </div>
+      <div class="flex justify-end gap-3">
+        <button
+          :if={!@patient.is_admitted}
+          hx-get={"/patients/#{@patient.id}/admissions/new"}
+          hx-target="#table_modal_form_contents"
+          hx-swap="innerHTML"
+          hx-indicator="#table_modal_contents_indicator"
+          hx-on:click="document.getElementById('table_modal_contents').showModal()"
+          type="button"
+          class="btn-sm btn-brand text-xs h-xs flex gap-2 items-center"
+        >
+          <.icon_plus class="size-3" />
+          New Admission
+        </button>
+        <button
+          :if={@patient.is_admitted}
+          class="btn-sm btn-brand text-xs h-xs flex gap-2 items-center"
+          hx-get={"/patients/#{@patient.id}/orders/new/"}
+          hx-target="#main-contents"
+          hx-indicator=".main-contents-loader"
+        >
+          <.icon_plus class="size-3" />
+          New Order
+        </button>
+        <.simple_form
+          :if={@patient.is_admitted and @can_be_discharged}
+          for={%{}}
+          action="/patients/admissions/discharge"
+          hx-post="/patients/admissions/discharge"
+          hx-disabled-elt="#discharge-form-button"
+          hx-indicator="#discharge-form-button-indicator"
+          hx-target="#main-contents"
+          no_styles={true}
+        >
+          <input type="hidden" name="patient_id" value={@patient.id} />
+          <button
+            type="submit"
+            id="discharge-form-button"
+            class="btn-sm text-xs h-xs flex gap-2 items-center"
           >
-            Patients
-          </a>
-        </li>
-        <li>Patient Details</li>
-      </ul>
+            <.icon_out class="size-3" />
+            Discharge Patient
+            <.htmx_indicator id="discharge-form-button-indicator" />
+          </button>
+        </.simple_form>
+        
+      </div>
+    </div>    
+  </div>
+  <div class="border border-background-surface-400 rounded-r-sm rounded-bl-sm mt-[-2px]">
+    <div id="patient-panel">
+      <div class="px-1.5 py-2 bg-background-surface-200 flex items-center gap-2">
+      <button
+          :if={!@patient.is_admitted}
+          type="button"
+          hx-get={"#{get_url()}/#{@patient.id}/edit"}
+          hx-target="#main-contents"
+          hx-swap="innerHTML"
+          hx-indicator="#main-contents-indicator"
+          type="button"
+          class="btn-sm-ghost text-xs h-xs flex items-center gap-2"
+        >
+          <.icon_edit class="size-3" />
+          Update Patient
+        </button>
+      </div>
+      <.patient_details patient={@patient} age={@age} />
     </div>
   </div>
 
-  <.patient_details patient={@patient} age={@age} can_be_discharged={@can_be_discharged} />
+  
+
+
+  
 
   <div class="flex items-center my-10 space-x-2">
     <button
@@ -46,4 +128,4 @@
   </div>
 </div>
 
-<.form_modal classes="max-w-3xl" />
+<.table_form_modal />

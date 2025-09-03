@@ -8,6 +8,7 @@
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
 >
+<section class="space-y-6">
   <.flash_group flash={@flash} />
   <input type="hidden" name="admission[admission_no]" value={@admission_no} />
   <input type="hidden" name="admission[age]" value={@age} />
@@ -62,7 +63,7 @@
       hx-target="#admission_facility_id"
       hx-on:htmx-after-on-load="selectRemoveOptions(['admission_campus_id', 'admission_ward_id', 'admission_room_id', 'admission_bed_id']);"
       field={f[:local_health_network_id]}
-      type="select"
+      type="simple-select"
       label="Local Health Network"
       prompt="Select..."
       options={@lhns}
@@ -75,7 +76,7 @@
       hx-target="#admission_campus_id"
       hx-on:htmx-after-on-load="selectRemoveOptions(['admission_ward_id', 'admission_room_id', 'admission_bed_id']);"
       field={f[:facility_id]}
-      type="select"
+      type="simple-select"
       label="Facility"
       prompt="Select..."
       options={@facilities}
@@ -86,7 +87,7 @@
       :if={netwrok_access(@is_admin, "campus", @current_user)}
       hx-on:change="triggerEvent(event.target.value, 'load_wards_with_mrn', 'campus', 'admission')"
       field={f[:campus_id]}
-      type="select"
+      type="simple-select"
       label="Campus"
       prompt="Select..."
       options={@campuses}
@@ -101,7 +102,7 @@
       hx-on:change="triggerEvent(event.target.value, 'load_rooms', 'room', 'admission')"
       hx-on:htmx-after-on-load="selectRemoveOptions(['admission_room_id', 'admission_bed_id'])"
       field={f[:ward_id]}
-      type="select"
+      type="simple-select"
       label="Ward"
       prompt="Select..."
       options={@wards}
@@ -116,7 +117,7 @@
       hx-on:change="triggerEvent(event.target.value, 'load_beds', 'room', 'admission')"
       hx-on:htmx-after-on-load="selectRemoveOptions('admission_bed_id')"
       field={f[:room_id]}
-      type="select"
+      type="simple-select"
       label="Room"
       prompt="Select..."
       options={@rooms}
@@ -130,7 +131,7 @@
       hx-target="#admission_bed_id"
       hx-on:htmx-after-on-load="selectRemoveOptions('admission_bed_id')"
       field={f[:bed_id]}
-      type="select"
+      type="simple-select"
       label="Bed"
       prompt="Select..."
       options={@beds}
@@ -177,14 +178,8 @@
     <.input field={f[:notes]} type="textarea" label="Notes" />
   </div>
 
-  <:actions>
-    <button id="form-button" type="submit" class="w-full btn btn-primary flex space-x-3">
-      <%= if(@edit) do %>
-        Update
-      <% else %>
-        Create
-      <% end %>
-      <span class="loading loading-spinner loading-md htmx-indicator"></span>
-    </button>
-  </:actions>
+  <footer class="flex justify-end space-x-3">
+      <.form_modal_buttons />
+    </footer>
+</section>
 </.simple_form>

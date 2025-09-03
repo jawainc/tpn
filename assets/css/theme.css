@@ -16,6 +16,7 @@
     --destructive-300: hsl(7.5deg 51.3% 15.3%);
     --destructive-200: hsl(10.9deg 23.4% 9.2%);
     --background: hsl(0deg 0% 9%);
+    --background-dash: hsl(0deg 0% 7.1%);
     --background-muted: hsl(0deg 0% 14.1%);
     --background-surface-400: hsl(0deg 0% 16.1%);
     --background-surface-300: hsl(0deg 0% 16.1%);
@@ -106,6 +107,7 @@
     --color-background-surface-100: var(--background-surface-100);
     --color-background-surface-75: var(--background-surface-75);
     --color-background: var(--background);
+    --color-background-dash: var(--background-dash);
     --color-dialog-background: var(--dialog-background);
     --color-foreground: var(--foreground);
     --color-foreground-light: var(--foreground-light);

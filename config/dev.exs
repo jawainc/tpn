@@ -2,11 +2,6 @@ import Config
 
 # Configure your database
 config :tpn, Tpn.Repo,
-  # username: System.get_env("DB_USER"),
-  # password: System.get_env("DB_PASSWORD"),
-  # hostname: System.get_env("DB_HOST"),
-  # database: System.get_env("DB"),
-  # pool_mode: "session",
   url: System.get_env("DATABASE_URLIPV6"),
   # url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
