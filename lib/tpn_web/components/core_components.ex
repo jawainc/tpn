@@ -200,7 +200,7 @@ defmodule TpnWeb.CoreComponents do
           hx-indicator="#search_indicator"
           type="text"
           name="filter"
-          class="input pl-8 h-xs text-xs"
+          class="input pl-8 h-xxs text-xxs"
           autocomplete="off"
           placeholder="Search..."
         />
@@ -574,15 +574,9 @@ defmodule TpnWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name} class="grid gap-3">
       <label for={@id} class="label">
-            {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
+        {@label} <span :if={Map.has_key?(@rest, :required)} class="text-error">*</span>
       </label>
-      <textarea
-        id={@id}
-        name={@name}
-        class="textarea"
-        aria-invalid={@errors != []}
-        {@rest}
-      ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      <textarea id={@id} name={@name} class="textarea" aria-invalid={@errors != []} {@rest}><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -875,7 +869,11 @@ defmodule TpnWeb.CoreComponents do
   def table_form_modal(assigns) do
     ~H"""
     <dialog id={@id} class="dialog sm:max-w-[700px] max-h-[612px]">
-      <article class={["bg-dialog-background text-foreground", (@size == "large" && "max-w-[750px]"), (@has_scroll && "scrollbar overflow-y-auto")]}>
+      <article class={[
+        "bg-dialog-background text-foreground",
+        @size == "large" && "max-w-[750px]",
+        @has_scroll && "scrollbar overflow-y-auto"
+      ]}>
         <.htmx_content_indicator id={@loader_id} />
         <div id={@form_id} class="hide-on-htmx-request"></div>
         <button
@@ -1223,12 +1221,12 @@ defmodule TpnWeb.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
-  attr :id, :string, default: ""
+  attr :id, :string, default: "form-button-indicator"
 
   def htmx_indicator(assigns) do
     ~H"""
     <svg
-      id="form-button-indicator"
+      id={@id}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -1277,7 +1275,7 @@ defmodule TpnWeb.CoreComponents do
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class={[@class, "animate-spin htmx-indicator "]}
+      class={[@class, "animate-spin htmx-indicator"]}
     >
       <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
     </svg>
@@ -1290,6 +1288,14 @@ defmodule TpnWeb.CoreComponents do
       <h3 class="mt-2 text-sm font-semibold">No Data</h3>
       <p class="mt-1 text-sm text-muted-foreground">Get started by creating a new.</p>
     </div>
+    """
+  end
+
+  attr :class, :string, default: ""
+
+  def divider_v(assigns) do
+    ~H"""
+    <div class={[@class, "w-px bg-border-control/80"]}></div>
     """
   end
 

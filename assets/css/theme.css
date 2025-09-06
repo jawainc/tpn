@@ -42,6 +42,7 @@
     --warning: hsl(38.9deg 100% 42.9%);
 
     --border: hsl(223.8136 0% 15.5096%);
+    --border-control: hsl(0deg 0% 22.4%);
     --input: hsl(223.8136 0% 20.3885%);
     --ring: hsl(0 0% 14.1%);
     --ring-border: hsl(0 0% 15%);
@@ -125,6 +126,7 @@
     --color-accent-foreground: var(--accent-foreground);
     --color-warning: var(--warning);
     --color-border: var(--border);
+    --color-border-control: var(--border-control);
     --color-input: var(--input);
     --color-ring: var(--ring);
     --color-ring-border: var(--ring-border);

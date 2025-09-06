@@ -1,44 +1,114 @@
-<div class="mx-auto max-w-7xl">
+<div class="max-w-6xl mx-auto">
   <.header>
-    Order
+    <h2>Patient Admission Order</h2>
+    <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
+      <li class="inline-flex items-center gap-1.5">
+        <a
+          href=""
+          hx-get="/patients/dashboard"
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+          class="hover:text-foreground transition-colors"
+        >
+          Patients
+        </a>
+      </li>
+      <li>
+        <.icon_angle_right class="size-3.5" />
+      </li>
+      <a
+        href=""
+        hx-get={"/patients/dashboard/#{@patient_id}"}
+        hx-target="#main-contents"
+        hx-indicator="#main-contents-indicator"
+        class="hover:text-foreground transition-colors"
+      >
+        Details
+      </a>
+      <li>
+        <.icon_angle_right class="size-3.5" />
+      </li>
+      <li class="inline-flex items-center gap-1.5">
+        <span class="text-foreground font-normal">
+          New Order
+        </span>
+      </li>
+    </ol>
   </.header>
 
-  <div class="flex items-center justify-between">
-    <div class="breadcrumbs text-sm">
-      <ul>
-        <li>
-          <a
-            hx-get="/patients/dashboard"
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
-          >
-            Patients
-          </a>
-        </li>
-        <li>
-        <a
-            hx-get={"/patients/dashboard/#{@patient_id}"}
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
-          >
-        Patient Details
-        </a>
-        </li>
-        <li>
-        New Order
-        </li>
-      </ul>
+  <div class="tabs tab-container w-full">
+    <div class="flex justify-between items-center">
+      <div role="tablist" class="flex tablist">
+        <div
+          role="tab"
+          id="order-tab"
+          aria-controls="order-panel"
+          aria-selected="true"
+          tabindex="0"
+          class="tab active"
+        >
+          <.icon_document /> Order Form
+        </div>
+        <div
+          role="tab"
+          id="patient-tab"
+          aria-controls="patient-panel"
+          aria-selected="false"
+          tabindex="0"
+          class="tab"
+        >
+          <.icon_user /> Patient
+        </div>
+        <div
+          role="tab"
+          id="admission-tab"
+          aria-controls="admission-panel"
+          aria-selected="false"
+          tabindex="0"
+          class="tab"
+        >
+          <.icon_clipboard_list /> Admission
+        </div>
+      </div>
     </div>
   </div>
-
-  <.order_patient_details patient={@patient} admission={@admission} />
-  <.order_form_new 
-    patient_id={@patient_id}
-    admission={@admission}
-    changeset={@changeset} 
-    vascular_accesses={@vascular_accesses} 
-    formularies={@formularies} 
-    templates={@templates}
-    />
-
+  <div class="border border-background-surface-400 rounded-r-sm rounded-bl-sm mt-[-1px]">
+    <div
+      role="tabpanel"
+      id="order-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="order-tab"
+      class="p-4"
+    >
+      <.order_form_new
+        patient_id={@patient_id}
+        admission={@admission}
+        changeset={@changeset}
+        vascular_accesses={@vascular_accesses}
+        formularies={@formularies}
+        templates={@templates}
+      />
+    </div>
+    <div
+      role="tabpanel"
+      id="patient-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="patient-tab"
+      hidden
+    >
+      <.order_patient_details patient={@patient} />
+    </div>
+    <div
+      role="tabpanel"
+      id="admission-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="admission-tab"
+      hidden
+    >
+      <.order_admission admission={@admission} />
+    </div>
+  </div>
 </div>

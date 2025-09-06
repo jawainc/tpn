@@ -1,105 +1,49 @@
-<h1 class="mt-10 mb-2 font-semibold">Patient Details</h1>
-<div class="md:flex space-x-2">
-    <div class="bg-gray-300/10 dark:bg-gray-700/10 px-10 py-4 flex flex-col items-center min-w-[300px] border border-white/5 ">
-    <div class="font-bold text-lg mt-5">{@patient.first_name} {@patient.last_name}</div>
-    <div class="mt-5 text-sm">
-        {@patient.tpn_id}
-    </div>
-    <div class="font-semibold text-gray-500 dark:text-gray-600">TPN ID</div>
-    <div class="mt-5 text-sm">
-        {@admission.admission_no}
-    </div>
-    <div class="font-semibold text-gray-500 dark:text-gray-600">Admission No</div>
-    <div class="mt-5 text-sm">
-        {@admission.mrn}
-    </div>
-    <div class="font-semibold text-gray-500 dark:text-gray-600">MRN</div>
-    </div>
-
-    <div class=" flex flex-col divide-y divide-white/5 divide-gray-300 flex-grow bg-gray-700/10 border border-white/5">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Gender</span>
-        <span class="text-sm">{@patient.gender}</span>
-        </div>
-
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Admission Age</span>
-        <span class="text-sm">{@admission.age}</span>
-        </div>
-
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Birthday</span>
-        <span class="text-sm">{Calendar.strftime(@patient.dob, "%B %d, %Y")}</span>
-        </div>
-
-        
+<div class="bg-background-surface-75/70 px-4 pt-4 text-muted-foreground text-sm">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-14">
+    <div class="divide-y-2 divide-background-surface-200">
+      <div class="flex justify-between py-4 gap-4 ">
+        <h3 class="font-semibold">Name:</h3>
+        <span>{@patient.first_name} {@patient.last_name}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">TPN I.D:</h3>
+        <span>{@patient.tpn_id}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Identity No:</h3>
+        <span>{@patient.identity_no || "--"}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Email:</h3>
+        <span>{@patient.email || "--"}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Phone:</h3>
+        <span>{@patient.phone || "--"}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Gender:</h3>
+        <span>{@patient.gender}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Birthday:</h3>
+        <span>{Calendar.strftime(@patient.dob, "%B %d, %Y")}</span>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Patient Type</span>
-        <span class="text-sm">{@admission.patient_type}</span>
-        </div>
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-500 dark:text-gray-600">Identity No</span>
-        <span class="text-sm">{@patient.identity_no}</span>
-        </div>  
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-500 dark:text-gray-600">Admission Date</span>
-        <span class="text-sm">{format_date(@admission.inserted_at)}</span>
-        </div>        
+    <div class="divide-y-2 divide-background-surface-200">
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Address:</h3>
+        <span>
+          {@patient.address_1}
+          {@patient.address_2}
+          {@patient.city} {@patient.state} {@patient.zip} {@patient.country}
+        </span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Notes:</h3>
+        <span>{raw(format_lines(@patient.notes))}</span>
+      </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Weight</span>
-        <span class="text-sm">{@admission.patient_weight} {@admission.weight_unit}</span>
-        </div>
-
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Height</span>
-        <span class="text-sm">{@admission.patient_height} {@admission.height_unit}</span>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">L.H.N</span>
-        <span class="text-sm">{@admission.local_health_network}</span>
-        </div>
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Facility</span>
-        <span class="text-sm">{@admission.facility}</span>
-        </div>
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Campus</span>
-        <span class="text-sm">{@admission.campus}</span>
-        </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Ward</span>
-        <span class="text-sm">{@admission.ward}</span>
-        </div>
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Room</span>
-        <span class="text-sm">{@admission.room}</span>
-        </div>
-        <div class="flex flex-col">
-        <span class="font-semibold text-gray-600">Bed</span>
-        <span class="text-sm">{@admission.bed}</span>
-        </div>
-    </div>
-    </div>
-    <div class="bg-gray-300/10 relative box-border dark:bg-gray-700/10 py-4 min-w-[300px] border border-gray-300 dark:border-slate-800">
-    <h3 class="font-semibold px-6 text-gray-500 dark:text-gray-600">Patient Notes</h3>
-    <div class="px-6 py-2 break-words max-w-[280px] text-sm">
-        {raw(format_lines(@patient.notes))}
-    </div>
-
-    <h3 class="font-semibold px-6 text-gray-500 dark:text-gray-600 mt-10">Admission Notes</h3>
-    <div class="px-6 py-2 break-words max-w-[280px] text-sm">
-        {raw(format_lines(@admission.notes))}
-    </div>
-    </div>
+  </div>
 </div>

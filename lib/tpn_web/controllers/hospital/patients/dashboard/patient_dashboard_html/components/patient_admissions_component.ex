@@ -14,21 +14,15 @@ defmodule TpnWeb.Hospital.Components.PatientAdmissionsComponent do
     <div
       hx-get={"/patients/#{@patient_id}/admissions"}
       hx-trigger="reloadPatientAdmissionTable"
-      hx-indicator="#admissions_loader"
+      hx-indicator="#admissions_details_loader"
       class="mt-10"
     >
-      <span id="admissions_loader" class="loading loading-spinner loading-md htmx-indicator"></span>
-      <h1 class="font-semibold">Admissions</h1>
       <%= if Enum.empty?(@admissions) do %>
         <.no_records />
       <% else %>
-        <.search
-          url={"/patients/admissions/search?patient_id=#{@patient_id}"}
-          target="#admissions_table"
-        />
-        <div id="admissions_table" class="mt-5 divide-y divide-white/5">
+        <div id="admissions_table" class="divide-y divide-white/5">
           <%= for admission <- @admissions do %>
-            <div class="relative flex items-start space-x-4 py-4">
+            <div class="relative flex items-start space-x-4 p-4">
               <div class="">
                 <div class="flex items-center gap-x-3">
                   <%= if !admission.discharged do %>

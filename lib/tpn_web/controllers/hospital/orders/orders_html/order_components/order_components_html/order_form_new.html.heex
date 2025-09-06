@@ -1,58 +1,112 @@
-<h1 class="mt-10 mb-2 font-semibold">Order Form</h1>
-
-<div>
-  <.simple_form
-    :let={f}
-    for={@changeset}
-    action={"/hospital/orders"}
-    method="post"
-    hx-disabled-elt="#form-button"
-    hx-target="#main-contents"
-    hx-on::config-request="formConfigRequest(event)"
-    autocomplete="off"
-  >
+<.simple_form
+  :let={f}
+  for={@changeset}
+  action="/hospital/orders"
+  method="post"
+  hx-disabled-elt="#form-button"
+  hx-target="#main-contents"
+  hx-on::config-request="formConfigRequest(event)"
+  autocomplete="off"
+>
+  <section class="space-y-6">
     <input type="hidden" name="patient_id" value={@patient_id} />
     <input type="hidden" name="admission_id" value={@admission.id} />
     <input type="hidden" name="order_type" value="PatientSpecific" />
 
-    <div
-      x-data="orderForm"
-      class="grid grid-cols-5 gap-2"
-    >   
-      <.input field={f[:vascular_access_id]} type="select" prompt="Select..." label="Vascular Access" options={@vascular_accesses} required />
-      <.input field={f[:formulary_id]} type="select" prompt="Select..." label="Enteral Product" options={@formularies} required />
-      <.input field={f[:enteral_dose]} type="number" label="Enteral Dose (mL)" step="0.1" required />
-      <.input field={f[:infusion_duration_type]} type="select" prompt="Select..." label="Infusion Duration Type" options={@infusion_duration_type} required />
-      <.input field={f[:lipid_infusion_duration_hours]} type="number" label="Lipid Infusion Duration (hours)" step="0.1" required />
-      <.input field={f[:tpn_infusion_type]} type="select" prompt="Select..." label="TPN Infusion Type" options={@tpn_infusion_types} required x-on:change="showTpnInfusionDuration = $event.target.value === '2_in_1'" />
+    <div x-data="orderForm" class="grid grid-cols-4 gap-4">
+      <.input
+        field={f[:vascular_access_id]}
+        type="simple-select"
+        prompt="Select..."
+        label="Vascular Access"
+        options={@vascular_accesses}
+        required
+      />
+      <.input
+        field={f[:formulary_id]}
+        type="simple-select"
+        prompt="Select..."
+        label="Enteral Product"
+        options={@formularies}
+        required
+      />
+      <.input
+        field={f[:enteral_dose]}
+        type="number"
+        label="Enteral Dose (mL)"
+        step="0.1"
+        required
+      />
+      <.input
+        field={f[:infusion_duration_type]}
+        type="simple-select"
+        prompt="Select..."
+        label="Infusion Duration Type"
+        options={@infusion_duration_type}
+        required
+      />
+      <.input
+        field={f[:lipid_infusion_duration_hours]}
+        type="number"
+        label="Lipid Infusion Duration (hours)"
+        step="0.1"
+        required
+      />
+      <.input
+        field={f[:tpn_infusion_type]}
+        type="simple-select"
+        prompt="Select..."
+        label="TPN Infusion Type"
+        options={@tpn_infusion_types}
+        required
+        x-on:change="showTpnInfusionDuration = $event.target.value === '2_in_1'"
+      />
       <template x-if="showTpnInfusionDuration">
-        <.input field={f[:tpn_infusion_duration_hours]} type="number" label="TPN Infusion Duration (hours)" step="1" required />
+        <.input
+          field={f[:tpn_infusion_duration_hours]}
+          type="number"
+          label="TPN Infusion Duration (hours)"
+          step="1"
+          required
+        />
       </template>
-      <.input field={f[:dosing_weight]} type="text" label="Dosing Weight" step="0.1" required value={"#{@admission.patient_weight} #{@admission.weight_unit}"} />
-      <.input 
-      hx-get="/order/template_products"
-      hx-trigger="change"
-      hx-target="#template_products_content"
-      hx-indicator="#template_products_loader"
-      field={f[:template_id]} 
-      type="select" 
-      prompt="Select..." 
-      label="Template" 
-      options={@templates} required />
+      <.input
+        field={f[:dosing_weight]}
+        type="text"
+        label="Dosing Weight"
+        step="0.1"
+        required
+        value={"#{@admission.patient_weight} #{@admission.weight_unit}"}
+      />
+      <.input
+        hx-get="/order/template_products"
+        hx-trigger="change"
+        hx-target="#template_products_content"
+        hx-indicator="#template_products_loader"
+        field={f[:template_id]}
+        type="simple-select"
+        prompt="Select..."
+        label="Template"
+        options={@templates}
+        required
+      />
     </div>
+  </section>
 
-    <div class="mt-16">
-      <h2 class="font-semibold">Template</h2>
-      <span id="template_products_loader" class="mx-auto my-12 loading loading-spinner loading-md htmx-indicator"></span>
-      <div id="template_products_content">
-        <div class="text-center my-10">Select a template to view products</div>
+  <section class="mt-8">
+    <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+      Template Products
+    </header>
+    <div id="template_products_content">
+      <div class="text-center my-10 text-sm text-muted-foreground">
+        Select a template to view products
       </div>
     </div>
+  </section>
 
-    <:actions>
-      <button id="form-button" type="submit" class="w-28 btn btn-primary flex space-x-3">
-        Create <span class="loading loading-spinner loading-md htmx-indicator"></span>
-      </button>
-    </:actions>
-  </.simple_form>
-</div>
+  <footer class="flex justify-end space-x-3 mt-8">
+    <button id="form-button" type="submit" class="btn-sm btn-brand">
+      Create
+    </button>
+  </footer>
+</.simple_form>

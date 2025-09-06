@@ -17,17 +17,55 @@
         <.icon_angle_right class="size-3.5" />
       </li>
       <li class="inline-flex items-center gap-1.5">
-        <span class="text-foreground font-normal">{@patient.first_name} {@patient.last_name}</span>
+        <span class="text-foreground font-normal">
+          {@patient.first_name} {@patient.last_name}
+        </span>
       </li>
     </ol>
   </.header>
 
-  <div class="tab-container w-full">
+  <div class="tabs tab-container w-full">
     <div class="flex justify-between items-center">
-      <div class="flex">
-        <div class="tab rounded-tl-sm active"><.icon_clipboard_list /> Patient <.simple_badge :if={@patient.is_admitted} state={true} label="Admitted" /></div>
-        <div class="tab"><.icon_in /> Admissions</div>
-        <div class="tab rounded-tr-sm"><.icon_squares /> Orders</div>       
+      <div role="tablist" class="flex tablist">
+        <div
+          role="tab"
+          id="patient-tab"
+          aria-controls="patient-panel"
+          aria-selected="true"
+          tabindex="0"
+          class="tab active"
+        >
+          <.icon_clipboard_list /> Patient
+          <.simple_badge :if={@patient.is_admitted} state={true} label="Admitted" />
+        </div>
+        <div
+          role="tab"
+          id="admissions-tab"
+          hx-get={"/patients/#{@patient.id}/admissions/list"}
+          hx-target="#admissions_details_container"
+          hx-on:htmx:after-request="handleIconLoader('admissions_details_loader', false)"
+          hx-on:click="handleIconLoader('admissions_details_loader', true)"
+          aria-controls="admissions-panel"
+          aria-selected="false"
+          tabindex="1"
+          class="tab"
+        >
+          <.icon_in /> Admissions
+        </div>
+        <div
+          role="tab"
+          id="orders-tab"
+          hx-get={"/patients/#{@patient.id}/orders/list"}
+          hx-target="#orders_details_container"
+          hx-on:htmx:after-request="handleIconLoader('orders_details_loader', false)"
+          hx-on:click="handleIconLoader('orders_details_loader', true)"
+          aria-controls="orders-panel"
+          aria-selected="false"
+          tabindex="2"
+          class="tab"
+        >
+          <.icon_squares /> Orders
+        </div>
       </div>
       <div class="flex justify-end gap-3">
         <button
@@ -38,20 +76,19 @@
           hx-indicator="#table_modal_contents_indicator"
           hx-on:click="document.getElementById('table_modal_contents').showModal()"
           type="button"
-          class="btn-sm btn-brand text-xs h-xs flex gap-2 items-center"
+          class="btn-sm btn-brand text-xs h-xxs flex gap-2 items-center"
         >
-          <.icon_plus class="size-3" />
-          New Admission
+          <.icon_plus class="size-3" /> New Admission
         </button>
         <button
           :if={@patient.is_admitted}
-          class="btn-sm btn-brand text-xs h-xs flex gap-2 items-center"
+          class="btn-sm btn-brand text-xs h-xxs flex gap-2 items-center"
           hx-get={"/patients/#{@patient.id}/orders/new/"}
           hx-target="#main-contents"
-          hx-indicator=".main-contents-loader"
+          hx-swap="innerHTML"
+          hx-indicator="#main-contents-indicator"
         >
-          <.icon_plus class="size-3" />
-          New Order
+          <.icon_plus class="size-3" /> New Order
         </button>
         <.simple_form
           :if={@patient.is_admitted and @can_be_discharged}
@@ -67,21 +104,25 @@
           <button
             type="submit"
             id="discharge-form-button"
-            class="btn-sm text-xs h-xs flex gap-2 items-center"
+            class="btn-sm text-xs h-xxs flex gap-2 items-center"
           >
-            <.icon_out class="size-3" />
-            Discharge Patient
+            <.icon_out class="size-3" /> Discharge Patient
             <.htmx_indicator id="discharge-form-button-indicator" />
           </button>
         </.simple_form>
-        
       </div>
-    </div>    
+    </div>
   </div>
-  <div class="border border-background-surface-400 rounded-r-sm rounded-bl-sm mt-[-2px]">
-    <div id="patient-panel">
-      <div class="px-1.5 py-2 bg-background-surface-200 flex items-center gap-2">
-      <button
+  <div class="border border-background-surface-400 rounded-r-sm rounded-bl-sm mt-[-1px]">
+    <div
+      role="tabpanel"
+      id="patient-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="patient-tab"
+    >
+      <div class="px-2 py-2 bg-background-surface-200 flex items-center gap-2 min-h-[44px]">
+        <button
           :if={!@patient.is_admitted}
           type="button"
           hx-get={"#{get_url()}/#{@patient.id}/edit"}
@@ -89,43 +130,62 @@
           hx-swap="innerHTML"
           hx-indicator="#main-contents-indicator"
           type="button"
-          class="btn-sm-ghost text-xs h-xs flex items-center gap-2"
+          class="btn-sm-ghost text-xs h-xxs flex items-center gap-2"
         >
-          <.icon_edit class="size-3" />
-          Update Patient
+          <.icon_edit class="size-3" /> Update Patient
         </button>
       </div>
       <.patient_details patient={@patient} age={@age} />
     </div>
-  </div>
-
-  
-
-
-  
-
-  <div class="flex items-center my-10 space-x-2">
-    <button
-            hx-get={"/patients/#{@patient.id}/admissions/list"}
-            hx-target="#patient_details_container"
-            hx-indicator="#patient_details_loader"
-            type="button"
-            class="btn btn-soft btn-xs btn-neutral rounded-sm"
-    >Admissions</button>
-
-    <button
-            hx-get={"/patients/#{@patient.id}/orders/list"}
-            hx-target="#patient_details_container"
-            hx-indicator="#patient_details_loader"
-            type="button"
-            class="btn btn-soft btn-xs btn-success rounded-sm"
-    >Orders</button>
-  </div>
-
-  <div class="mt-10">
-    <span id="patient_details_loader" class="loading loading-spinner loading-lg mx-auto mt10 block htmx-indicator "></span>
-    <div id="patient_details_container"></div>
+    <div
+      role="tabpanel"
+      id="admissions-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="admissions-tab"
+      hidden
+    >
+      <div class="px-2 py-1 bg-background-surface-200 flex items-center gap-2 min-h-[44px]">
+        <button
+          type="button"
+          hx-get={"/patients/#{@patient.id}/admissions/list"}
+          hx-target="#admissions_details_container"
+          hx-on:htmx:after-request="handleIconLoader('admissions_details_loader', false)"
+          hx-on:click="handleIconLoader('admissions_details_loader', true)"
+          class="btn-sm-ghost text-xs h-xs flex items-center gap-2"
+        >
+          <.icon_loader id="admissions_details_loader" />
+        </button>
+        <.divider_v class="h-[20px]" />
+        <.search
+          url={"/patients/admissions/search?patient_id=#{@patient.id}"}
+          target="#admissions_details_container"
+        />
+      </div>
+      <div id="admissions_details_container"></div>
+    </div>
+    <div
+      role="tabpanel"
+      id="orders-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="orders-tab"
+      hidden
+    >
+      <div class="px-2 py-1 bg-background-surface-200 flex items-center gap-2 min-h-[44px]">
+        <button
+          type="button"
+          hx-get={"/patients/#{@patient.id}/orders/list"}
+          hx-target="#orders_details_container"
+          hx-on:htmx:after-request="handleIconLoader('orders_details_loader', false)"
+          hx-on:click="handleIconLoader('orders_details_loader', true)"
+          class="btn-sm-ghost text-xs h-xs flex items-center gap-2"
+        >
+          <.icon_loader id="orders_details_loader" />
+        </button>
+      </div>
+      <div id="orders_details_container"></div>
+    </div>
   </div>
 </div>
-
 <.table_form_modal />

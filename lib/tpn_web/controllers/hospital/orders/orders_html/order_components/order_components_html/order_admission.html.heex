@@ -1,0 +1,57 @@
+<div class="bg-background-surface-75/70 px-4 pt-4 text-muted-foreground text-sm">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-14">
+    <div class="divide-y-2 divide-background-surface-200">
+      <div class="flex justify-between py-4 gap-4 ">
+        <h3 class="font-semibold">Admission No:</h3>
+        <span>{@admission.admission_no}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">MRN:</h3>
+        <span>{@admission.mrn}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Admission Date:</h3>
+        <span>{format_date(@admission.inserted_at)}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Patient Type:</h3>
+        <span>{@admission.patient_type}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Admission Age:</h3>
+        <span>{@admission.age}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Local Health Network:</h3>
+        <span>{@admission.local_health_network}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Facility:</h3>
+        <span>{@admission.facility}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Campus:</h3>
+        <span>{@admission.campus}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Ward:</h3>
+        <span>{@admission.ward}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Room:</h3>
+        <span>{@admission.room}</span>
+      </div>
+      <div class="flex justify-between py-4 gap-4">
+        <h3 class="font-semibold">Bed:</h3>
+        <span>{@admission.bed}</span>
+      </div>
+    </div>
+
+    <div class="divide-y-2 divide-background-surface-200">
+      <div class="flex flex-col py-4 gap-4">
+        <h3 class="font-semibold">Admission Notes:</h3>
+        <span>{raw(format_lines(@admission.notes))}</span>
+      </div>
+    </div>
+  </div>
+</div>

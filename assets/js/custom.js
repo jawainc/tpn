@@ -174,3 +174,27 @@ window.swapElementStyle = function (id) {
   const ids = ["select-container-template_product_formulary_id"];
   return ids.includes(id) ? "outerHTML" : "innerHTML";
 };
+
+window.handleIconLoader = function (id, spin = true, container = "") {
+  const icon = document.getElementById(id);
+  if (!icon) {
+    return;
+  }
+
+  if (spin) {
+    icon.classList.add("animate-spin");
+  } else {
+    icon.classList.remove("animate-spin");
+  }
+
+  if (container) {
+    const panel = document.getElementById(container);
+    if (panel && spin) {
+      panel.classList.add("hidden");
+    }
+
+    if (panel && !spin) {
+      panel.classList.remove("hidden");
+    }
+  }
+};

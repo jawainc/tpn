@@ -20,6 +20,7 @@ body {
 .htmx-indicator {
     display: none;
 }
+
 .htmx-request.htmx-indicator {
     display: inline;
 }
@@ -29,13 +30,22 @@ body {
 }
 
 /* apply display none to next element of htmx-indicator */
-.htmx-request + .hide-on-htmx-request {
+.htmx-request+.hide-on-htmx-request {
     display: none;
 }
 
 .h-xs {
     @apply h-[28px];
 }
+
+.h-xxs {
+    @apply h-[24px];
+}
+
+.text-xxs {
+    @apply text-[11px];
+}
+
 .btn-brand {
     @apply bg-brand/70 hover:bg-brand text-brand-foreground border border-brand-default/20 hover:border-brand-default/80;
 }
@@ -56,13 +66,14 @@ body {
     background-color: hsl(var(--color-secondary));
 }
 
-.dialog > .article {
+.dialog>.article {
     @apply bg-dialog-background text-foreground;
 }
 
 input[type="date"] {
     position: relative;
 }
+
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     display: block;
@@ -78,18 +89,22 @@ input[type="date"]:before {
     position: absolute;
     right: 10px;
     top: 55%;
-    width: 20px;    
+    width: 20px;
     transform: translateY(-50%);
     pointer-events: none;
 }
 
-.tab {
-    @apply px-5 py-3 gap-2 text-xs font-semibold text-muted-foreground flex items-center border-t-2 border-t-background-surface-300;
-    @apply border-l-1 border-l-background-surface-100 border-r-1 border-r-background-surface-100 cursor-pointer bg-background-surface-100/50;
+.tablist {
+    @apply rounded-none;
 }
 
-.tab.active {
-    @apply border-t-white border-l-background-surface-300 border-r-background-surface-300;
+.tab {
+    @apply px-5 py-5 gap-2 text-xs text-muted-foreground flex items-center border-t-2 border-t-background-surface-300;
+    @apply border-x-1 border-x-background-surface-100 cursor-pointer bg-background-surface-100/50 rounded-none;
+}
+
+.tab[aria-selected="true"] {
+    @apply border-t-white border-x-background-surface-300;
     @apply bg-background-surface-200 text-white cursor-default;
 }
 

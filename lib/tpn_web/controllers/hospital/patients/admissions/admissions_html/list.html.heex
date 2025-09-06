@@ -1,15 +1,102 @@
-<div class="mt-10">
-  <span id="admissions_loader" class="loading loading-spinner loading-md htmx-indicator"></span>
-  <h1 class="font-semibold">Admissions</h1>
-  <%= if Enum.empty?(@admissions) do %>
-  <.no_records />
-  <% else %>
-  <.search
-  url={"/patients/admissions/search?patient_id=#{@patient_id}"}
-  target="#admissions_table"
-  />
-  <div id="admissions_table" class="mt-5 divide-y divide-white/5">
-    <.admission_records admissions={@admissions} />
+<%= if Enum.empty?(@admissions) do %>
+  <div class="p-10 w-full h-full flex items-center justify-center">
+    <.no_records />
   </div>
-  <% end %>
-</div>
+<% else %>
+  <div id="admissions_table" class="divide-y divide-white/5">
+    <%= for admission <- @admissions do %>
+      <div class="relative flex items-center space-x-12 p-4">
+        <span class="text-sm">Admission No: {admission.admission_no}</span>
+        <div class="flex items-center gap-x-4">
+          <div id={"admission-details-popover-#{admission.id}"} class="popover">
+            <button
+              id="admission-details-popover-trigger-#{admission.id}"
+              type="button"
+              aria-expanded="false"
+              aria-controls="admission-details-popover-popover-#{admission.id}"
+              class="btn-sm-outline text-xxs h-xxs"
+            >
+              Details
+            </button>
+            <div
+              id="admission-details-popover-popover-#{admission.id}"
+              data-popover
+              aria-hidden="true"
+              class="w-80"
+            >
+              <div class="grid gap-4">
+                <header class="grid gap-1.5">
+                  <h4 class="leading-none font-medium text-sm">Admission Details</h4>
+                </header>
+                <div class="flex flex-col gap-2 text-xs">
+                  <p>MRN: {admission.mrn}</p>
+                  <p>Age: {admission.age}</p>
+                  <p :if={admission.discharged}>
+                    Discharge Date: {format_date(admission.discharged_at)}
+                  </p>
+                  <p>Admission Date: {format_date(admission.inserted_at)}</p>
+                  <p>Patient Type: {admission.patient_type}</p>
+                  <p>Weight: {admission.patient_weight}{admission.weight_unit}</p>
+                  <p>Height: {admission.patient_height}{admission.height_unit}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id={"admission-network-popover-#{admission.id}"} class="popover">
+            <button
+              id="admission-network-popover-trigger-#{admission.id}"
+              type="button"
+              aria-expanded="false"
+              aria-controls="admission-network-popover-popover-#{admission.id}"
+              class="btn-sm-outline text-xxs h-xxs"
+            >
+              Networks
+            </button>
+            <div
+              id="admission-network-popover-popover-#{admission.id}"
+              data-popover
+              aria-hidden="true"
+              class="w-80"
+            >
+              <div class="grid gap-4">
+                <header class="grid gap-1.5">
+                  <h4 class="leading-none font-medium text-sm">Network Details</h4>
+                  <p class="text-muted-foreground text-xs">admission location details</p>
+                </header>
+                <div class="flex flex-col gap-2 text-sm">
+                  <p>Local Health Network: {admission.local_health_network}</p>
+                  <p>Facility: {admission.facility}</p>
+                  <p>Campus: {admission.campus}</p>
+                  <p>Ward: {admission.ward}</p>
+                  <p>Room: {admission.room}</p>
+                  <p>Bed: {admission.bed}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id={"admission-network-popover-#{admission.id}"} class="popover">
+            <button
+              id="admission-network-popover-trigger-#{admission.id}"
+              type="button"
+              aria-expanded="false"
+              aria-controls="admission-network-popover-popover-#{admission.id}"
+              class="btn-sm-outline text-xxs h-xxs"
+            >
+              Notes
+            </button>
+            <div
+              id="admission-network-popover-popover-#{admission.id}"
+              data-popover
+              aria-hidden="true"
+              class="w-80"
+            >
+              <p class="text-xs">{raw(format_lines(admission.notes))}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
