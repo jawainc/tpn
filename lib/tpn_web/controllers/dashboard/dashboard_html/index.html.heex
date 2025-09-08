@@ -1,9 +1,9 @@
 <.app_menu is_admin={@is_admin} user_access_level={@user_access_level} />
-<main>
+<main class="min-h-screen flex flex-col overflow-hidden">
   <.app_header name={@current_user.first_name} />
-  <div class="py-10">
+  <div class="py-10 grow overflow-y-auto scrollbar flex flex-col">
     <.htmx_content_indicator id="main-contents-indicator" />
-    <div id="main-contents" class="px-4 sm:px-6 lg:px-8 main-contents hide-on-htmx-request">
+    <div id="main-contents" class="px-4 sm:px-6 lg:px-8 main-contents hide-on-htmx-request grow">
       <div class="mx-auto max-w-7xl">
         <.header>
           Dashboard

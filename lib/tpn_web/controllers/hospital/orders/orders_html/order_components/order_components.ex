@@ -23,9 +23,16 @@ defmodule TpnWeb.Orders.OrderComponents do
   ]
 
   attr :patient, :map, required: true
-  attr :admission, :map, required: true
 
   def order_patient_details(assigns)
+
+  attr :admission, :map, required: true
+
+  def order_admission(assigns)
+
+  attr :admission, :map, required: true
+  attr :patient, :map, required: true
+  def order_side_bar(assigns)
 
   attr :changeset, :map, required: true
   attr :vascular_accesses, :list, required: true
@@ -49,5 +56,4 @@ defmodule TpnWeb.Orders.OrderComponents do
     {:ok, formatted_date} = Timex.format(date, "{M}/{D}/{YYYY} {h12}:{m} {AM}")
     formatted_date
   end
-
 end

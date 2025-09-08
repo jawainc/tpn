@@ -1,0 +1,170 @@
+<aside class="w-[250px] shrink-0">
+  <div class="flex flex-col gap-4">
+    <span class="text-muted-foreground/70 text-xs font-medium">
+      Patient
+    </span>
+    <div class="grid gap-1">
+      <span class="text-xs font-medium text-muted-foreground">
+        Name
+      </span>
+      <span class="text-xs text-white">
+        {@patient.first_name} {@patient.last_name}
+      </span>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          T.P.N ID
+        </span>
+        <span class="text-xs text-white">
+          {@patient.tpn_id}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Identity No
+        </span>
+        <span class="text-xs text-white">
+          {@patient.identity_no || "--"}
+        </span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Email
+        </span>
+        <span class="text-xs text-white">
+          {@patient.email || "--"}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Phone
+        </span>
+        <span class="text-xs text-white">
+          {@patient.phone || "--"}
+        </span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Gender
+        </span>
+        <span class="text-xs text-white">
+          {@patient.gender}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Birthdate
+        </span>
+        <span class="text-xs text-white">
+          {Calendar.strftime(@patient.dob, "%B %d, %Y")}
+        </span>
+      </div>
+    </div>
+    <span class="text-muted-foreground/70 text-xs font-medium mt-4">
+      Admission
+    </span>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Admission No
+        </span>
+        <span class="text-xs text-white">
+          {@admission.admission_no}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          MRN
+        </span>
+        <span class="text-xs text-white">
+          {@admission.mrn}
+        </span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Admission Date
+        </span>
+        <span class="text-xs text-white">
+          {Calendar.strftime(@admission.inserted_at, "%B %d, %Y")}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Patient Type
+        </span>
+        <span class="text-xs text-white">
+          {@admission.patient_type}
+        </span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Admission Age
+        </span>
+        <span class="text-xs text-white">
+          {@admission.age}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Local Health Network
+        </span>
+        <span class="text-xs text-white">
+          {@admission.local_health_network}
+        </span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Facility
+        </span>
+        <span class="text-xs text-white">
+          {@admission.facility}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Campus
+        </span>
+        <span class="text-xs text-white">
+          {@admission.campus}
+        </span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Ward
+        </span>
+        <span class="text-xs text-white">
+          {@admission.ward}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Room
+        </span>
+        <span class="text-xs text-white">
+          {@admission.room}
+        </span>
+      </div>
+      <div class="grid gap-1">
+        <span class="text-xs font-medium text-muted-foreground">
+          Bed
+        </span>
+        <span class="text-xs text-white">
+          {@admission.bed}
+        </span>
+      </div>
+    </div>
+  </div>
+</aside>
