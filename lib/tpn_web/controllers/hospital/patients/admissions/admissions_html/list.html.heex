@@ -95,6 +95,18 @@
               <p class="text-xs">{raw(format_lines(admission.notes))}</p>
             </div>
           </div>
+
+          <button
+            type="button"
+            hx-get={"/patients/admissions/#{admission.id}/orders/list"}
+            hx-target="#slidingPanel-content"
+            hx-swap="innerHTML"
+            hx-indicator="#slidingPanel-loader"
+            onclick="openSlidingPanel()"
+            class="btn-sm-outline text-xxs h-xxs"
+          >
+            Admission orders
+          </button>
         </div>
       </div>
     <% end %>

@@ -15,6 +15,11 @@ defmodule TpnWeb.Hospital.AdmissionsController do
     end
   end
 
+  def orders(conn, %{"admission_id" => admission_id}) do
+    orders = Orders.list_orders_by_admission_id(admission_id)
+    render(conn, :orders, orders: orders)
+  end
+
   def show(conn, %{"id" => id, "admission_id" => admission_id}) do
     patient = Patients.get_patient_view(id)
     admission = Admissions.get_admission_view(admission_id)

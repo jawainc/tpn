@@ -1306,4 +1306,30 @@ defmodule TpnWeb.CoreComponents do
   def generate_paging_link(url, meta, "prev") do
     "#{url}?page=#{meta.previous_page}&table=1&filter=#{meta.filter}&order_by=#{meta.order_by}&order_direction=#{meta.order_direction}"
   end
+
+  attr :title, :string, required: true
+
+  def right_sliding_panel(assigns) do
+    ~H"""
+    <div id="panelOverlay" class="panel-overlay" onclick="closeSlidingPanel()"></div>
+    <div id="slidingPanel" class="sliding-panel">
+      <div class="panel-header">
+        <h3 class="text-sm font-semibold text-foreground">{@title}</h3>
+        <button
+          type="button"
+          onclick="closeSlidingPanel()"
+          class="panel-close-btn text-white hover:text-gray-300"
+        >
+          <.icon_x_mark />
+        </button>
+      </div>
+      <div class="bg-background-dash pt-4">
+        <div id="slidingPanel-loader" class="mt-12 htmx-indicator">
+          <.icon_simple_spinner class="mx-auto text-foreground size-6" />
+        </div>
+        <div id="slidingPanel-content" class="panel-content hide-on-htmx-request"></div>
+      </div>
+    </div>
+    """
+  end
 end

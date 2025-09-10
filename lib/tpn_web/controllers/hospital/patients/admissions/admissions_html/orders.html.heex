@@ -1,0 +1,13 @@
+<%= if Enum.empty?(@orders) do %>
+  <div class="p-10 w-full h-full flex items-center justify-center text-center text-muted-foreground text-sm">
+    No orders found.
+  </div>
+<% else %>
+  <div id="orders_table" class="divide-y divide-white/5">
+    <%= for order <- @orders do %>
+      <div class="relative flex items-center space-x-12 p-4">
+        <span class="text-sm">{order.id}</span>
+      </div>
+    <% end %>
+  </div>
+<% end %>
