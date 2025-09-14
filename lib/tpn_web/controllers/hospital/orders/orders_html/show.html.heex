@@ -1,0 +1,32 @@
+<div class="mx-auto max-w-7xl">
+  <.header>
+    Orders
+  </.header>
+
+  <div class="flex items-center gap-4">
+    <div class="custom-card flex items-center gap-2 cursor-pointer">
+      <span class="badge-outline bg-background-dash py-1"><.icon_boxes /></span>
+      <div class="text-sm text-foreground">
+        Bulk Order
+        <p class="text-xs text-muted-foreground">Order multiple batches</p>
+      </div>
+    </div>
+    <div
+      hx-get="/orders/admissions"
+      hx-target="#slidingPanel-content"
+      hx-indicator="#slidingPanel-loader"
+      onclick="openSlidingPanel()"
+      class="custom-card flex items-center gap-2 cursor-pointer"
+    >
+      <span class="badge-outline bg-background-dash py-1">
+        <.icon_clipboard_plus />
+      </span>
+      <div class="text-sm text-foreground">
+        Admission Order
+        <p class="text-xs text-muted-foreground">Order for patient admission</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<.right_sliding_panel title="Admissions" />

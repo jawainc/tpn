@@ -140,3 +140,7 @@ input[type="date"]:before {
 .panel-close-btn {
     @apply p-2 hover:bg-background-surface-300 rounded-md transition-colors duration-200;
 }
+
+.custom-card {
+    @apply overflow-hidden rounded-lg text-card-foreground shadow-sm grow bg-background-surface-100 p-3 transition-colors hover:bg-background-surface-200 border border-border hover:border-border-control;
+}

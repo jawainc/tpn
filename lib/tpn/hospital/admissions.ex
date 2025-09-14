@@ -4,12 +4,54 @@ defmodule Tpn.Admissions do
   alias Tpn.Repo
   alias Tpn.{Admission, AdmissionView}
   alias Tpn.PatientMrn
-  alias Tpn.Helpers.PaginationHelper
 
-  def list_admissions(%{"patient_id" => patient_id} = params) do
+  def list_admissions(%{"patient_id" => patient_id} = _params) do
     admissions =
       from(a in AdmissionView)
       |> where([a], a.patient_id == ^patient_id)
+      |> order_by([a], desc: a.inserted_at)
+      |> Repo.all()
+
+    {:ok, admissions}
+  end
+
+  def list_admissions_for_user(_, _, campus_id) when not is_nil(campus_id) do
+    admissions =
+      from(a in AdmissionView)
+      |> where([a], a.campus_id == ^campus_id)
+      |> where([a], a.discharged == false)
+      |> order_by([a], desc: a.inserted_at)
+      |> Repo.all()
+
+    {:ok, admissions}
+  end
+
+  def list_admissions_for_user(_, facility_id, _) when not is_nil(facility_id) do
+    admissions =
+      from(a in AdmissionView)
+      |> where([a], a.facility_id == ^facility_id)
+      |> where([a], a.discharged == false)
+      |> order_by([a], desc: a.inserted_at)
+      |> Repo.all()
+
+    {:ok, admissions}
+  end
+
+  def list_admissions_for_user(lhn_id, _, _) when not is_nil(lhn_id) do
+    admissions =
+      from(a in AdmissionView)
+      |> where([a], a.local_health_network_id == ^lhn_id)
+      |> where([a], a.discharged == false)
+      |> order_by([a], desc: a.inserted_at)
+      |> Repo.all()
+
+    {:ok, admissions}
+  end
+
+  def list_admissions_for_user(_, _, _) do
+    admissions =
+      from(a in AdmissionView)
+      |> where([a], a.discharged == false)
       |> order_by([a], desc: a.inserted_at)
       |> Repo.all()
 

@@ -4,6 +4,7 @@ defmodule TpnWeb.Orders.OrderComponents do
   use Phoenix.Component
   import Phoenix.HTML
   import TpnWeb.CoreComponents
+  import TpnWeb.IconComponents
 
   embed_templates "order_components_html/*"
 

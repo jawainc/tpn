@@ -3,6 +3,14 @@ defmodule Tpn.Orders do
   alias Tpn.Repo
   alias Tpn.Order
 
+  def list_orders() do
+    orders =
+      from(o in Order, order_by: [desc: o.id])
+      |> Repo.all()
+
+    orders
+  end
+
   def list_orders_by_admission_id(admission_id) do
     orders =
       from(o in Order)

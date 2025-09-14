@@ -97,7 +97,10 @@
     <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
       Template Products
     </header>
-    <div id="template_products_content">
+    <div id="template_products_loader" class="htmx-indicator">
+      <.icon_simple_spinner class="mx-auto mt-12 text-foreground size-6" />
+    </div>
+    <div id="template_products_content" class="hide-on-htmx-request">
       <div class="text-center my-10 text-sm text-muted-foreground">
         Select a template to view products
       </div>

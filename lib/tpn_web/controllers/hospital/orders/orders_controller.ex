@@ -17,9 +17,30 @@ defmodule TpnWeb.Hospital.OrdersController do
     Settings
   }
 
+  alias TpnWeb.Helpers.Networks
+
   def index(conn, params) do
     records = Orders.list_orders_by_patient_id(params["patient_id"])
     render(conn, :list, records: records)
+  end
+
+  def show(conn, _params) do
+    orders = Orders.list_orders()
+    render(conn, :show, orders: orders)
+  end
+
+  @doc """
+  This function is used to get the admissions for the user based on the networks.
+  """
+  def admissions(conn, _params) do
+    case Networks.get_user_network_access(conn) do
+      {:ok, %{lhn_id: lhn_id, facility_id: facility_id, campus_id: campus_id}} ->
+        {:ok, admissions} = Admissions.list_admissions_for_user(lhn_id, facility_id, campus_id)
+        render(conn, :admissions, admissions: admissions)
+
+      {:error, _} ->
+        render(conn, :admissions, admissions: [])
+    end
   end
 
   # create order

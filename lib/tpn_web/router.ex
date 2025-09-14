@@ -108,6 +108,8 @@ defmodule TpnWeb.Router do
     get "/patients/:id/admissions/:admission_id", Hospital.AdmissionsController, :show
 
     get "/order/template_products", Hospital.OrdersController, :template_products
+    get "/orders", Hospital.OrdersController, :show
+    get "/orders/admissions", Hospital.OrdersController, :admissions
 
     get "/settings", SettingsController, :index
     post "/settings", SettingsController, :update

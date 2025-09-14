@@ -1,10 +1,42 @@
 defmodule TpnWeb.Helpers.Networks do
+  @moduledoc """
+  This module is used to handle networks for the user.
+  """
   use TpnWeb, :controller
 
   import Ecto.Query, warn: false
   alias Tpn.Repo
 
   alias Tpn.Accounts.Networks.{LocalHealthNetwork, Facility, Campus}
+
+  @doc """
+  This function is used to get the user network access.
+  """
+  def get_user_network_access(conn) do
+    current_user = conn.assigns[:current_user]
+
+    cond do
+      conn.assigns[:is_admin] ->
+        {:ok, %{:lhn_id => nil, :facility_id => nil, :campus_id => nil}}
+
+      !is_nil(current_user.campus_id) ->
+        {:ok, %{:lhn_id => nil, :facility_id => nil, :campus_id => current_user.campus_id}}
+
+      !is_nil(current_user.facility_id) ->
+        {:ok, %{:lhn_id => nil, :facility_id => current_user.facility_id, :campus_id => nil}}
+
+      !is_nil(current_user.local_health_network_id) ->
+        {:ok,
+         %{
+           :lhn_id => current_user.local_health_network_id,
+           :facility_id => nil,
+           :campus_id => nil
+         }}
+
+      true ->
+        {:error, %{}}
+    end
+  end
 
   def params_assign_user(conn, params) do
     current_user = conn.assigns[:current_user]

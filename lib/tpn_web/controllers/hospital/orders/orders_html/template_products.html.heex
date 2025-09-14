@@ -319,8 +319,8 @@
           </div>
           <div class="flex-shrink">
             <template x-if="!product.substance_locked_on_order">
-              <button type="button" class="btn-sm-destructive" @click="removeProduct(product.id)">
-                <.icon_trash />
+              <button type="button" class="btn-sm-icon-outline" @click="removeProduct(product.id)">
+                <.icon_trash class="text-destructive" />
               </button>
             </template>
           </div>
