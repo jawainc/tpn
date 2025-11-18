@@ -119,9 +119,9 @@ defmodule TpnWeb.Router do
     resources "/roles", RolesController, except: [:show, :delete]
     get "/roles/:id/rights", RolesController, :rights
     post "/role/context/rights", RolesController, :update_rights
-    resources "/accounts", AccountsController, except: [:show, :delete]
-    get "/accounts/:id/change_password", AccountsController, :change_password
-    put "/accounts/:id/change_password", AccountsController, :update_password
+    resources "/users", AccountsController, except: [:show, :delete]
+    get "/users/:id/change_password", AccountsController, :change_password
+    put "/users/:id/change_password", AccountsController, :update_password
     resources "/lhn", Networks.LocalHealthNetworksController, except: [:show, :delete]
     resources "/facilities", FacilitiesController, except: [:show, :delete]
     resources "/campuses", CampusesController, except: [:show, :delete]
@@ -149,7 +149,7 @@ defmodule TpnWeb.Router do
     # admin
     pipe_through :require_authenticated_admin
     delete "/roles/:id", RolesController, :delete
-    delete "/accounts/:id", AccountsController, :delete
+    delete "/users/:id", AccountsController, :delete
     delete "/lhn/:id", Networks.LocalHealthNetworksController, :delete
     delete "/facilities/:id", FacilitiesController, :delete
     delete "/campuses/:id", CampusesController, :delete
@@ -192,10 +192,8 @@ defmodule TpnWeb.Router do
     delete "/accounts/:id", AccountsController, :delete
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", TpnWeb do
-  #   pipe_through :api
-  # end
+  # Forward all API routes to the dedicated API router
+  forward "/api", TpnWeb.ApiRouter
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:tpn, :dev_routes) do

@@ -167,8 +167,9 @@
       <button
         :if={@template.additional_substances_allowed}
         type="button"
-        class="btn-sm-outline"
+        class="btn-sm-outline btn-xs"
         @click="addProduct"
+        x-bind:disabled="!productsToAdd.length"
       >
         Add More
       </button>
@@ -202,14 +203,14 @@
                 />
               </label>
               <label class="form-control w-full max-w-xs grid gap-3" for="template_product">
-                <div class="label">
+                <div class="label flex items-center gap-2">
                   <span class="label-text">Product</span>
                   <span
                     x-show="product.formulary_id"
-                    class="label-text-alt"
+                    class="label-text-alt cursor-pointer"
                     @click="openFormularyInfo(product.id)"
                   >
-                    <.icon_info class="size-4 text-muted-foreground cursor-pointer hover:text-white" />
+                    <.icon_eye class="size-4 text-muted-foreground cursor-pointer hover:text-white" />
                   </span>
                 </div>
                 <select

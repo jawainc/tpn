@@ -430,6 +430,7 @@ defmodule TpnWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :help_text, :string, default: nil, doc: "the help text for checkbox inputs"
 
   attr :rest, :global,
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
@@ -467,6 +468,32 @@ defmodule TpnWeb.CoreComponents do
         {@rest}
       />
       {@label}
+    </label>
+    """
+  end
+
+  def input(%{type: "checkbox-item"} = assigns) do
+    assigns =
+      assign_new(assigns, :checked, fn ->
+        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+      end)
+
+    ~H"""
+    <label for={@id} class="flex flex-row items-start gap-3 rounded-md border p-4 shadow-xs">
+      <input type="hidden" name={@name} value="false" />
+      <input
+        type="checkbox"
+        id={@id}
+        name={@name}
+        value="true"
+        checked={@checked}
+        class="input"
+        {@rest}
+      />
+      <div class="flex flex-col gap-1">
+        <span class="leading-snug">{@label}</span>
+        <p class="text-muted-foreground text-sm leading-snug">{@help_text}</p>
+      </div>
     </label>
     """
   end

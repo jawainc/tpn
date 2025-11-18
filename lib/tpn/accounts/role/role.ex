@@ -8,6 +8,7 @@ defmodule Tpn.Accounts.Role do
   schema "roles" do
     field :name, :string
     field :is_admin, :boolean, default: false
+    field :is_verifier, :boolean, default: false
 
     timestamps()
   end
@@ -15,7 +16,7 @@ defmodule Tpn.Accounts.Role do
   @doc false
   def changeset(role, attrs) do
     role
-    |> cast(attrs, [:name, :is_admin])
+    |> cast(attrs, [:name, :is_admin, :is_verifier])
     |> validate_required([:name])
     |> unique_constraint(:name)
   end

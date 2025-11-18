@@ -1,9 +1,12 @@
-<div id="form_container">
-    <.header>
-      Update Role
-    </.header>
-    
-    <.data_form changeset={@changeset} action={"#{get_url()}/#{@record.id}"} flash={@flash} />
-</div>
-  
-    
+<header>
+  <h2>Update Role</h2>
+</header>
+
+<.data_form
+  changeset={@changeset}
+  action={"#{get_url()}/#{@record.id}"}
+  flash={@flash}
+  edit={true}
+  is_admin={@is_admin}
+  current_user={@current_user}
+/>

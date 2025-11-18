@@ -1,54 +1,39 @@
 <%= if(!Enum.empty?(@records)) do %>
-    <.table id="roles" rows={@records} url={get_url()} meta={@meta}>
-        <:col :let={record} label="Name" field={:name}><%= record.name %></:col>
-        <:col :let={record} label="Is Admin" field={:is_admin}>
-            <.empty_badge status={record.is_admin} />
-        </:col>
+  <.table id="roles" rows={@records} url={get_url()} meta={@meta}>
+    <:col :let={record} label="Name" field={:name}>{record.name}</:col>
+    <:col :let={record} label="Admin" field={:is_admin}>
+      <.empty_badge status={record.is_admin} />
+    </:col>
+    <:col :let={record} label="Verifier" field={:is_verifier}>
+      <.empty_badge status={record.is_verifier} />
+    </:col>
 
-        <:action :let={record}>
-            <button
-            hx-get={"#{get_url()}/#{record.id}/rights"}
-            hx-target="#main-contents"
-            hx-indicator=".main-contents-loader"
-            type="button"
-            class="btn btn-xs"
-            >
-            Permissions
-            </button>
-        </:action>
+    <:action :let={record}>
+      <button
+        hx-get={"#{get_url()}/#{record.id}/rights"}
+        hx-target="#main-contents"
+        hx-indicator=".main-contents-loader"
+        type="button"
+        class="btn-sm-outline"
+      >
+        Permissions
+      </button>
+    </:action>
 
-        <:action :let={record}>
-            <button
-            hx-get={"#{get_url()}/#{record.id}/edit"}
-            hx-target="#table_modal_contents"
-            hx-indicator="#table_modal_indicator"
-            hx-on:click="table_modal.showModal()"
-            type="button"
-            class="btn btn-info btn-xs"
-            >
-            Edit
-            </button>
-        </:action>
+    <:action :let={record} :if={@is_admin || @can.update || @can.delete}>
+      <.table_actions_edit_delete
+        record={record}
+        url={get_url()}
+        is_admin={@is_admin}
+        can_update={@can.update}
+        can_delete={@can.delete}
+      />
+    </:action>
+  </.table>
 
-        <:action :let={record}>
-            <.form
-            for={%{}}
-            method="delete"
-            action={"#{get_url()}/#{record.id}"}
-            hx-delete={"#{get_url()}/#{record.id}"}
-            hx-confirm="Are you sure to delete?"
-            >
-            <button class="btn btn-error btn-xs">
-                Delete
-            </button>
-            </.form>
-        </:action>
-    </.table>
-
-    <%= if @meta.has_previous_page or @meta.has_next_page do %>
-        <.pagination meta={@meta} url={get_url()} />
-    <% end %>
-
+  <%= if @meta.has_previous_page or @meta.has_next_page do %>
+    <.pagination meta={@meta} url={get_url()} />
+  <% end %>
 <% else %>
-    <.no_records />
+  <.no_records />
 <% end %>
