@@ -22,7 +22,7 @@ defmodule Tpn.Formularies do
   end
 
   def formularies_for_select do
-    Repo.all(Formulary)
+    Repo.all(from f in Formulary, where: f.active == true)
     |> Enum.map(&{&1.name, &1.id})
   end
 
@@ -32,6 +32,7 @@ defmodule Tpn.Formularies do
         join: fpt in FormularyPatientType,
         on: f.id == fpt.formulary_id,
         where: fpt.patient_type_id == ^patient_type_id,
+        where: f.active == true,
         preload: [:patient_types]
 
     query
@@ -76,6 +77,7 @@ defmodule Tpn.Formularies do
         join: fpt in FormularyPatientType,
         on: f.id == fpt.formulary_id,
         where: fpt.patient_type_id == ^patient_type_id,
+        where: f.active == true,
         preload: [:patient_types]
 
     query
@@ -88,7 +90,8 @@ defmodule Tpn.Formularies do
     formularies =
       Repo.all(
         from f in FormularyView,
-          where: f.class_id in ^class_ids
+          where: f.class_id in ^class_ids,
+          where: f.active == true
       )
 
     # get formularies ids

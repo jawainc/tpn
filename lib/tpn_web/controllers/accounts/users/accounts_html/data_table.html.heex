@@ -1,61 +1,41 @@
 <%= if(!Enum.empty?(@records)) do %>
-    <.table id="users" rows={@records} url={get_url()} meta={@meta}>
-        <:col :let={record} label="First Name" field={:first_name}><%= record.first_name %></:col>
-        <:col :let={record} label="Last Name" field={:last_name}><%= record.last_name %></:col>
-        <:col :let={record} label="Email" field={:email}><%= record.email %></:col>
-        <:col :let={record} label="Role" field={:role}><%= record.role %></:col>
-        <:col :let={record} label="L.H.N" field={:local_health_network}><%= record.local_health_network %></:col>
-        <:col :let={record} label="Facility" field={:facility}><%= record.facility %></:col>
-        <:col :let={record} label="Campus" field={:campus}><%= record.campus %></:col>
-        <:col :let={record} label="Contact No" field={:contact_no}><%= record.contact_no %></:col>
-        <:col :let={record} label="Active" field={:active}>
-            <.empty_badge status={record.active} />
-        </:col>
-        
-        <:action :let={user}>
-            <button
-            hx-get={"#{get_url()}/#{user.id}/change_password"}
-            hx-target="#table_modal_contents"
-            hx-indicator="#table_modal_indicator"
-            hx-on:click="table_modal.showModal()"
-            type="button"
-            class="btn btn-xs"
-            >
-            Change Password
-            </button>
-        </:action>
+  <.table id="users" rows={@records} url={get_url()} meta={@meta}>
+    <:col :let={record} label="First Name" field={:first_name}>{record.first_name}</:col>
+    <:col :let={record} label="Last Name" field={:last_name}>{record.last_name}</:col>
+    <:col :let={record} label="Email" field={:email}>{record.email}</:col>
+    <:col :let={record} label="Role" field={:role}>{record.role}</:col>
+    <:col :let={record} label="Active" field={:active}>
+      <.empty_badge status={record.active} />
+    </:col>
 
-        <:action :let={record}>
-            <button
-            hx-get={"#{get_url()}/#{record.id}/edit"}
-            hx-target="#table_modal_contents"
-            hx-indicator="#table_modal_indicator"
-            hx-on:click="table_modal.showModal()"
-            type="button"
-            class="btn btn-info btn-xs"
-            >
-            Edit
-            </button>
-        </:action>     
-        <:action :let={record}>
-            <.form
-            for={%{}}
-            method="delete"
-            action={"#{get_url()}/#{record.id}"}
-            hx-delete={"#{get_url()}/#{record.id}"}
-            hx-confirm="Are you sure to delete?"
-            >
-            <button class="btn btn-error btn-xs">
-                Delete
-            </button>
-            </.form>
-        </:action>   
-    </.table>
+    <:action :let={record}>
+      <div role="group" class="button-group">
+        <button
+          hx-get={"#{get_url()}/#{record.id}/change_password"}
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+          type="button"
+          class="btn-outline"
+        >
+          Change Password
+        </button>
+        <.table_actions_edit_delete
+          record={record}
+          url={get_url()}
+          is_admin={true}
+          can_update={true}
+          can_delete={true}
+          preview={true}
+          edit_popup={false}
+        />
+      </div>
+    </:action>
+  </.table>
 
-    <%= if @meta.has_previous_page or @meta.has_next_page do %>
-        <.pagination meta={@meta} url={get_url()} />
-    <% end %>
-
+  <%= if @meta.has_previous_page or @meta.has_next_page do %>
+    <.pagination meta={@meta} url={get_url()} />
+  <% end %>
 <% else %>
-    <.no_records />
+  <.no_records />
 <% end %>
+<.table_form_modal />

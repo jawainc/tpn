@@ -102,7 +102,24 @@ window.formulariesIngredients = function () {
     selected_ingredients: [],
     old_selected_ingredients: [],
     units: [],
-    open_ingredients: () => {
+    query: "",
+    search_ingredients(query) {
+      if (!query.trim()) {
+        this.set_ingredients();
+      } else {
+        const notSelected = differenceBy(
+          this.all_ingredients,
+          this.selected_ingredients,
+          "id",
+        );
+        this.ingredients = notSelected.filter((ingredient) =>
+          ingredient.name.toLowerCase().includes(query.trim().toLowerCase()),
+        );
+      }
+    },
+    open_ingredients() {
+      this.set_ingredients();
+      this.query = "";
       document.getElementById("ingredients_modal").showModal();
     },
     set_ingredients() {
@@ -130,7 +147,7 @@ window.formulariesIngredients = function () {
     },
     add_ingredient(ingredient) {
       this.selected_ingredients.push(ingredient);
-      this.set_ingredients();
+      this.search_ingredients(this.query);
     },
     remove_ingredient(id) {
       this.selected_ingredients = this.selected_ingredients.filter(

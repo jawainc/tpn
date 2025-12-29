@@ -75,18 +75,17 @@ defmodule TpnWeb.AccountsController do
 
     case Users.update_user(user, params) do
       {:ok, user} ->
-        _changeset = Users.change_user(user)
+        changeset = Users.change_user(user)
 
         conn
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event(
-            "reloadDataTable",
-            "success",
-            "Updated successfully."
-          )
-        )
-        |> send_resp(204, "")
+        |> put_flash(:info, "Updated successfully.")
+        |> assign(:roles, get_roles())
+        |> assign(:lhns, get_lhns())
+        |> assign(:facilities, get_facilities(user.local_health_network_id))
+        |> assign(:campuses, get_campuses(user.facility_id))
+        |> assign(:changeset, changeset)
+        |> assign(:user, user)
+        |> render(:edit)
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
@@ -125,6 +124,11 @@ defmodule TpnWeb.AccountsController do
         |> put_flash(:error, "Please fix the errors.")
         |> render(:change_password, user: user, changeset: changeset)
     end
+  end
+
+  def show(conn, %{"id" => id}) do
+    user = Users.get_user_role!(id)
+    render(conn, :show, user: user)
   end
 
   def delete(conn, %{"id" => id}) do

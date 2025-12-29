@@ -1,54 +1,56 @@
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Templates", to: "#{get_url()}"},
+  %{label: "#{@record.name}"}
+]} />
 <div class="mx-auto max-w-5xl">
   <header class="flex items-center justify-between">
     <div>
-      <h2>Template Details</h2>
-      <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
-        <li class="inline-flex items-center gap-1.5">
-          <a
-            href=""
-            hx-get={"#{get_url()}"}
-            hx-target="#main-contents"
-            hx-indicator="#main-contents-indicator"
-            class="hover:text-foreground transition-colors"
-          >
-            Templates
-          </a>
-        </li>
-        <li>
-          <.icon_angle_right class="size-3.5" />
-        </li>
-        <li class="inline-flex items-center gap-1.5">
-          <span class="text-foreground font-normal">{@record.name}</span>
-        </li>
-      </ol>
+      <h2 class="text-lg">Template Details</h2>
     </div>
   </header>
 
-  <div class="flex gap-6 mt-14">
-    <div class="card">
-      <header>
-        <h2 class="text-lg flex items-center gap-4">
-          <.icon_template class="size-6 text-muted-foreground" />
+  <div class="flex w-fit divide-x divide-border border border-border rounded-lg bg-card mt-10">
+    <div class="w-[350px] p-6">
+      <header class="mb-6">
+        <h2 class="flex items-center gap-2">
+          <.icon_template class="size-4 text-muted-foreground" />
           {@record.name}
         </h2>
       </header>
       <section>
-        <dl class="grid grid-cols-2 gap-8">
-          <dt>Patient Type:</dt>
-          <dd>{@record.patient_type_name}</dd>
-          <dt>Bag Over Fill Volume:</dt>
-          <dd>{@record.bag_over_fill_volume}</dd>
-          <dt>Lipid Overfill Volume:</dt>
-          <dd>{@record.lipid_over_fill_volume}</dd>
-          <dt>Fluids:</dt>
-          <dd>{@record.fluids}/{@record.fluid_unit}</dd>
-        </dl>
+        <ul role="list" class="divide-y divide-border text-sm">
+          <li class="pb-4">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Patient Type:</span>
+              <span>{@record.patient_type_name}</span>
+            </div>
+          </li>
+          <li class="py-4">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Bag Over Fill Volume:</span>
+              <span>{@record.bag_over_fill_volume}</span>
+            </div>
+          </li>
+          <li class="py-4">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Lipid Overfill Volume:</span>
+              <span>{@record.lipid_over_fill_volume}</span>
+            </div>
+          </li>
+          <li class="pt-4">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Fluids:</span>
+              <span>{@record.fluids}/{@record.fluid_unit}</span>
+            </div>
+          </li>
+        </ul>
       </section>
     </div>
-    <div class="card w-[395px]">
-      <header>
-        <h2 class="text-lg flex items-center gap-4">
-          <.icon_settings_bar_h class="size-6 text-muted-foreground" /> Configurations
+    <div class="p-6 w-[350px]">
+      <header class="mb-6">
+        <h2 class="flex items-center gap-2">
+          <.icon_settings_bar_h class="size-4 text-muted-foreground" /> Configurations
         </h2>
       </header>
       <section class="grid grid-cols-1 gap-4">
@@ -62,8 +64,8 @@
             end
           }
         />
-        <.simple_badge state={@record.pre_mixed_standard} label="Premixed Standard" />
-        <.simple_badge
+        <.status_badge state={@record.pre_mixed_standard} label="Premixed Standard" />
+        <.status_badge
           state={@record.additional_substances_allowed}
           label="Additional Substances Allowed"
         />

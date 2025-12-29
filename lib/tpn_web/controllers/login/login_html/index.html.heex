@@ -1,27 +1,34 @@
-<div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <.form 
-    class="space-y-6" 
-    for={%{}} 
-    method="post" 
+<section>
+  <.form
+    class="form grid gap-6"
+    for={%{}}
+    method="post"
     autocomplete="off"
-    action={~p"/login"} 
-    hx-post={~p'/login'} 
+    action={~p"/login"}
+    hx-post={~p'/login'}
     hx-swap="outerHTML"
     hx-disabled-elt="#form-button"
     hx-indicator="#form-button-indicator"
-    >
-        <.alert flash={@flash} type={:error} />
-        <div>
-            <.simple_input label="Email" id="email" name="email" required autofocus autocomplete="new-password" />            
-        </div>
-        <div>
-            <.simple_input label="Password" type="password" id="password" name="password" required autocomplete="new-password" />            
-        </div>
-        <div>
-            <button id="form-button" type="submit" class="w-full btn btn-brand flex space-x-3" >
-                Sign in
-                <.htmx_indicator id="form-button-indicator" />                
-            </button>
-        </div> 
-    </.form>
-</div>
+  >
+    <.alert flash={@flash} type={:error} />
+    <.simple_input
+      label="Email"
+      id="email"
+      name="email"
+      required
+      autofocus
+      autocomplete="new-password"
+    />
+    <.simple_input
+      label="Password"
+      type="password"
+      id="password"
+      name="password"
+      required
+      autocomplete="new-password"
+    />
+    <button id="form-button" type="submit" class="btn w-full space-x-3">
+      Sign in <.btn_htmx_indicator />
+    </button>
+  </.form>
+</section>

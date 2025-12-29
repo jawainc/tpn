@@ -1,6 +1,11 @@
 <.app_menu is_admin={@is_admin} user_access_level={@user_access_level} />
 <main class="h-full flex flex-col overflow-hidden">
   <.app_header name={@current_user.first_name} />
+
+  <.bread_crumb items={[
+    %{label: "Home"}
+  ]} />
+
   <div class="py-10 grow overflow-y-auto scrollbar flex flex-col">
     <.htmx_content_indicator id="main-contents-indicator" />
     <div id="main-contents" class="px-4 sm:px-6 lg:px-8 main-contents hide-on-htmx-request grow">

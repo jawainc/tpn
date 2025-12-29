@@ -1,57 +1,55 @@
 <div class="mx-auto max-w-7xl">
-    <.header>
-        Manage Role Permissions
-      <:subtitle>
-        <.badge><%= @role.name %></.badge>
-      </:subtitle>
-    </.header>    
+  <.header>
+    Manage Role Permissions
+    <:subtitle>
+      <.badge>{@role.name}</.badge>
+    </:subtitle>
+  </.header>
 </div>
 
-<div class="divider mx-auto max-w-7xl"></div> 
+<div class="divider mx-auto max-w-7xl"></div>
 
 <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 mx-auto max-w-7xl mt-10">
   <%= for context <- @contexts do %>
-  <li class="bg-neutral shadow sm:rounded-lg col-span-1">
-    <.form 
-    for={%{}} 
-    method="post"
-    action="/role/context/rights"
-    hx-post="/role/context/rights" 
-    hx-disabled-elt={"#form-button#{context.id}"}
-    hx-on::config-request="formConfigRequest(event)"
-    >
-    <input type="hidden" name="rights[context_id]" value={context.id} />
-    <input type="hidden" name="rights[role_id]" value={@role.id} />
-      <div class="px-4 py-5 sm:p-6">
-        <div class="sm:flex sm:items-start sm:justify-between">
+    <li class="form flex flex-row items-start gap-3 rounded-md border p-4 shadow-xs col-span-1">
+      <.form
+        for={%{}}
+        method="post"
+        action="/role/context/rights"
+        hx-post="/role/context/rights"
+        hx-disabled-elt={"#form-button#{context.id}"}
+        hx-on::config-request="formConfigRequest(event)"
+        class="w-full"
+      >
+        <input type="hidden" name="rights[context_id]" value={context.id} />
+        <input type="hidden" name="rights[role_id]" value={@role.id} />
+        <div class="flex items-end justify-between">
           <div>
-            <h3 class="font-semibold"><%= context.name %></h3>
+            <h3 class="font-semibold">{context.name}</h3>
             <div class="mt-2 max-w-xl flex gap-4 align-middle ">
               <%= for {label, id, key} <- [{"Create", "create", :create}, {"Read", "read", :read}, {"Update", "update", :update}, {"Delete", "delete", :delete}] do %>
-              <div
-                hx-on:click="applyCheckboxSelector(this);" 
-                class={"form-control rounded-md px-2 #{if(has_role_right?(@rights, context.id, key)) do "checkox-checked-indicator" end}"}
+                <div
+                  hx-on:click="applyCheckboxSelector(this);"
+                  class={"form-control rounded-md px-2 #{if(has_role_right?(@rights, context.id, key)) do "checkox-checked-indicator" end}"}
                 >
-                <label class="cursor-pointer label gap-2">
-                  <span class="label-text"><%= label %></span>
-                  <input name={"rights[#{id}]"} type="checkbox" checked={has_role_right?(@rights, context.id, key)} class="checkbox checkbox-xs checkbox-success" />
-                </label>
-              </div>
-              <% end %>            
+                  <label class="label gap-3">
+                    <input
+                      name={"rights[#{id}]"}
+                      type="checkbox"
+                      checked={has_role_right?(@rights, context.id, key)}
+                      class="input"
+                    />
+                    {label}
+                  </label>
+                </div>
+              <% end %>
             </div>
           </div>
-          <div class="mt-5 sm:ml-6 sm:mt-0 sm:flex sm:flex-shrink-0 sm:items-center">
-            <button id={"form-button#{context.id}"} type="submit" class="w-full btn btn-primary btn-xs flex space-x-3" >
-              Update
-              <span class="loading loading-spinner loading-xs htmx-indicator"></span>
-            </button>            
-          </div>
+          <button id={"form-button#{context.id}"} type="submit" class="btn-sm-outline">
+            Update <.btn_htmx_indicator />
+          </button>
         </div>
-      </div>
-    </.form>
-    
-  </li>
+      </.form>
+    </li>
   <% end %>
-
-  
-</ul>  
+</ul>

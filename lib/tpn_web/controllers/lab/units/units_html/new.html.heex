@@ -1,16 +1,22 @@
-<header>
-    <h2>New Unit</h2>
-</header>
-  
-  <.data_form 
-    changeset={@changeset} 
-    action={"#{get_url()}"} 
-    flash={@flash} 
-    edit={false} 
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Units", to: "#{get_url()}"},
+  %{label: "New Unit"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    New Unit
+  </.form_header>
+</div>
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}"}
+    flash={@flash}
+    edit={false}
     is_admin={@is_admin}
     current_user={@current_user}
     types={@types}
     selected_types={@selected_types}
-    />
-
-  
+  />
+</div>

@@ -1,15 +1,21 @@
-<header>
-  <h2>New Ingredient</h2>
-</header>
-  
-<.data_form 
-    changeset={@changeset} 
-    action={"#{get_url()}"} 
-    flash={@flash} 
-    edit={false} 
-    is_admin={@is_admin} 
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Ingredients", to: "#{get_url()}"},
+  %{label: "New Ingredient"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    New Ingredient
+  </.form_header>
+</div>
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}"}
+    flash={@flash}
+    edit={false}
+    is_admin={@is_admin}
     unit_types={@unit_types}
     current_user={@current_user}
-    />
-
-  
+  />
+</div>

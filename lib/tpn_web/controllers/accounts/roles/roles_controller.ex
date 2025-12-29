@@ -30,10 +30,6 @@ defmodule TpnWeb.RolesController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> render(:new, changeset: new_change())
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -60,10 +56,6 @@ defmodule TpnWeb.RolesController do
 
         conn
         |> put_flash(:info, "Updated successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> render(:edit, record: record, changeset: changeset)
 
       {:error, %Ecto.Changeset{} = changeset} ->

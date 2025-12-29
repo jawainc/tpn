@@ -50,14 +50,6 @@ defmodule TpnWeb.FormulariesController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event(
-            "",
-            "success",
-            "Created successfully."
-          )
-        )
         |> set_assigns()
         |> assign(:selected_patient_types, [])
         |> assign(:selected_ingredients, Jason.encode!([]))
@@ -66,6 +58,7 @@ defmodule TpnWeb.FormulariesController do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
+        |> put_flash(:error, "Please fix the errors.")
         |> set_assigns()
         |> assign(:selected_patient_types, [])
         |> assign(:selected_ingredients, Jason.encode!([]))
@@ -78,8 +71,6 @@ defmodule TpnWeb.FormulariesController do
     record = Formularies.get_formulary_for_edit(id)
     changeset = Formularies.change_formulary(record)
     selected_patient_types = Enum.map(record.formulary_patient_types, & &1.patient_type_id)
-
-    IO.inspect(selected_patient_types)
 
     conn
     |> set_assigns()
@@ -96,7 +87,6 @@ defmodule TpnWeb.FormulariesController do
     case Formularies.update_formulary(id, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
@@ -112,6 +102,7 @@ defmodule TpnWeb.FormulariesController do
         selected_patient_types = Enum.map(record.formulary_patient_types, & &1.patient_type_id)
 
         conn
+        |> put_flash(:error, "Please fix the errors.")
         |> set_assigns()
         |> assign(:record, record)
         |> assign(:selected_patient_types, selected_patient_types)
@@ -167,10 +158,24 @@ defmodule TpnWeb.FormulariesController do
   defp parse_selected_ingredients(ingredients) do
     ingredients
     |> Enum.map(fn ing ->
-      %{ingredient_id: ing.ingredient_id, amount: ing.amount, unit_id: ing.unit_id}
+      %{
+        ingredient_id: ing.ingredient_id,
+        amount: format_decimal_for_json(ing.amount),
+        unit_id: ing.unit_id
+      }
     end)
     |> Jason.encode!()
   end
+
+  defp format_decimal_for_json(nil), do: nil
+
+  defp format_decimal_for_json(%Decimal{} = value) do
+    value
+    |> Decimal.to_string()
+    |> String.replace(~r/\.?0+$/, "")
+  end
+
+  defp format_decimal_for_json(value), do: value
 
   defp get_settings() do
     Settings.get_settings()

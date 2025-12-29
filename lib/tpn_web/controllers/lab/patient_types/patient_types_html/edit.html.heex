@@ -1,12 +1,20 @@
-<header>
-    <h2>Update Patient Type</h2>
-</header>
-    
-<.data_form 
-      changeset={@changeset} 
-      action={"#{get_url()}/#{@record.id}"} 
-      flash={@flash} 
-      edit={true} 
-      is_admin={@is_admin}
-      current_user={@current_user}
-      />
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Patient Types", to: "#{get_url()}"},
+  %{label: "Edit Patient Type"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    Update Patient Type
+  </.form_header>
+</div>
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}/#{@record.id}"}
+    flash={@flash}
+    edit={true}
+    is_admin={@is_admin}
+    current_user={@current_user}
+  />
+</div>

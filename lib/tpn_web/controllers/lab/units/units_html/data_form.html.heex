@@ -3,36 +3,38 @@
   for={@changeset}
   action={@action}
   hx-post={@action}
-  hx-target="#table_modal_form_contents"
+  hx-target="#main-contents"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
 >
-<section class="space-y-6">
-  <.flash_group flash={@flash} />
+  <section class="space-y-6">
+    <.flash_group flash={@flash} />
 
-  <.input field={f[:unit]} type="text" label="Unit" required />
+    <.input field={f[:unit]} type="text" label="Unit" required />
 
-  <div>
-    <label class="label mb-4">Types</label>
-    <div class="grid grid-cols-3 gap-4 ">
-      <label :for={type <- @types} class="label gap-3">
-        <input
-          type="checkbox"
-          checked={is_selected?(@edit, type.id, @selected_types)}
-          class="input"
-          id={"checkbox-#{type.id}"}
-        />
-        <span class="label-text ml-2"><%= type.name %></span>
-      </label>
+    <div>
+      <label class="label mb-4">Types</label>
+      <div class="grid grid-cols-3 gap-4 ">
+        <label :for={type <- @types} class="label gap-3">
+          <input
+            type="checkbox"
+            checked={is_selected?(@edit, type.id, @selected_types)}
+            class="input"
+            id={"checkbox-#{type.id}"}
+          />
+          <span class="label-text ml-2">{type.name}</span>
+        </label>
+      </div>
     </div>
-  </div>
 
-  <input type="hidden" name="unit[types]" id="types" value={types_value(@selected_types)} />
+    <input type="hidden" name="unit[types]" id="types" value={types_value(@selected_types)} />
 
-  <footer class="flex justify-end space-x-3">
-    <.form_modal_buttons />
-  </footer>
-</section>
+    <div class="mt-10 flex justify-end gap-2">
+      <button id="form-button" type="submit" class="btn">
+        Save <.btn_htmx_indicator />
+      </button>
+    </div>
+  </section>
 </.simple_form>
 
 <script>

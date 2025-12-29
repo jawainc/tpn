@@ -32,10 +32,6 @@ defmodule TpnWeb.IngredientsController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> assign(:unit_types, UnitTypes.unit_types_for_select())
         |> render(:new, changeset: new_change())
 
@@ -63,11 +59,10 @@ defmodule TpnWeb.IngredientsController do
     case Ingredients.update_ingredient(record, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:success, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

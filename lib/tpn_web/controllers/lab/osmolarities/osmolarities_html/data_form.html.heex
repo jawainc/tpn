@@ -1,41 +1,55 @@
-<.simple_form :let={f} 
-    for={@changeset} action={@action}
-    hx-post={@action}
-    hx-target="#table_modal_form_contents"
-    hx-on::config-request="formConfigRequest(event)"
-    autocomplete="off"
-    >
-    <section class="space-y-6">
+<.simple_form
+  :let={f}
+  for={@changeset}
+  action={@action}
+  hx-post={@action}
+  hx-target="#main-contents"
+  hx-on::config-request="formConfigRequest(event)"
+  autocomplete="off"
+>
+  <section class="space-y-6">
     <.flash_group flash={@flash} />
 
-    <div class="grid grid-cols-2 gap-4">
-        
-        <.input field={f[:name]} type="text" label="Name" required />
-        <.input 
-            field={f[:unit_id]} 
-            type="select" 
-            label="Unit" 
-            options={@units} 
-            prompt="Select..." 
-            required />
-        <.input 
-            field={f[:patient_type_id]} 
-            type="select" 
-            label="Patient Type" 
-            options={@patient_types} 
-            prompt="Select..." 
-            required />
-        <.input
-            field={f[:vascular_access_id]} 
-            type="select" 
-            label="Vascular Access" 
-            options={@vascular_accesses} 
-            prompt="Select..." 
-            required />        
-    </div>    
-   
+    <div class="grid grid-cols-2 gap-4 items-start">
+      <.input field={f[:name]} type="text" label="Name" required />
+      <.input
+        field={f[:osmolarity]}
+        type="number"
+        label="Osmolarity"
+        placeholder="0.0000"
+        step=".0001"
+        required
+      />
+      <.input
+        field={f[:unit_id]}
+        type="select"
+        label="Unit"
+        options={@units}
+        prompt="Select..."
+        required
+      />
+      <.input
+        field={f[:patient_type_id]}
+        type="select"
+        label="Patient Type"
+        options={@patient_types}
+        prompt="Select..."
+        required
+      />
+      <.input
+        field={f[:vascular_access_id]}
+        type="select"
+        label="Vascular Access"
+        options={@vascular_accesses}
+        prompt="Select..."
+        required
+      />
+    </div>
+
     <footer class="flex justify-end space-x-3">
-        <.form_modal_buttons />
+      <button id="form-button" type="submit" class="btn">
+        Save <.btn_htmx_indicator />
+      </button>
     </footer>
-</section>
+  </section>
 </.simple_form>

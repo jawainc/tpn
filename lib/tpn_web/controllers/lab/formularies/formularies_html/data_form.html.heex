@@ -3,9 +3,8 @@
   for={@changeset}
   action={@action}
   hx-post={@action}
-  hx-target="#form-contents"
+  hx-target="#main-contents"
   hx-disabled-elt="#form-button"
-  hx-indicator="#form-button-indicator"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
 >
@@ -13,9 +12,10 @@
 
   <section class="w-full rounded-lg border scroll-mt-16">
     <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
-      Formulary Data
+      Product Data
     </header>
-    <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 items-start">
+      <.input field={f[:drug_id]} type="text" label="Drug ID" />
       <.input field={f[:name]} type="text" label="Name" required />
       <.input field={f[:code]} type="text" label="Code" required />
       <.input field={f[:label_friendly_name]} type="text" label="Label Friendly Name" required />
@@ -25,11 +25,11 @@
         label="Cost per Container"
         label_inside_left={get_currency_symbol(@currency)}
         label_inside_right={get_currency_code(@currency)}
-        placeholder="0.00"
-        step=".01"
+        placeholder="0.0000"
+        step=".0001"
         input_type="number"
       />
-      <.input field={f[:container_size]} type="number" label="Container Size" step=".01" />
+      <.input field={f[:container_size]} type="number" label="Container Size" step=".0001" />
       <.input
         field={f[:class_id]}
         type="select"
@@ -61,9 +61,9 @@
         label="Concentration"
         options={@concentration_units}
         options_label="Unit..."
-        placeholder="0.00"
+        placeholder="0.0000"
         input_type="number"
-        step=".01"
+        step=".0001"
         required
       />
       <.input
@@ -73,17 +73,18 @@
         label="Calories"
         options={@calories_units}
         options_label="Unit..."
-        placeholder="0.00"
+        placeholder="0.0000"
         input_type="number"
-        step=".01"
+        step=".0001"
         required
       />
     </div>
-    <div class="p-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-10">
+    <div class="p-4 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <.input type="checkbox" label="Is Enteral" field={f[:is_enteral]} />
       <.input type="checkbox" label="Print on Label" field={f[:print_on_label]} />
       <.input type="checkbox" label="Include in Overfill" field={f[:include_in_overfill]} />
       <.input type="checkbox" label="Universal Fluid" field={f[:universal_fluid]} />
+      <.input type="checkbox" label="Active" field={f[:active]} />
     </div>
   </section>
 
@@ -118,11 +119,7 @@
   />
 
   <div class="flex justify-end items-center gap-4">
-    <button
-      id="form-button"
-      type="submit"
-      class="btn-sm btn-brand text-xs h-xs flex items-center gap-2"
-    >
+    <button id="form-button" type="submit" class="btn">
       <%= if(@edit) do %>
         Update formulary
       <% else %>

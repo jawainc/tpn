@@ -28,10 +28,6 @@ defmodule TpnWeb.FacilitiesController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> render(:new, changeset: new_change(), lhns: get_lhns())
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -58,10 +54,6 @@ defmodule TpnWeb.FacilitiesController do
 
         conn
         |> put_flash(:info, "Updated successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> render(:edit, record: record, changeset: changeset, lhns: get_lhns())
 
       {:error, %Ecto.Changeset{} = changeset} ->

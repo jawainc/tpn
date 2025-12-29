@@ -1,10 +1,27 @@
 export function events(params) {
+  function closeOpenDialogs() {
+    try {
+      const dialogs = document.querySelectorAll("dialog[open]");
+      dialogs.forEach((d) => {
+        if (typeof d.close === "function") {
+          d.close();
+        }
+      });
+    } catch (_e) {
+      return;
+    }
+  }
+
   document.body.addEventListener("clientObey", function (evt) {
     const dispatchEvent = evt.detail.event || null;
     const status = evt.detail.status || null;
     const message = evt.detail.message || null;
     // Show snackbar if needed
     if (status) {
+      if (status === "error") {
+        closeOpenDialogs();
+      }
+
       document.dispatchEvent(
         new CustomEvent("basecoat:toast", {
           detail: {
@@ -77,7 +94,6 @@ export async function formConfigRequest(evt) {
     if (evt.detail.verb === "get") {
       return;
     }
-
     evt.preventDefault();
     const key = localStorage.getItem("x-key-status");
 

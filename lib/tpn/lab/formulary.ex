@@ -2,25 +2,29 @@ defmodule Tpn.Formulary do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [
-    :id,
-    :name,
-    :label_friendly_name,
-    :code,
-    :is_enteral,
-    :concentration,
-    :calories,
-    :cost_per_container,
-    :container_size,
-    :print_on_label,
-    :include_in_overfill,
-    :universal_fluid
-  ]}
+  @derive {Jason.Encoder,
+           only: [
+             :id,
+             :name,
+             :label_friendly_name,
+             :code,
+             :drug_id,
+             :is_enteral,
+             :concentration,
+             :calories,
+             :cost_per_container,
+             :container_size,
+             :print_on_label,
+             :include_in_overfill,
+             :universal_fluid,
+             :active
+           ]}
 
   schema "formularies" do
     field :name, :string
     field :label_friendly_name, :string
     field :code, :string
+    field :drug_id, :string
     field :is_enteral, :boolean
     field :concentration, :decimal
     field :calories, :decimal
@@ -29,6 +33,7 @@ defmodule Tpn.Formulary do
     field :print_on_label, :boolean
     field :include_in_overfill, :boolean
     field :universal_fluid, :boolean
+    field :active, :boolean
 
     belongs_to :class, Tpn.Class
     belongs_to :concentration_unit, Tpn.Unit
@@ -50,6 +55,7 @@ defmodule Tpn.Formulary do
       :name,
       :label_friendly_name,
       :code,
+      :drug_id,
       :is_enteral,
       :concentration,
       :calories,
@@ -58,6 +64,7 @@ defmodule Tpn.Formulary do
       :print_on_label,
       :include_in_overfill,
       :universal_fluid,
+      :active,
       :class_id,
       :concentration_unit_id,
       :calories_unit_id,
@@ -73,5 +80,6 @@ defmodule Tpn.Formulary do
       :concentration,
       :concentration_unit_id
     ])
+    |> unique_constraint(:code)
   end
 end

@@ -18,7 +18,7 @@ defmodule TpnWeb.Templates.TemplateProductsComponent do
       <header class="flex items-center justify-between border-b px-4 py-3 font-semibold bg-card text-card-foreground">
         <span>Products</span>
         <button
-          class="btn-sm-outline btn-xs"
+          class="btn-sm-outline"
           hx-get={"/template_products/#{@template_id}/new"}
           hx-target="#template_table_form_modal_contents"
           hx-indicator="#template_table_modal_loader"
@@ -38,7 +38,7 @@ defmodule TpnWeb.Templates.TemplateProductsComponent do
         class="flex flex-col items-center justify-center"
       >
         <.loader id="products_loader" class="text-muted-foreground my-24" />
-        <div id="products_container" class="hide-on-htmx-request"></div>
+        <div id="products_container" class="hide-on-htmx-request w-full"></div>
       </div>
     </section>
     """

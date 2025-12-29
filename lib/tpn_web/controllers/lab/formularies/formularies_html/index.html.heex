@@ -1,6 +1,10 @@
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Formulary"}
+]} />
 <div class="mx-auto max-w-7xl">
   <.header>
-    Formularies
+    Formulary
     <:actions>
       <.search url={"#{get_url()}?table=1"} />
       <.page_form_new_button hx_get={"#{get_url()}/new"}>

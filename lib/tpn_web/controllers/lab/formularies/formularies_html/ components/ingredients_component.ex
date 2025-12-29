@@ -26,7 +26,7 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
       <header class="flex items-center justify-between border-b px-4 py-3 font-semibold bg-card text-card-foreground">
         <span>Ingredients</span>
         <button
-          class="btn-sm-outline text-xs h-xs flex items-center gap-2"
+          class="btn-sm-outline"
           @click="open_ingredients()"
           type="button"
           aria-label="Add Ingredient"
@@ -72,14 +72,14 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
                     x-bind:name="`formulary[ingredients][${ingredient.id}][amount]`"
                     x-bind:value="ingredient.amount || ''"
                     x-bind:id="`ingredient-${ingredient.id}-input`"
-                    placeholder="0.00"
-                    step=".01"
+                    placeholder="0.0000"
+                    step=".0001"
                     required
-                    class="input pr-32"
+                    class="input pr-[155px]"
                   />
                   <div
                     x-bind:id="`select-${ingredient.id}`"
-                    class="select absolute right-0 top-[1px] w-32"
+                    class="select absolute right-0 top-[1px] w-[150px]"
                   >
                     <button
                       type="button"
@@ -100,7 +100,7 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        class="lucide lucide-chevron-down-icon lucide-chevron-down text-muted-foreground opacity-50 shrink-0"
+                        class="text-muted-foreground opacity-50 shrink-0"
                       >
                         <path d="m6 9 6 6 6-6"></path>
                       </svg>
@@ -180,21 +180,12 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
                   </div>
                 </div>
               </div>
-              <button @click="remove_ingredient(ingredient.id)" type="button" class="btn-sm-outline">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+              <button
+                @click="remove_ingredient(ingredient.id)"
+                type="button"
+                class="btn-sm-icon-destructive mb-[3px]"
+              >
+                <.icon_trash />
               </button>
             </div>
           </li>
@@ -202,15 +193,28 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
       </ul>
 
       <dialog id="ingredients_modal" class="dialog w-full sm:max-w-[425px] max-h-[612px]">
-        <article class="bg-dialog-background text-foreground">
+        <div>
           <header>
-            <h2>Ingredients</h2>
-            <p>
-              Add new ingredients by clicking the "+ Add" button.
-            </p>
+            <h2 id="dialog-example-title">Ingredients</h2>
+            <p id="dialog-example-description">Add new ingredients by clicking the "+ Add" button.</p>
+            <div class="relative">
+              <input
+                x-model="query"
+                x-on:input="search_ingredients(query)"
+                type="text"
+                class="input pl-9 pr-20"
+                placeholder="Search..."
+              />
+              <div class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground [&>svg]:size-4">
+                <.icon_select_search />
+              </div>
+              <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-sm">
+                <span x-text="ingredients.length"></span> results
+              </div>
+            </div>
           </header>
 
-          <section>
+          <section class="overflow-y-auto scrollbar">
             <ul role="list">
               <template x-for="ingredient in ingredients" x-bind:key="ingredient.id">
                 <li class="rounded-lg border hover:bg-accent/50 p-2 mb-4 flex items-center justify-between">
@@ -220,22 +224,7 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
                     @click="add_ingredient(ingredient)"
                     class="btn-sm-outline text-xs h-xs flex items-center gap-2"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="h-4 w-4"
-                    >
-                      <path d="M5 12h14"></path>
-                      <path d="M12 5v14"></path>
-                    </svg>
-                    Add
+                    <.icon_plus class="size-4" /> Add
                   </button>
                 </li>
               </template>
@@ -265,7 +254,7 @@ defmodule TpnWeb.Formularies.Components.IngredientsComponent do
               <path d="m6 6 12 12" />
             </svg>
           </button>
-        </article>
+        </div>
       </dialog>
     </section>
     """

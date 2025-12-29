@@ -1,12 +1,20 @@
-<header>
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Vascular Accesses", to: "#{get_url()}"},
+  %{label: "New Vascular Access"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
     New Vascular Access
-</header>
-  
-<.data_form 
-    changeset={@changeset} 
-    action={"#{get_url()}"} 
-    flash={@flash} 
-    edit={false} 
+  </.form_header>
+</div>
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}"}
+    flash={@flash}
+    edit={false}
     is_admin={@is_admin}
     current_user={@current_user}
-    />
+  />
+</div>

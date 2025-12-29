@@ -3,7 +3,8 @@
   for={@changeset}
   action={@action}
   hx-post={@action}
-  hx-target="#table_modal_form_contents"
+  hx-target="#main-contents"
+  hx-indicator="#main-contents-indicator"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
 >
@@ -23,19 +24,19 @@
       <.input
         field={f[:bag_over_fill_volume]}
         type="number"
-        step=".01"
-        placeholder="0.00"
+        step=".0001"
+        placeholder="0.0000"
         label="Bag Over Fill Volume(mL)"
         required
       />
       <.input
         field={f[:lipid_over_fill_volume]}
         type="number"
-        step=".01"
-        placeholder="0.00"
+        step=".0001"
+        placeholder="0.0000"
         label="Lipid Over Fill Volume(mL)"
       />
-      <.input field={f[:fluids]} type="number" step=".01" placeholder="0.00" label="Fluids" />
+      <.input field={f[:fluids]} type="number" step=".0001" placeholder="0.0000" label="Fluids" />
       <.input
         field={f[:fluid_unit_id]}
         type="select"
@@ -45,23 +46,19 @@
         required
       />
 
-      <div class="pt-7 pl-1">
-        <.input type="checkbox" label="Active" field={f[:active]} />
-      </div>
-      <div class="pt-7 pl-1">
-        <.input type="checkbox" label="Pre Mixed Standard" field={f[:pre_mixed_standard]} />
-      </div>
-      <div class="pt-7 pl-1">
-        <.input
-          type="checkbox"
-          label="Additional Substances Allowed"
-          field={f[:additional_substances_allowed]}
-        />
-      </div>
+      <.input type="checkbox" label="Active" field={f[:active]} />
+      <.input type="checkbox" label="Pre Mixed Standard" field={f[:pre_mixed_standard]} />
+      <.input
+        type="checkbox"
+        label="Additional Substances Allowed"
+        field={f[:additional_substances_allowed]}
+      />
     </div>
 
     <footer class="flex justify-end space-x-3">
-      <.form_modal_buttons />
+      <button id="form-button" type="submit" class="btn">
+        Save <.btn_htmx_indicator />
+      </button>
     </footer>
   </section>
 </.simple_form>

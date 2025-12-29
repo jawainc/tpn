@@ -1,23 +1,23 @@
 defmodule TpnWeb.IconComponents do
   use Phoenix.Component
 
-  attr :class, :string, default: "size-4"
+  attr :class, :string, default: "size-2"
 
   def icon_edit(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      fill="none"
       stroke="currentColor"
-      class={@class}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-pencil-icon lucide-pencil"
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-      />
+      <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" />
     </svg>
     """
   end
@@ -107,7 +107,7 @@ defmodule TpnWeb.IconComponents do
     """
   end
 
-  attr :class, :string, default: "size-4"
+  attr :class, :string, default: "size-4 htmx-indicator"
   attr :id, :string, default: "loading_indicator"
 
   def icon_spinner(assigns) do
@@ -123,14 +123,16 @@ defmodule TpnWeb.IconComponents do
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class={"animate-spin htmx-indicator text-white/40 " <> @class}
+      hx-disinherit="hx-indicator"
+      class={"animate-spin text-muted-foreground " <> @class}
     >
-      <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
     """
   end
 
   attr :class, :string, default: "size-4"
+  attr :id, :string, default: "loading_indicator"
 
   def icon_simple_spinner(assigns) do
     ~H"""
@@ -144,9 +146,12 @@ defmodule TpnWeb.IconComponents do
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class={"animate-spin text-white/40 " <> @class}
+      role="status"
+      aria-label="Loading"
+      class={["animate-spin", @class]}
+      id={@id}
     >
-      <path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" />
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
     """
   end
@@ -195,6 +200,8 @@ defmodule TpnWeb.IconComponents do
     """
   end
 
+  attr :class, :string, default: ""
+
   def icon_success(assigns) do
     ~H"""
     <svg
@@ -207,11 +214,14 @@ defmodule TpnWeb.IconComponents do
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
+      class={@class}
     >
       <circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" />
     </svg>
     """
   end
+
+  attr :class, :string, default: ""
 
   def icon_warning(assigns) do
     ~H"""
@@ -225,11 +235,14 @@ defmodule TpnWeb.IconComponents do
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
+      class={@class}
     >
       <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M12 8v4" /><path d="M12 16h.01" />
     </svg>
     """
   end
+
+  attr :class, :string, default: ""
 
   def icon_chevron_down(assigns) do
     ~H"""
@@ -356,6 +369,26 @@ defmodule TpnWeb.IconComponents do
     """
   end
 
+  def icon_h_ellipsis(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="19" cy="12" r="1" />
+      <circle cx="5" cy="12" r="1" />
+    </svg>
+    """
+  end
+
   def icon_square_pen(assigns) do
     ~H"""
     <svg
@@ -381,20 +414,20 @@ defmodule TpnWeb.IconComponents do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
-      class="text-destructive"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="red"
+      stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class=""
     >
-      <path d="M3 6h18"></path>
-      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+      <path d="M3 6h18" />
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+      <line x1="10" x2="10" y1="11" y2="17" />
+      <line x1="14" x2="14" y1="11" y2="17" />
     </svg>
     """
   end
@@ -412,6 +445,58 @@ defmodule TpnWeb.IconComponents do
       class={@class}
     >
       <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+    """
+  end
+
+  attr :class, :string, default: "size-4"
+
+  def icon_circle_check(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class={"text-green-700 dark:text-green-500 " <> @class}
+    >
+      <path d="M21.801 10A10 10 0 1 1 17 3.335" /><path d="m9 11 3 3L22 4" />
+    </svg>
+    """
+  end
+
+  attr :class, :string, default: "size-4"
+
+  def icon_circle_off(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class={"text-destructive " <> @class}
+    >
+      <path d="m2 2 20 20" /><path d="M8.35 2.69A10 10 0 0 1 21.3 15.65" /><path d="M19.08 19.08A10 10 0 1 1 4.92 4.92" />
+    </svg>
+    """
+  end
+
+  attr :class, :string, default: "size-1.5"
+
+  def icon_circle(assigns) do
+    ~H"""
+    <svg viewBox="0 0 6 6" aria-hidden="true" class={@class}>
+      <circle r="3" cx="3" cy="3" />
     </svg>
     """
   end

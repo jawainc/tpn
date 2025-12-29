@@ -1,18 +1,22 @@
 <%= if(!Enum.empty?(@records)) do %>
-    <.table id="lhn" rows={@records} url={get_url()} meta={@meta}>
-        <:col :let={record} label="Name" field={:name}><%= record.name %></:col>            
-        <:col :let={record} label="Code" field={:code}><%= record.code %></:col>            
-        <:col :let={record} label="Facility" field={:facility_id}><%= record.facility.name %></:col>            
+  <.table id="lhn" rows={@records} url={get_url()} meta={@meta}>
+    <:col :let={record} label="Name" field={:name}>{record.name}</:col>
+    <:col :let={record} label="Code" field={:code}>{record.code}</:col>
+    <:col :let={record} label="Facility" field={:facility_id}>{record.facility.name}</:col>
 
-        <:action :let={record}>
-            <.table_actions_edit_delete record={record} url={get_url()} is_admin={true} />
-        </:action>
-    </.table>
+    <:action :let={record}>
+      <.table_actions_edit_delete
+        record={record}
+        url={get_url()}
+        is_admin={true}
+        edit_popup={false}
+      />
+    </:action>
+  </.table>
 
-    <%= if @meta.has_previous_page or @meta.has_next_page do %>
-        <.pagination meta={@meta} url={get_url()} />
-    <% end %>
-
+  <%= if @meta.has_previous_page or @meta.has_next_page do %>
+    <.pagination meta={@meta} url={get_url()} />
+  <% end %>
 <% else %>
-    <.no_records />
+  <.no_records />
 <% end %>

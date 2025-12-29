@@ -1,40 +1,27 @@
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Formulary", to: "#{get_url()}"},
+  %{label: "Update Formulary"}
+]} />
+<div class="mx-auto max-w-5xl">
+  <.form_header>
+    Update Formulary
+    <:actions>
+      <button
+        type="button"
+        hx-get={"#{get_url()}/new"}
+        hx-target="#main-contents"
+        hx-swap="innerHTML"
+        hx-indicator="#main-contents-indicator"
+        type="button"
+        class="btn-sm-outline"
+      >
+        <.icon_plus /> Create new formulary
+      </button>
+    </:actions>
+  </.form_header>
+</div>
 <div id="form-contents" class="mx-auto max-w-5xl">
-  <.header>
-    <h2>Update Formulary</h2>
-    <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
-      <li class="inline-flex items-center gap-1.5">
-        <a
-          href=""
-          hx-get={"#{get_url()}"}
-          hx-target="#main-contents"
-          hx-indicator="#main-contents-indicator"
-          class="hover:text-foreground transition-colors"
-        >
-          Formularies
-        </a>
-      </li>
-      <li>
-        <.icon_angle_right class="size-3.5" />
-      </li>
-      <li class="inline-flex items-center gap-1.5">
-        <span class="text-foreground font-normal">{@record.name}</span>
-      </li>
-    </ol>
-  </.header>
-  <div class="flex justify-end -mb-6">
-    <button
-      type="button"
-      hx-get={"#{get_url()}/new"}
-      hx-target="#main-contents"
-      hx-swap="innerHTML"
-      hx-indicator="#main-contents-indicator"
-      type="button"
-      class="btn-sm text-xs h-xs flex items-center gap-2"
-    >
-      <.icon_plus />
-      Create new formulary
-    </button>
-  </div>
   <.data_form
     changeset={@changeset}
     action={"#{get_url()}/#{@record.id}"}

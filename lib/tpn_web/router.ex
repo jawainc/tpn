@@ -4,6 +4,7 @@ defmodule TpnWeb.Router do
 
   import TpnWeb.UserAuth
   import TpnWeb.AdminAuth
+  alias TpnWeb.Helpers.ClientEvents
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -119,7 +120,7 @@ defmodule TpnWeb.Router do
     resources "/roles", RolesController, except: [:show, :delete]
     get "/roles/:id/rights", RolesController, :rights
     post "/role/context/rights", RolesController, :update_rights
-    resources "/users", AccountsController, except: [:show, :delete]
+    resources "/users", AccountsController, except: [:delete]
     get "/users/:id/change_password", AccountsController, :change_password
     put "/users/:id/change_password", AccountsController, :update_password
     resources "/lhn", Networks.LocalHealthNetworksController, except: [:show, :delete]
@@ -215,9 +216,18 @@ defmodule TpnWeb.Router do
   @impl Plug.ErrorHandler
   def handle_errors(conn, %{kind: kind, reason: _reason, stack: _stack}) do
     if kind in [:error, :throw] do
-      conn
-      |> put_resp_header("hx-redirect", "/login")
-      |> send_resp(200, "")
+      message = "Something went wrong, Please try again."
+
+      if get_req_header(conn, "hx-request") == ["true"] do
+        conn
+        |> put_resp_header(
+          "hx-trigger",
+          ClientEvents.generate_client_event("", "error", message)
+        )
+        |> send_resp(200, "")
+      else
+        send_resp(conn, 500, message)
+      end
     end
   end
 end

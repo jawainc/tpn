@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "basecoat-css": "^0.2.8",
+    "basecoat-css": "^0.3.6",
     "lodash": "^4.17.21"
   }
 }

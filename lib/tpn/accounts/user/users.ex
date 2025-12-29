@@ -35,17 +35,21 @@ defmodule Tpn.Accounts.Users do
   def list_users(params) do
     users =
       from(a in UsersRoles)
+      |> where([a], a.deleted == false)
       |> PaginationHelper.build_query_params(UsersRoles, params)
       |> Tpn.Repo.all()
 
     meta =
       from(a in UsersRoles)
+      |> where([a], a.deleted == false)
       |> PaginationHelper.get_paging_meta(params, UsersRoles)
 
     {:ok, {users, meta}}
   end
 
   def get_user!(id), do: Repo.get!(User, id)
+
+  def get_user_role!(id), do: Repo.get!(UsersRoles, id)
 
   def create_user(attrs \\ %{}) do
     %User{}

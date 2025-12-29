@@ -1,14 +1,20 @@
-<header>
-    <h2>Update Solution Type</h2>
-</header>
-    
-<.data_form 
-  changeset={@changeset} 
-  action={"#{get_url()}/#{@record.id}"} 
-  flash={@flash} 
-  edit={true} 
-  is_admin={@is_admin}
-  current_user={@current_user}
-/>
-  
-    
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Solution Types", to: "#{get_url()}"},
+  %{label: "Edit Solution Type"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    Update Solution Type
+  </.form_header>
+</div>
+<div class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}/#{@record.id}"}
+    flash={@flash}
+    edit={true}
+    is_admin={@is_admin}
+    current_user={@current_user}
+  />
+</div>

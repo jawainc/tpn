@@ -1,17 +1,25 @@
-<div id="form_container">
-  <.header>
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Users", to: "#{get_url()}"},
+  %{label: "New User"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
     New User
-  </.header>
-  
-  <.user_form 
-    changeset={@changeset} 
-    action={"#{get_url()}"} 
-    flash={@flash} 
-    roles={@roles} 
+    <:subtitle>
+      Fill in the form below to create a new user.
+    </:subtitle>
+  </.form_header>
+</div>
+
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.user_form
+    changeset={@changeset}
+    action={"#{get_url()}"}
+    flash={@flash}
+    roles={@roles}
     lhns={@lhns}
     facilities={@facilities}
     campuses={@campuses}
-    />
+  />
 </div>
-
-  

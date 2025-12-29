@@ -1,4 +1,19 @@
-<header>
-    <h2>Update Campus</h2>
-</header>    
-<.data_form changeset={@changeset} action={"#{get_url()}/#{@record.id}"} flash={@flash} facilities={@facilities}  />
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Campuses", to: "#{get_url()}"},
+  %{label: "Update Campus"}
+]} />
+
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    Update Campus
+  </.form_header>
+</div>
+<div class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}/#{@record.id}"}
+    flash={@flash}
+    facilities={@facilities}
+  />
+</div>

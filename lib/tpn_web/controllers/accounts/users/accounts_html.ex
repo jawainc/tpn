@@ -1,7 +1,7 @@
 defmodule TpnWeb.AccountsHTML do
   use TpnWeb, :html
 
-  @url "/accounts"
+  @url "/users"
 
   embed_templates "accounts_html/*"
 

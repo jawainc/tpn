@@ -28,6 +28,7 @@ defmodule Tpn.Accounts.UsersRoles do
     field :email, :string
     field :contact_no, :string
     field :active, :boolean, default: true
+    field :deleted, :boolean, default: false
     field :role, :string
     field :role_id, :integer
     field :local_health_network, :string

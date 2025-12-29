@@ -1,14 +1,20 @@
-<header>
-    <h2>Update Class</h2>
-</header>
-    
-<.data_form 
-      changeset={@changeset} 
-      action={"#{get_url()}/#{@record.id}"} 
-      flash={@flash} 
-      edit={true} 
-      is_admin={@is_admin}
-      current_user={@current_user}
-      />
-  
-    
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Classes", to: "#{get_url()}"},
+  %{label: "Edit Class"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    Update Class
+  </.form_header>
+</div>
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}/#{@record.id}"}
+    flash={@flash}
+    edit={true}
+    is_admin={@is_admin}
+    current_user={@current_user}
+  />
+</div>

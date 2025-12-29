@@ -32,10 +32,6 @@ defmodule TpnWeb.UnitsController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> assign(:types, UnitTypes.unit_types())
         |> assign(:selected_types, [])
         |> render(:new, changeset: new_change())
@@ -66,11 +62,10 @@ defmodule TpnWeb.UnitsController do
     case Units.update(id, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

@@ -1,30 +1,29 @@
 <%= if(!Enum.empty?(@records)) do %>
-    <.table id="wards" rows={@records} url={get_url()} meta={@meta} >
-        <:col :let={record} label="Name" field={:name}><%= record.name %></:col>
-        <:col :let={record} label="Unit Type" field={:unit_type}><%= record.unit_type %></:col>
-        <:col :let={record} label="Print on Label" field={:print_on_label}>
-            <.empty_badge status={record.print_on_label} />
-        </:col>
-        <:col :if={@is_admin} :let={record} label="Added By" field={:user_name}><%= record.user_name %></:col>
+  <.table id="wards" rows={@records} url={get_url()} meta={@meta}>
+    <:col :let={record} label="Name" field={:name}>{record.name}</:col>
+    <:col :let={record} label="Unit Type" field={:unit_type}>{record.unit_type}</:col>
+    <:col :let={record} label="Print on Label" field={:print_on_label}>
+      <.empty_badge status={record.print_on_label} />
+    </:col>
+    <:col :let={record} :if={@is_admin} label="Added By" field={:user_name}>
+      {record.user_name}
+    </:col>
 
-        <:action 
-            :if={@is_admin || @can.update || @can.delete}
-            :let={record}
-        >
-            <.table_actions_edit_delete 
-                record={record} 
-                url={get_url()} 
-                is_admin={@is_admin} 
-                can_update={@can.update} 
-                can_delete={@can.delete} 
-            />
-        </:action>
-    </.table>
+    <:action :let={record} :if={@is_admin || @can.update || @can.delete}>
+      <.table_actions_edit_delete
+        record={record}
+        url={get_url()}
+        is_admin={@is_admin}
+        can_update={@can.update}
+        can_delete={@can.delete}
+        edit_popup={false}
+      />
+    </:action>
+  </.table>
 
-    <%= if @meta.has_previous_page or @meta.has_next_page do %>
-        <.pagination meta={@meta} url={get_url()} />
-    <% end %>
-
+  <%= if @meta.has_previous_page or @meta.has_next_page do %>
+    <.pagination meta={@meta} url={get_url()} />
+  <% end %>
 <% else %>
-    <.no_records />
+  <.no_records />
 <% end %>

@@ -36,10 +36,6 @@ defmodule TpnWeb.OsmolaritiesController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> assign(:units, Units.units_for_select())
         |> assign(:patient_types, PatientTypes.patient_types_for_select())
         |> assign(:vascular_accesses, VascularAccesses.vascular_accesses_for_select())
@@ -73,11 +69,10 @@ defmodule TpnWeb.OsmolaritiesController do
     case Osmolarities.update_osmolarity(record, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:success, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

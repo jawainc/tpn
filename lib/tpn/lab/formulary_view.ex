@@ -23,6 +23,7 @@ defmodule Tpn.FormularyView do
     field :name, :string
     field :label_friendly_name, :string
     field :code, :string
+    field :drug_id, :string
     field :is_enteral, :boolean
     field :concentration, :decimal
     field :calories, :decimal
@@ -31,6 +32,7 @@ defmodule Tpn.FormularyView do
     field :print_on_label, :boolean
     field :include_in_overfill, :boolean
     field :universal_fluid, :boolean
+    field :active, :boolean
     field :class_id, :integer
     field :concentration_unit_id, :integer
     field :calories_unit_id, :integer

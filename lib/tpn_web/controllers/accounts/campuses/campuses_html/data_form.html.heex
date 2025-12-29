@@ -1,26 +1,30 @@
-<.simple_form :let={f} 
-    for={@changeset} action={@action}
-    hx-post={@action}
-    hx-target="#table_modal_form_contents"
-    hx-on::config-request="formConfigRequest(event)"
-    autocomplete="off"
-    >
-    <section class="space-y-6">
-        <.flash_group flash={@flash} />
+<.simple_form
+  :let={f}
+  for={@changeset}
+  action={@action}
+  hx-post={@action}
+  hx-target="#main-contents"
+  hx-on::config-request="formConfigRequest(event)"
+  autocomplete="off"
+>
+  <section class="space-y-6">
+    <.flash_group flash={@flash} />
 
-        <.input field={f[:name]} type="text" label="Name" required autocomplete="new-name" />
-        <.input field={f[:code]} type="text" label="Code" required />
-        <.input 
-            field={f[:facility_id]} 
-            type="select" 
-            label="Facility" 
-            options={@facilities} 
-            prompt="Select Facility"
-            required 
-            />
-        
-        <footer class="flex justify-end space-x-3">
-            <.form_modal_buttons />
-        </footer>
-    </section>
+    <.input field={f[:name]} type="text" label="Name" required autocomplete="new-name" />
+    <.input field={f[:code]} type="text" label="Code" required />
+    <.input
+      field={f[:facility_id]}
+      type="select"
+      label="Facility"
+      options={@facilities}
+      prompt="Select Facility"
+      required
+    />
+
+    <div class="mt-10 flex justify-end gap-2">
+      <button id="form-button" type="submit" class="btn">
+        Save <.btn_htmx_indicator />
+      </button>
+    </div>
+  </section>
 </.simple_form>

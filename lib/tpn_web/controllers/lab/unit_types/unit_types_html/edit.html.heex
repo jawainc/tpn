@@ -1,12 +1,20 @@
-<header>
-    <h2>Update Unit Type</h2>
-</header>
-    
-<.data_form 
-    changeset={@changeset} 
-    action={"#{get_url()}/#{@record.id}"} 
-    flash={@flash} 
-    edit={true} 
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Unit Types", to: "#{get_url()}"},
+  %{label: "Edit Unit Type"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    Update Unit Type
+  </.form_header>
+</div>
+<div class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}/#{@record.id}"}
+    flash={@flash}
+    edit={true}
     is_admin={@is_admin}
     current_user={@current_user}
-/>
+  />
+</div>

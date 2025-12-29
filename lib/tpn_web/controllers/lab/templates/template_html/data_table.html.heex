@@ -4,7 +4,7 @@
     <:col :let={record} label="Patient Type" field={:patient_type_id}>
       {record.patient_type_name}
     </:col>
-    <:col :let={record} label="Fluids" field={:fluids}>{record.fluids}</:col>
+    <:col :let={record} label="Fluids" field={:fluids}>{format_decimal(record.fluids)}</:col>
     <:col :let={record} label="Active" field={:active}>
       <.empty_badge status={record.active} />
     </:col>
@@ -14,19 +14,25 @@
     </:col>
 
     <:action :let={record}>
-      <.view_button hx_get={"#{get_url()}/#{record.id}"}>
-        View details
-      </.view_button>
-    </:action>
-
-    <:action :let={record} :if={@is_admin || @can.update || @can.delete}>
-      <.table_actions_edit_delete
-        record={record}
-        url={get_url()}
-        is_admin={@is_admin}
-        can_update={@can.update}
-        can_delete={@can.delete}
-      />
+      <div role="group" class="button-group">
+        <button
+          hx-get={"#{get_url()}/#{record.id}"}
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+          type="button"
+          class="btn-outline"
+        >
+          View details
+        </button>
+        <.table_actions_edit_delete
+          record={record}
+          url={get_url()}
+          is_admin={@is_admin}
+          can_update={@can.update}
+          can_delete={@can.delete}
+          edit_popup={false}
+        />
+      </div>
     </:action>
   </.table>
 

@@ -2,15 +2,20 @@
   Update Template Product
 </header>
 
-<.data_form
-  changeset={@changeset}
-  action={"#{get_url()}/#{@record.id}"}
-  flash={@flash}
-  edit={true}
-  templates={@templates}
-  substances={@substances}
-  filling_methods={@filling_methods}
-  dose_units={@dose_units}
-  formularies={@formularies}
-  template_id={@template_id}
-/>
+<section>
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}/#{@record.id}"}
+    flash={@flash}
+    edit={true}
+    templates={@templates}
+    substances={@substances}
+    filling_methods={@filling_methods}
+    dose_units={@dose_units}
+    formularies={@formularies}
+    template_id={@template_id}
+  />
+</section>
+<button type="button" aria-label="Close dialog" onclick="this.closest('dialog').close()">
+  <.icon_x_mark />
+</button>

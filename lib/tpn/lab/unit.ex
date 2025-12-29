@@ -17,6 +17,7 @@ defmodule Tpn.Unit do
     unit
     |> cast(attrs, [:unit, :user_id])
     |> validate_required([:unit, :user_id])
+    |> unique_constraint(:unit)
   end
 
   def filter_fields do
@@ -26,5 +27,4 @@ defmodule Tpn.Unit do
   def sortable_fields do
     @sortable_fields
   end
-
 end

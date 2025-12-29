@@ -1,7 +1,13 @@
-<header>
-    <h2>Update Local Health Network</h2>
-</header>
-    
-<.data_form changeset={@changeset} action={"#{get_url()}/#{@record.id}"} flash={@flash} />
-  
-    
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Local Health Networks", to: "#{get_url()}"},
+  %{label: "Edit Local Health Network"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    Update Local Health Network
+  </.form_header>
+</div>
+<div class="mx-auto max-w-3xl">
+  <.data_form changeset={@changeset} action={"#{get_url()}/#{@record.id}"} flash={@flash} />
+</div>

@@ -28,10 +28,6 @@ defmodule TpnWeb.UnitTypesController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> render(:new, changeset: new_change())
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -54,11 +50,10 @@ defmodule TpnWeb.UnitTypesController do
     case UnitTypes.update_unit_type(record, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

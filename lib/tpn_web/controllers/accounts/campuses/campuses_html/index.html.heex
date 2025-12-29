@@ -1,4 +1,8 @@
-<div class="mx-auto max-w-7xl">
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Campuses"}
+]} />
+<div class="mx-auto max-w-5xl">
   <.header>
     Campuses
     <:actions>
@@ -9,7 +13,7 @@
     </:actions>
   </.header>
 </div>
-<div class="mx-auto max-w-7xl mt-5">
+<div class="mx-auto max-w-5xl mt-5">
   <.htmx_content_indicator id="data-table-indicator" />
   <div
     id="data-table"
@@ -20,6 +24,4 @@
   >
     <.data_table records={@records} meta={@meta} />
   </div>
-  
-  <.table_form_modal />
 </div>

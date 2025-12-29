@@ -41,6 +41,7 @@ defmodule TpnWeb.TemplateProductController do
 
   def create(conn, %{"template_product" => template_product_params}) do
     params = Networks.params_assign_user(conn, template_product_params)
+    IO.inspect(params, label: "params")
 
     case TemplateProducts.create_template_product(params) do
       {:ok, _} ->
@@ -86,7 +87,6 @@ defmodule TpnWeb.TemplateProductController do
     case TemplateProducts.update_template_product(record, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:success, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
@@ -110,14 +110,6 @@ defmodule TpnWeb.TemplateProductController do
     TemplateProducts.sort_template_products(products)
 
     conn
-    |> put_resp_header(
-      "hx-trigger",
-      ClientEvents.generate_client_event(
-        "reloadProductsTable",
-        "success",
-        "Updated successfully."
-      )
-    )
     |> send_resp(204, "")
   end
 
@@ -146,6 +138,8 @@ defmodule TpnWeb.TemplateProductController do
       name: "template_product[formulary_id]"
     )
   end
+
+  def formularies_data(_, ""), do: []
 
   def formularies_data(template_id, class_id) do
     template =

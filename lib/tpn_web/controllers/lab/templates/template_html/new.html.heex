@@ -1,14 +1,22 @@
-<header>
-  <h2>New Template</h2>
-</header>
-
-<.data_form
-  changeset={@changeset}
-  action={"#{get_url()}"}
-  flash={@flash}
-  edit={false}
-  is_admin={@is_admin}
-  units={@fluid_units}
-  patient_types={@patient_types}
-  current_user={@current_user}
-/>
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Templates", to: "#{get_url()}"},
+  %{label: "New Template"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
+    New Template
+  </.form_header>
+</div>
+<div id="form_container" class="mx-auto max-w-3xl">
+  <.data_form
+    changeset={@changeset}
+    action={"#{get_url()}"}
+    flash={@flash}
+    edit={false}
+    is_admin={@is_admin}
+    units={@fluid_units}
+    patient_types={@patient_types}
+    current_user={@current_user}
+  />
+</div>

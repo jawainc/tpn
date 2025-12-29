@@ -46,10 +46,6 @@ defmodule TpnWeb.TemplateController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> set_assigns()
         |> assign(:changeset, new_change())
         |> render(:new)
@@ -80,11 +76,10 @@ defmodule TpnWeb.TemplateController do
     case Templates.update_template(record, params) do
       {:ok, _} ->
         conn
-        |> put_flash(:success, "Updated successfully.")
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

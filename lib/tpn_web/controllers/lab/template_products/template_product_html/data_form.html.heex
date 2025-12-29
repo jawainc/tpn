@@ -8,95 +8,107 @@
   hx-disabled-elt="#form-button"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
+  class="space-y-6"
+  no_styles={true}
 >
-  <section class="space-y-6">
-    <.flash_group flash={@flash} />
+  <.flash_group flash={@flash} />
 
-    <div class="grid grid-cols-2 gap-4">
-      <input
-        type="hidden"
-        id="template_product_template_id"
-        name="template_product[template_id]"
-        value={@template_id}
-      />
+  <div class="grid grid-cols-2 gap-4 items-start">
+    <input
+      type="hidden"
+      id="template_product_template_id"
+      name="template_product[template_id]"
+      value={@template_id}
+    />
 
-      <.input
-        event_name="load_template_formularies"
-        event_attribute="class_id"
-        include_empty={true}
-        field={f[:class_id]}
-        type="select"
-        label="Substance"
-        options={@substances}
-        prompt="Select..."
-        required
-      />
-      <.input
-        hx-get="/template_products/formularies"
-        hx-vals="js:{template_id: event.detail.template_id, class_id: event.detail.class_id}"
-        hx-trigger="load_template_formularies from:body"
-        hx-target="#select-container-template_product_formulary_id"
-        field={f[:formulary_id]}
-        type="select"
-        options={@formularies}
-        prompt="Select..."
-        label="Default Product"
-        include_empty={true}
-      />
-      <.input
-        field={f[:filling_method_id]}
-        type="select"
-        label="Filling Method"
-        options={@filling_methods}
-        prompt="Select..."
-      />
-      <.input
-        field={f[:dose]}
-        field_2={f[:dose_unit_id]}
-        type="input-with-select"
-        label="Dose"
-        options={@dose_units}
-        options_label="Unit..."
-        placeholder="0.00"
-        input_type="number"
-        step=".01"
-      />
+    <.input
+      event_name="load_template_formularies"
+      event_attribute="class_id"
+      include_empty={true}
+      field={f[:class_id]}
+      type="select"
+      label="Substance"
+      options={@substances}
+      prompt="Select..."
+      required
+    />
+    <.input
+      hx-get="/template_products/formularies"
+      hx-vals="js:{template_id: event.detail.template_id, class_id: event.detail.class_id}"
+      hx-trigger="load_template_formularies from:body"
+      hx-target="#select-container-template_product_formulary_id"
+      field={f[:formulary_id]}
+      type="select"
+      options={@formularies}
+      prompt="Select..."
+      label="Default Product"
+      include_empty={true}
+    />
+    <.input
+      field={f[:filling_method_id]}
+      type="select"
+      label="Filling Method"
+      options={@filling_methods}
+      prompt="Select..."
+    />
+    <.input
+      field={f[:dose]}
+      field_2={f[:dose_unit_id]}
+      type="input-with-select"
+      label="Dose"
+      options={@dose_units}
+      options_label="Unit..."
+      placeholder="0.0000"
+      input_type="number"
+      step=".0001"
+    />
 
-      <.input
-        field={f[:additional_dose]}
-        field_2={f[:additional_dose_unit_id]}
-        type="input-with-select"
-        label="Additional Dose"
-        options={@dose_units}
-        options_label="Unit..."
-        placeholder="0.00"
-        input_type="number"
-        step=".01"
-      />
+    <.input
+      field={f[:additional_dose]}
+      field_2={f[:additional_dose_unit_id]}
+      type="input-with-select"
+      label="Additional Dose"
+      options={@dose_units}
+      options_label="Unit..."
+      placeholder="0.0000"
+      input_type="number"
+      step=".0001"
+    />
 
-      <.input
-        field={f[:max_allowed_limit]}
-        field_2={f[:max_allowed_unit_id]}
-        type="input-with-select"
-        label="Max Allowed Limit"
-        options={@dose_units}
-        options_label="Unit..."
-        placeholder="0.00"
-        input_type="number"
-        step=".01"
-      />
-    </div>
-    <div class="grid grid-cols-2 gap-4">
-      <.input
-        field={f[:substance_locked_on_order]}
-        type="checkbox"
-        label="Substance Locked On Order"
-      />
-      <.input field={f[:additional_dose_allowed]} type="checkbox" label="Additional Dose Allowed" />
-    </div>
+    <.input
+      field={f[:max_allowed_limit]}
+      field_2={f[:max_allowed_unit_id]}
+      type="input-with-select"
+      label="Max Allowed Limit"
+      options={@dose_units}
+      options_label="Unit..."
+      placeholder="0.0000"
+      input_type="number"
+      step=".0001"
+    />
+  </div>
+  <div class="grid grid-cols-2 gap-4 mt-6">
+    <.input
+      field={f[:substance_locked_on_order]}
+      type="checkbox"
+      label="Substance Locked On Order"
+      checkbox_inline={false}
+    />
+    <.input
+      field={f[:additional_dose_allowed]}
+      type="checkbox"
+      label="Additional Dose Allowed"
+      checkbox_inline={false}
+    />
+  </div>
 
-    <footer class="flex justify-end space-x-3 pt-4">
-      <.form_modal_buttons />
-    </footer>
-  </section>
+  <div class="flex justify-end space-x-3 pt-10">
+    <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">
+      Cancel
+    </button>
+    <button id="form-button" type="submit" class="btn">
+      {if @edit, do: "Update", else: "Create"} Product
+      <.icon_spinner id="form-button-indicator" />
+    </button>
+  </div>
 </.simple_form>

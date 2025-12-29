@@ -9,25 +9,26 @@
     </:col>
 
     <:action :let={record}>
-      <button
-        hx-get={"#{get_url()}/#{record.id}/rights"}
-        hx-target="#main-contents"
-        hx-indicator=".main-contents-loader"
-        type="button"
-        class="btn-sm-outline"
-      >
-        Permissions
-      </button>
-    </:action>
-
-    <:action :let={record} :if={@is_admin || @can.update || @can.delete}>
-      <.table_actions_edit_delete
-        record={record}
-        url={get_url()}
-        is_admin={@is_admin}
-        can_update={@can.update}
-        can_delete={@can.delete}
-      />
+      <div role="group" class="button-group">
+        <button
+          hx-get={"#{get_url()}/#{record.id}/rights"}
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+          type="button"
+          class="btn-outline"
+        >
+          Permissions
+        </button>
+        <.table_actions_edit_delete
+          :if={@is_admin || @can.update || @can.delete}
+          record={record}
+          url={get_url()}
+          is_admin={@is_admin}
+          can_update={@can.update}
+          can_delete={@can.delete}
+          edit_popup={false}
+        />
+      </div>
     </:action>
   </.table>
 
