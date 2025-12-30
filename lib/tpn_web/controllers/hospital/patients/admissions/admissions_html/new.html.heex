@@ -1,28 +1,54 @@
-<div id="form_container">
-  <header>
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Patients", to: "#{get_url()}"},
+  %{
+    label: "#{@patient.first_name} #{@patient.last_name}",
+    to: "/patients/dashboard/#{@patient.id}"
+  },
+  %{label: "New Admission"}
+]} />
+<div class="mx-auto max-w-3xl">
+  <.form_header>
     New Admission
-  </header>
-
-  <.data_form
-    changeset={@changeset}
-    action={"#{get_url()}"}
-    flash={@flash}
-    edit={false}
-    is_admin={@is_admin}
-    lhns={@lhns}
-    facilities={@facilities}
-    campuses={@campuses}
-    current_user={@current_user}
-    patient_id={@patient_id}
-    admission_no={@admission_no}
-    age={@age}
-    mrn={@mrn}
-    wards={@wards}
-    rooms={@rooms}
-    beds={@beds}
-    patient_types={@patient_types}
-    weight_units={@weight_units}
-    height_units={@height_units}
-    has_campus={@has_campus}
-  />
+    <:subtitle>
+      {@patient.first_name} {@patient.last_name}
+    </:subtitle>
+    <:actions>
+      <button
+        hx-get={"/patients/dashboard/#{@patient.id}"}
+        hx-target="#main-contents"
+        hx-indicator="#main-contents-indicator"
+        type="button"
+        class="btn-sm-outline justify-self-end"
+      >
+        <.icon_eye class="size-3" /> View Patient Details
+      </button>
+    </:actions>
+  </.form_header>
+</div>
+<div class="mx-auto max-w-3xl">
+  <section>
+    <.data_form
+      changeset={@changeset}
+      action={"#{get_url()}"}
+      flash={@flash}
+      edit={false}
+      is_admin={@is_admin}
+      lhns={@lhns}
+      facilities={@facilities}
+      campuses={@campuses}
+      current_user={@current_user}
+      patient_id={@patient_id}
+      admission_no={@admission_no}
+      age={@age}
+      mrn={@mrn}
+      wards={@wards}
+      rooms={@rooms}
+      beds={@beds}
+      patient_types={@patient_types}
+      weight_units={@weight_units}
+      height_units={@height_units}
+      has_campus={@has_campus}
+    />
+  </section>
 </div>

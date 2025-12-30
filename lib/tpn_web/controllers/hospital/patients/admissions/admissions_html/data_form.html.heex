@@ -3,7 +3,7 @@
   for={@changeset}
   action={@action}
   hx-post={@action}
-  hx-target="#form_container"
+  hx-target="#main-contents"
   hx-disabled-elt="#form-button"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
@@ -184,7 +184,9 @@
     </div>
 
     <footer class="flex justify-end space-x-3">
-      <.form_modal_buttons />
+      <button id="form-button" type="submit" class="btn">
+        Save <.btn_htmx_indicator />
+      </button>
     </footer>
   </section>
 </.simple_form>

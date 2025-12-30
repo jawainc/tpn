@@ -1,39 +1,18 @@
-<.header>
-  <h2>Patient Admission Order</h2>
-  <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
-    <li class="inline-flex items-center gap-1.5">
-      <a
-        href=""
-        hx-get="/patients/dashboard"
-        hx-target="#main-contents"
-        hx-indicator="#main-contents-indicator"
-        class="hover:text-foreground transition-colors"
-      >
-        Patients
-      </a>
-    </li>
-    <li>
-      <.icon_angle_right class="size-3.5" />
-    </li>
-    <a
-      href=""
-      hx-get={"/patients/dashboard/#{@patient_id}"}
-      hx-target="#main-contents"
-      hx-indicator="#main-contents-indicator"
-      class="hover:text-foreground transition-colors"
-    >
-      Details
-    </a>
-    <li>
-      <.icon_angle_right class="size-3.5" />
-    </li>
-    <li class="inline-flex items-center gap-1.5">
-      <span class="text-foreground font-normal">
-        New Order
-      </span>
-    </li>
-  </ol>
-</.header>
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Patients", to: "/patients/dashboard"},
+  %{
+    label: "#{@patient.first_name} #{@patient.last_name}",
+    to: "/patients/dashboard/#{@patient.id}"
+  },
+  %{label: "New Order"}
+]} />
+<.form_header>
+  Patient Admission Order
+  <:subtitle>
+    {@patient.first_name} {@patient.last_name}
+  </:subtitle>
+</.form_header>
 <div class="flex gap-8">
   <.order_side_bar patient={@patient} admission={@admission} />
   <div class="max-w-6xl mx-auto grow">

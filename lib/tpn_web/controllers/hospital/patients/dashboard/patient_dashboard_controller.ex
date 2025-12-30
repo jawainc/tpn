@@ -55,10 +55,6 @@ defmodule TpnWeb.Hospital.PatientDashboardController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> Networks.assign_networks()
         |> assign(:genders, Patients.get_genders())
         |> render(:new, changeset: new_change())

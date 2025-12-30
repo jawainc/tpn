@@ -3,18 +3,20 @@
     <.no_records />
   </div>
 <% else %>
-  <div id="admissions_table" class="divide-y divide-white/5">
+  <div id="admissions_table" class="divide-y divide-border">
     <%= for admission <- @admissions do %>
-      <div class="relative flex items-center space-x-12 p-4">
-        <span class="text-sm">Admission No: {admission.admission_no}</span>
-        <div class="flex items-center gap-x-4">
+      <div class="relative flex items-center space-x-12 py-4">
+        <span class="text-sm">
+          <span class="text-muted-foreground">Admission No:</span> {admission.admission_no}
+        </span>
+        <div role="group" class="button-group">
           <div id={"admission-details-popover-#{admission.id}"} class="popover">
             <button
               id="admission-details-popover-trigger-#{admission.id}"
               type="button"
               aria-expanded="false"
               aria-controls="admission-details-popover-popover-#{admission.id}"
-              class="btn-sm-outline text-xxs h-xxs"
+              class="btn-sm-outline"
             >
               Details
             </button>
@@ -24,22 +26,43 @@
               aria-hidden="true"
               class="w-80"
             >
-              <div class="grid gap-4">
-                <header class="grid gap-1.5">
-                  <h4 class="leading-none font-medium text-sm">Admission Details</h4>
-                </header>
-                <div class="flex flex-col gap-2 text-xs">
-                  <p>MRN: {admission.mrn}</p>
-                  <p>Age: {admission.age}</p>
-                  <p :if={admission.discharged}>
-                    Discharge Date: {format_date(admission.discharged_at)}
-                  </p>
-                  <p>Admission Date: {format_date(admission.inserted_at)}</p>
-                  <p>Patient Type: {admission.patient_type}</p>
-                  <p>Weight: {admission.patient_weight}{admission.weight_unit}</p>
-                  <p>Height: {admission.patient_height}{admission.height_unit}</p>
+              <header class="pb-1 text-sm font-medium border-b">
+                Admission Details
+              </header>
+              <section class="text-sm divide-y divide-border">
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">MRN:</span> <span>{admission.mrn}</span>
                 </div>
-              </div>
+
+                <div :if={admission.discharged} class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Discharge Date:</span>
+                  <span>{format_date(admission.discharged_at)}</span>
+                </div>
+
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Admission Date:</span>
+                  <span>{format_date(admission.inserted_at)}</span>
+                </div>
+
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Age:</span> <span>{admission.age}</span>
+                </div>
+
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Patient Type:</span>
+                  <span>{admission.patient_type}</span>
+                </div>
+
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Weight:</span>
+                  <span>{admission.patient_weight}{admission.weight_unit}</span>
+                </div>
+
+                <div class="flex justify-between gap-2 pt-3">
+                  <span class="text-muted-foreground">Height:</span>
+                  <span>{admission.patient_height}{admission.height_unit}</span>
+                </div>
+              </section>
             </div>
           </div>
 
@@ -49,9 +72,9 @@
               type="button"
               aria-expanded="false"
               aria-controls="admission-network-popover-popover-#{admission.id}"
-              class="btn-sm-outline text-xxs h-xxs"
+              class="btn-sm-outline"
             >
-              Networks
+              Location
             </button>
             <div
               id="admission-network-popover-popover-#{admission.id}"
@@ -59,20 +82,32 @@
               aria-hidden="true"
               class="w-80"
             >
-              <div class="grid gap-4">
-                <header class="grid gap-1.5">
-                  <h4 class="leading-none font-medium text-sm">Network Details</h4>
-                  <p class="text-muted-foreground text-xs">admission location details</p>
-                </header>
-                <div class="flex flex-col gap-2 text-sm">
-                  <p>Local Health Network: {admission.local_health_network}</p>
-                  <p>Facility: {admission.facility}</p>
-                  <p>Campus: {admission.campus}</p>
-                  <p>Ward: {admission.ward}</p>
-                  <p>Room: {admission.room}</p>
-                  <p>Bed: {admission.bed}</p>
+              <header class="pb-1 text-sm font-medium border-b">
+                Location Details
+              </header>
+              <section class="text-sm divide-y divide-border">
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">LHN:</span>
+                  <span>{admission.local_health_network}</span>
                 </div>
-              </div>
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Facility:</span>
+                  <span>{admission.facility}</span>
+                </div>
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Campus:</span>
+                  <span>{admission.campus}</span>
+                </div>
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Ward:</span> <span>{admission.ward}</span>
+                </div>
+                <div class="flex justify-between gap-2 py-3">
+                  <span class="text-muted-foreground">Room:</span> <span>{admission.room}</span>
+                </div>
+                <div class="flex justify-between gap-2 pt-3">
+                  <span class="text-muted-foreground">Bed:</span> <span>{admission.bed}</span>
+                </div>
+              </section>
             </div>
           </div>
 
@@ -92,7 +127,10 @@
               aria-hidden="true"
               class="w-80"
             >
-              <p class="text-xs">{raw(format_lines(admission.notes))}</p>
+              <header class="pb-1 text-sm font-medium border-b">Admission Notes</header>
+              <section class="pt-3">
+                {raw(format_lines(admission.notes))}
+              </section>
             </div>
           </div>
 
@@ -103,7 +141,7 @@
             hx-swap="innerHTML"
             hx-indicator="#slidingPanel-loader"
             onclick="openSlidingPanel()"
-            class="btn-sm-outline text-xxs h-xxs"
+            class="btn-sm-outline"
           >
             Admission orders
           </button>

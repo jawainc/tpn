@@ -1,53 +1,51 @@
-<div class="bg-background-surface-75/70 px-4 pt-4 text-muted-foreground text-sm">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-14">
-          <div class="divide-y-2 divide-background-surface-200">
-            <div class="flex justify-between py-4 gap-4 ">
-              <h3 class="font-semibold">Name:</h3>
-              <span>{@patient.first_name} {@patient.last_name}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">TPN I.D:</h3>
-              <span>{@patient.tpn_id}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Identity No:</h3>
-              <span>{@patient.identity_no || "--"}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Email:</h3>
-              <span>{@patient.email || "--"}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Phone:</h3>
-              <span>{@patient.phone || "--"}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Age:</h3>
-              <span>{@age}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Gender:</h3>
-              <span>{@patient.gender}</span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Birthday:</h3>
-              <span>{Calendar.strftime(@patient.dob, "%B %d, %Y")}</span>
-            </div>
-          </div>
-          
-          <div class="divide-y-2 divide-background-surface-200">
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Address:</h3>
-              <span>
-                {@patient.address_1}
-                {@patient.address_2}
-                {@patient.city} {@patient.state} {@patient.zip} {@patient.country}
-              </span>
-            </div>
-            <div class="flex justify-between py-4 gap-4">
-              <h3 class="font-semibold">Notes:</h3>
-              <span>{raw(format_lines(@patient.notes))}</span>
-            </div>
-          </div>  
-        </div>
-      </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-14">
+  <div class="divide-y divide-border">
+    <div class="flex justify-between pb-4 gap-4 ">
+      <h3 class="text-muted-foreground">Name:</h3>
+      <span>{@patient.first_name} {@patient.last_name}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">TPN I.D:</h3>
+      <span>{@patient.tpn_id}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Identity No:</h3>
+      <span>{@patient.identity_no || "--"}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Email:</h3>
+      <span>{@patient.email || "--"}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Phone:</h3>
+      <span>{@patient.phone || "--"}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Age:</h3>
+      <span>{@age}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Gender:</h3>
+      <span>{@patient.gender}</span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Birthday:</h3>
+      <span>{Calendar.strftime(@patient.dob, "%B %d, %Y")}</span>
+    </div>
+  </div>
+
+  <div class="divide-y divide-border">
+    <div class="flex justify-between pb-4 gap-4">
+      <h3 class="text-muted-foreground">Address:</h3>
+      <span>
+        {@patient.address_1}
+        {@patient.address_2}
+        {@patient.city} {@patient.state} {@patient.zip} {@patient.country}
+      </span>
+    </div>
+    <div class="flex justify-between py-4 gap-4">
+      <h3 class="text-muted-foreground">Notes:</h3>
+      <span>{raw(format_lines(@patient.notes))}</span>
+    </div>
+  </div>
+</div>

@@ -22,8 +22,8 @@
               </div>
             </td>
             <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
-              <.simple_badge :if={record.is_admitted} state={true} label="Admitted" />
-              <.simple_badge :if={record.cancelled} state={false} label="Cancelled" />
+              <.status_badge :if={record.is_admitted} state={true} label="Admitted" icon={false} />
+              <.status_badge :if={record.cancelled} state={false} label="Cancelled" icon={false} />
             </td>
             <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <div>
@@ -39,11 +39,10 @@
               </div>
               <div class="mt-1">
                 Email: {record.email || "--"}
-              </div>              
+              </div>
             </td>
             <td class="py-3 px-4 border-t border-card-foreground/5 bg-card/60">
               <div :if={!record.cancelled} class="flex items-center justify-end space-x-2">
-                
                 <button
                   hx-get={"#{get_url()}/#{record.id}"}
                   hx-target="#main-contents"
@@ -54,15 +53,15 @@
                 >
                   <.icon_eye />
                 </button>
-                
-                <button 
+
+                <button
                   :if={!record.is_admitted && (@is_admin || can_manage?(record, @current_user))}
-                  class="btn-icon-outline" 
+                  class="btn-icon-outline"
                   type="button"
                   hx-get={"#{get_url()}/#{record.id}/edit"}
                   hx-target="#main-contents"
                   hx-indicator="#main-contents-indicator"
-                  >
+                >
                   <.icon_edit />
                 </button>
 

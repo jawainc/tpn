@@ -35,10 +35,6 @@ defmodule TpnWeb.BedsController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> Networks.assign_networks()
         |> assign(:wards, [])
         |> assign(:rooms, [])
@@ -79,7 +75,7 @@ defmodule TpnWeb.BedsController do
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

@@ -16,6 +16,9 @@
     <:col :let={record} label="Print" field={:print_on_label}>
       <.empty_badge status={record.print_on_label} />
     </:col>
+    <:col :let={record} label="Active" field={:print_on_label}>
+      <.empty_badge status={record.active} />
+    </:col>
 
     <:col :let={record} :if={@is_admin} label="Added By" field={:user_name}>
       {record.user_name}

@@ -1,43 +1,25 @@
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Patients", to: "#{get_url()}"},
+  %{label: "Update Patient"}
+]} />
 <div class="mx-auto max-w-4xl">
-  <header class="flex items-center justify-between">
-    <div>
-      <h2>Update Patient</h2>
-      <ol class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
-        <li class="inline-flex items-center gap-1.5">
-          <a
-            href=""
-            hx-get={"#{get_url()}"}
-            hx-target="#main-contents"
-            hx-indicator="#main-contents-indicator"
-            class="hover:text-foreground transition-colors"
-          >
-            Patients
-          </a>
-        </li>
-        <li>
-          <.icon_angle_right class="size-3.5" />
-        </li>
-        <li class="inline-flex items-center gap-1.5">
-          <span class="text-foreground font-normal">{@record.first_name} {@record.last_name}</span>
-        </li>
-      </ol>
-    </div>
-  </header>
-  <div class="flex justify-end -mb-6 mt-6">
-    <button
-      type="button"
-      hx-get={"#{get_url()}/#{@record.id}"}
-      hx-target="#main-contents"
-      hx-swap="innerHTML"
-      hx-indicator="#main-contents-indicator"
-      type="button"
-      class="btn-sm text-xs h-xs flex items-center gap-2"
-    >
-      <.icon_eye class="size-3" />
-      View Patient Details
-    </button>
-  </div>
-  
+  <.form_header>
+    Update Patient
+    <:actions>
+      <button
+        hx-get={"#{get_url()}/#{@record.id}"}
+        hx-target="#main-contents"
+        hx-indicator="#main-contents-indicator"
+        type="button"
+        class="btn-sm-outline justify-self-end"
+      >
+        <.icon_eye class="size-3" /> View Patient Details
+      </button>
+    </:actions>
+  </.form_header>
+</div>
+<div class="mx-auto max-w-4xl">
   <%= if @record.has_admission do %>
     <div class="flex gap-6 mt-14">
       <div class="card">
@@ -95,85 +77,83 @@
         Patient Data
       </header>
 
-    <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      <.input field={f[:first_name]} type="text" label="First Name" required />
-      <.input field={f[:last_name]} type="text" label="Last Name" required />
-      <.input
-        :if={!@record.has_admission}
-        field={f[:dob]}
-        type="date"
-        label="Date of Birth"
-        required
-      />
-      <.input
-        :if={!@record.has_admission}
-        field={f[:gender]}
-        type="simple-select"
-        label="Gender"
-        options={@genders}
-        required
-      />
-      <.input field={f[:identity_no]} type="text" label="Identity No" />
-      <.input field={f[:email]} type="text" label="Email" />
-      <.input field={f[:address_1]} type="text" label="Address 1" />
-      <.input field={f[:address_2]} type="text" label="Address 2" />
-      <.input field={f[:city]} type="text" label="City" />
-      <.input field={f[:state]} type="text" label="State" />
-      <.input field={f[:country]} type="text" label="Country" />
-      <.input field={f[:zip]} type="text" label="Zip" />
-      <.input field={f[:phone]} type="text" label="Phone" />
-      
-      <div class="divider col-span-3 ">
-        <.input field={f[:notes]} type="textarea" label="Notes" />
-      </div>
-    </div>
-    </section>
+      <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        <.input field={f[:first_name]} type="text" label="First Name" required />
+        <.input field={f[:last_name]} type="text" label="Last Name" required />
+        <.input
+          :if={!@record.has_admission}
+          field={f[:dob]}
+          type="date"
+          label="Date of Birth"
+          required
+        />
+        <.input
+          :if={!@record.has_admission}
+          field={f[:gender]}
+          type="simple-select"
+          label="Gender"
+          options={@genders}
+          required
+        />
+        <.input field={f[:identity_no]} type="text" label="Identity No" />
+        <.input field={f[:email]} type="text" label="Email" />
+        <.input field={f[:address_1]} type="text" label="Address 1" />
+        <.input field={f[:address_2]} type="text" label="Address 2" />
+        <.input field={f[:city]} type="text" label="City" />
+        <.input field={f[:state]} type="text" label="State" />
+        <.input field={f[:country]} type="text" label="Country" />
+        <.input field={f[:zip]} type="text" label="Zip" />
+        <.input field={f[:phone]} type="text" label="Phone" />
 
-    
+        <div class="divider col-span-3 ">
+          <.input field={f[:notes]} type="textarea" label="Notes" />
+        </div>
+      </div>
+    </section>
 
     <%= if !@record.has_admission do %>
       <section class="w-full rounded-lg border scroll-mt-16">
-      <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
-        Networks
-      </header>
-      <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        <.input
-          :if={@is_admin}
-          hx-get="/health_networks"
-          hx-target="#patient_facility_id"
-          hx-on:htmx-after-on-load="selectRemoveOptions('patient_campus_id');"
-          field={f[:local_health_network_id]}
-          type="simple-select"
-          label="Local Health Network"
-          prompt="Select..."
-          options={@lhns}
-          required
-        />
+        <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+          Networks
+        </header>
+        <div class="p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <.input
+            :if={@is_admin}
+            hx-get="/health_networks"
+            hx-target="#patient_facility_id"
+            hx-on:htmx-after-on-load="selectRemoveOptions('patient_campus_id');"
+            field={f[:local_health_network_id]}
+            type="simple-select"
+            label="Local Health Network"
+            prompt="Select..."
+            options={@lhns}
+            required
+          />
 
-        <.input
-          :if={netwrok_access(@is_admin, "facility", @current_user)}
-          hx-get="/health_networks"
-          hx-target="#patient_campus_id"
-          hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'bed')"
-          field={f[:facility_id]}
-          type="simple-select"
-          label="Facility"
-          prompt="Select..."
-          options={@facilities}
-          required
-        />
+          <.input
+            :if={netwrok_access(@is_admin, "facility", @current_user)}
+            hx-get="/health_networks"
+            hx-target="#patient_campus_id"
+            hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'bed')"
+            field={f[:facility_id]}
+            type="simple-select"
+            label="Facility"
+            prompt="Select..."
+            options={@facilities}
+            required
+          />
 
-        <.input
-          :if={netwrok_access(@is_admin, "campus", @current_user)}
-          field={f[:campus_id]}
-          type="simple-select"
-          label="Campus"
-          prompt="Select..."
-          options={@campuses}
-          required
-        />
-      </div>
-    </section>
+          <.input
+            :if={netwrok_access(@is_admin, "campus", @current_user)}
+            field={f[:campus_id]}
+            type="simple-select"
+            label="Campus"
+            prompt="Select..."
+            options={@campuses}
+            required
+          />
+        </div>
+      </section>
     <% end %>
 
     <:actions>

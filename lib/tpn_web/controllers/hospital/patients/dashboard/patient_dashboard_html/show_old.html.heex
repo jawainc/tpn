@@ -101,7 +101,6 @@
     </button>
   </nav>
 
-  <%!-- Patient Panel --%>
   <div
     role="tabpanel"
     id="patient-panel"
@@ -111,7 +110,7 @@
   >
     <div class="card min-h-11">
       <header>
-        <h2 class="flex justify-between items-center">
+        <h2 class="flex items-center gap-4">
           Patient
           <button
             :if={!@patient.is_admitted}
@@ -121,7 +120,7 @@
             hx-swap="innerHTML"
             hx-indicator="#main-contents-indicator"
             type="button"
-            class="btn-sm-outline"
+            class="btn-sm-ghost "
           >
             <.icon_edit class="size-3" /> Update Patient
           </button>
@@ -131,71 +130,69 @@
         <.patient_details patient={@patient} age={@age} />
       </section>
     </div>
-  </div>
+    <div
+      role="tabpanel"
+      id="admission-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="admission-tab"
+      hidden
+    >
+      <div class="card min-h-11">
+        <header>
+          <h2 class="flex items-center gap-4">
+            Admissions
+            <button
+              type="button"
+              hx-get={"/patients/#{@patient.id}/admissions/list"}
+              hx-target="#admissions_details_container"
+              hx-on:htmx:after-request="handleIconLoader('admissions_details_loader', false)"
+              hx-on:click="handleIconLoader('admissions_details_loader', true)"
+              class="btn-sm-icon-ghost"
+            >
+              <.icon_loader id="admissions_details_loader" />
+            </button>
+          </h2>
 
-  <%!-- Admission Panel --%>
-  <div
-    role="tabpanel"
-    id="admission-panel"
-    tabindex="-1"
-    aria-selected="false"
-    aria-labelledby="admission-tab"
-    hidden
-  >
-    <div class="card min-h-11">
-      <header class="flex justify-between items-center">
-        <h2 class="flex gap-4 items-center">
-          Admissions
-          <button
-            type="button"
-            hx-get={"/patients/#{@patient.id}/admissions/list"}
-            hx-target="#admissions_details_container"
-            hx-on:htmx:after-request="handleIconLoader('admissions_details_loader', false)"
-            hx-on:click="handleIconLoader('admissions_details_loader', true)"
-            class="btn-sm-icon-outline"
-          >
-            <.icon_loader id="admissions_details_loader" />
-          </button>
-        </h2>
-        <.search
-          url={"/patients/admissions/search?patient_id=#{@patient.id}"}
-          target="#admissions_details_container"
-        />
-      </header>
-      <section>
-        <div id="admissions_details_container"></div>
-      </section>
+          <.search
+            url={"/patients/admissions/search?patient_id=#{@patient.id}"}
+            target="#admissions_details_container"
+          />
+        </header>
+        <section>
+          <div id="admissions_details_container"></div>
+        </section>
+      </div>
     </div>
-  </div>
-
-  <%!-- Orders Panel --%>
-  <div
-    role="tabpanel"
-    id="order-panel"
-    tabindex="-1"
-    aria-selected="false"
-    aria-labelledby="order-tab"
-    hidden
-  >
-    <div class="card min-h-11">
-      <header class="flex justify-between items-center">
-        <h2 class="flex items-center gap-4">
-          Orders
-          <button
-            type="button"
-            hx-get={"/patients/#{@patient.id}/orders/list"}
-            hx-target="#orders_details_container"
-            hx-on:htmx:after-request="handleIconLoader('orders_details_loader', false)"
-            hx-on:click="handleIconLoader('orders_details_loader', true)"
-            class="btn-sm-icon-outline"
-          >
-            <.icon_loader id="orders_details_loader" />
-          </button>
-        </h2>
-      </header>
-      <section>
-        <div id="orders_details_container"></div>
-      </section>
+    <div
+      role="tabpanel"
+      id="order-panel"
+      tabindex="-1"
+      aria-selected="false"
+      aria-labelledby="order-tab"
+      hidden
+    >
+      <div class="card min-h-11">
+        <header>
+          <h2 class="flex items-center gap-4">
+            Orders
+            <button
+              type="button"
+              hx-get={"/patients/#{@patient.id}/orders/list"}
+              hx-target="#orders_details_container"
+              hx-on:htmx:after-request="handleIconLoader('orders_details_loader', false)"
+              hx-on:click="handleIconLoader('orders_details_loader', true)"
+              class="btn-icon-sm-ghost"
+            >
+              <.icon_loader id="orders_details_loader" />
+            </button>
+          </h2>
+        </header>
+        <section>
+          <div id="orders_details_container"></div>
+        </section>
+      </div>
     </div>
   </div>
 </div>
+<.right_sliding_panel id="patient_admission_order_sliding_panel" title="Admission Orders" />

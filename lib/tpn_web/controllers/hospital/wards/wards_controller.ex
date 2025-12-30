@@ -32,10 +32,6 @@ defmodule TpnWeb.WardsController do
       {:ok, _} ->
         conn
         |> put_flash(:success, "Created successfully.")
-        |> put_resp_header(
-          "hx-trigger",
-          ClientEvents.generate_client_event("reloadDataTable")
-        )
         |> Networks.assign_networks()
         |> render(:new, changeset: new_change())
 
@@ -70,7 +66,7 @@ defmodule TpnWeb.WardsController do
         |> put_resp_header(
           "hx-trigger",
           ClientEvents.generate_client_event(
-            "reloadDataTable",
+            "",
             "success",
             "Updated successfully."
           )

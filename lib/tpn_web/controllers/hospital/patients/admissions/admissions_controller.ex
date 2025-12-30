@@ -21,7 +21,7 @@ defmodule TpnWeb.Hospital.AdmissionsController do
   end
 
   def show(conn, %{"id" => id, "admission_id" => admission_id}) do
-    patient = Patients.get_patient_view(id)
+    patient = Patients.get_patient_view!(id)
     admission = Admissions.get_admission_view(admission_id)
     orders = Orders.list_orders_by_admission_id(admission_id)
     render(conn, :show, patient: patient, admission: admission, orders: orders)
@@ -30,6 +30,7 @@ defmodule TpnWeb.Hospital.AdmissionsController do
   def new(conn, %{"id" => id}) do
     age = PatientHelper.calc_age(id)
     admission_no = PatientHelper.generate_admission_number()
+    patient = Patients.get_patient_view!(id)
 
     current_user = conn.assigns[:current_user]
     mrn = get_mrn(id, current_user)
@@ -45,6 +46,7 @@ defmodule TpnWeb.Hospital.AdmissionsController do
     |> assign(:wards, wards)
     |> assign(:rooms, [])
     |> assign(:beds, [])
+    |> assign(:patient, patient)
     |> set_assigns()
     |> render(:new, changeset: new_change())
   end
@@ -77,7 +79,6 @@ defmodule TpnWeb.Hospital.AdmissionsController do
         |> send_resp(204, "")
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset)
         wards = get_wards(current_user)
         has_campus = has_campus?(current_user)
 

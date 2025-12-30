@@ -1,84 +1,98 @@
-<header>
-  New Patient
-</header>
-<section>
-<.simple_form
-  :let={f}
-  for={@changeset}
-  action={get_url()}
-  hx-post={get_url()}
-  hx-disabled-elt="#form-button"
-  hx-target="#table_modal_form_contents"
-  hx-on::config-request="formConfigRequest(event)"
-  autocomplete="off"
-  class="form"
->
-  
-    <.flash_group flash={@flash} />
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Patients", to: "#{get_url()}"},
+  %{label: "New Patient"}
+]} />
+<div class="mx-auto max-w-4xl">
+  <.form_header>
+    New Patient
+  </.form_header>
+</div>
+<div class="mx-auto max-w-4xl">
+  <section>
+    <.simple_form
+      :let={f}
+      for={@changeset}
+      action={get_url()}
+      hx-post={get_url()}
+      hx-disabled-elt="#form-button"
+      hx-target="#main-contents"
+      hx-on::config-request="formConfigRequest(event)"
+      autocomplete="off"
+      class="form"
+    >
+      <.flash_group flash={@flash} />
 
-    <div class="grid grid-cols-3 gap-4">
-    <.input field={f[:first_name]} type="text" label="First Name" required />
-    <.input field={f[:last_name]} type="text" label="Last Name" required />
-    <.input field={f[:dob]} type="date" label="Date of Birth" required />
-    <.input field={f[:gender]} type="simple-select" label="Gender" options={@genders} required />
-    <.input field={f[:identity_no]} type="text" label="Identity No" />
-    <.input field={f[:email]} type="text" label="Email" />
-    <.input field={f[:address_1]} type="text" label="Address 1" />
-    <.input field={f[:address_2]} type="text" label="Address 2" />
-    <.input field={f[:city]} type="text" label="City" />
-    <.input field={f[:state]} type="text" label="State" />
-    <.input field={f[:country]} type="text" label="State" />
-    <.input field={f[:zip]} type="text" label="Zip" />
-    <.input field={f[:phone]} type="text" label="Phone" />
-    
-  </div>
+      <div class="grid grid-cols-3 gap-4">
+        <.input field={f[:first_name]} type="text" label="First Name" required />
+        <.input field={f[:last_name]} type="text" label="Last Name" required />
+        <.input field={f[:dob]} type="date" label="Date of Birth" required />
+        <.input
+          field={f[:gender]}
+          type="simple-select"
+          label="Gender"
+          options={@genders}
+          required
+        />
+        <.input field={f[:identity_no]} type="text" label="Identity No" />
+        <.input field={f[:email]} type="text" label="Email" />
+        <.input field={f[:address_1]} type="text" label="Address 1" />
+        <.input field={f[:address_2]} type="text" label="Address 2" />
+        <.input field={f[:city]} type="text" label="City" />
+        <.input field={f[:state]} type="text" label="State" />
+        <.input field={f[:country]} type="text" label="State" />
+        <.input field={f[:zip]} type="text" label="Zip" />
+        <.input field={f[:phone]} type="text" label="Phone" />
+      </div>
 
-  <div>
-    <.input field={f[:notes]} type="textarea" label="Notes" />
-  </div>
+      <div>
+        <.input field={f[:notes]} type="textarea" label="Notes" />
+      </div>
 
-  <div class="font-semibold mt-4">Networks</div>
-  <div class="grid grid-cols-2 gap-4">
-    <.input
-      :if={@is_admin}
-      hx-get="/health_networks"
-      hx-target="#patient_facility_id"
-      hx-on:htmx-after-on-load="selectRemoveOptions('patient_campus_id');"
-      field={f[:local_health_network_id]}
-      type="simple-select"
-      label="Local Health Network"
-      prompt="Select..."
-      options={@lhns}
-      required
-    />
+      <div class="font-semibold mt-4">Networks</div>
+      <div class="grid grid-cols-2 gap-4">
+        <.input
+          :if={@is_admin}
+          hx-get="/health_networks"
+          hx-target="#patient_facility_id"
+          hx-on:htmx-after-on-load="selectRemoveOptions('patient_campus_id');"
+          field={f[:local_health_network_id]}
+          type="simple-select"
+          label="Local Health Network"
+          prompt="Select..."
+          options={@lhns}
+          required
+        />
 
-    <.input
-      :if={netwrok_access(@is_admin, "facility", @current_user)}
-      hx-get="/health_networks"
-      hx-target="#patient_campus_id"
-      hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'bed')"
-      field={f[:facility_id]}
-      type="simple-select"
-      label="Facility"
-      prompt="Select..."
-      options={@facilities}
-      required
-    />
+        <.input
+          :if={netwrok_access(@is_admin, "facility", @current_user)}
+          hx-get="/health_networks"
+          hx-target="#patient_campus_id"
+          hx-on:htmx-after-on-load="triggerEvent(event.target.value, 'load_wards', 'facility', 'bed')"
+          field={f[:facility_id]}
+          type="simple-select"
+          label="Facility"
+          prompt="Select..."
+          options={@facilities}
+          required
+        />
 
-    <.input
-      :if={netwrok_access(@is_admin, "campus", @current_user)}
-      field={f[:campus_id]}
-      type="simple-select"
-      label="Campus"
-      prompt="Select..."
-      options={@campuses}
-      required
-    />
-  </div>
+        <.input
+          :if={netwrok_access(@is_admin, "campus", @current_user)}
+          field={f[:campus_id]}
+          type="simple-select"
+          label="Campus"
+          prompt="Select..."
+          options={@campuses}
+          required
+        />
+      </div>
 
-  <footer class="flex justify-end space-x-3">
-    <.form_modal_buttons />
-  </footer>
-
-</.simple_form>
-</section>
+      <footer class="flex justify-end space-x-3">
+        <button id="form-button" type="submit" class="btn">
+          Save <.btn_htmx_indicator />
+        </button>
+      </footer>
+    </.simple_form>
+  </section>
+</div>
