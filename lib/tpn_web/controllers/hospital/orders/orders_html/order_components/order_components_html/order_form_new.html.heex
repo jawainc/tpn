@@ -7,6 +7,7 @@
   hx-target="#main-contents"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
+  no_styles={true}
 >
   <section class="space-y-6">
     <input type="hidden" name="patient_id" value={@patient_id} />
@@ -72,11 +73,11 @@
       </template>
       <.input
         field={f[:dosing_weight]}
-        type="text"
-        label="Dosing Weight"
-        step="0.1"
+        type="number"
+        label={"Dosing Weight (#{@admission.weight_unit})"}
+        step=".0001"
         required
-        value={"#{@admission.patient_weight} #{@admission.weight_unit}"}
+        value={format_decimal(@admission.patient_weight)}
       />
       <.input
         hx-get="/order/template_products"
@@ -93,12 +94,12 @@
     </div>
   </section>
 
-  <section class="mt-8">
-    <header class="border-b px-4 py-3 font-semibold bg-card text-card-foreground">
+  <section class="w-full rounded-lg overflow-hidden border mt-8">
+    <header class="border-b px-4 py-3 font-semibold bg-card">
       Template Products
     </header>
     <div id="template_products_loader" class="htmx-indicator">
-      <.icon_simple_spinner class="mx-auto mt-12 text-foreground size-6" />
+      <.icon_simple_spinner class="mx-auto my-12 text-foreground size-6" />
     </div>
     <div id="template_products_content" class="hide-on-htmx-request">
       <div class="text-center my-10 text-sm text-muted-foreground">
@@ -107,9 +108,12 @@
     </div>
   </section>
 
-  <footer class="flex justify-end space-x-3 mt-8">
-    <button id="form-button" type="submit" class="btn-sm btn-brand">
-      Create
+  <footer class="flex justify-end items-center space-x-3 mt-16">
+    <button type="button" class="btn btn-blue">
+      <.icon_save /> Save as Draft
+    </button>
+    <button id="form-button" type="submit" class="btn btn-green">
+      <.icon_pakage_plus /> Create Order
     </button>
   </footer>
 </.simple_form>

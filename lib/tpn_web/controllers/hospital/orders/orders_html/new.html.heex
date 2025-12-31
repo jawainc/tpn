@@ -16,80 +16,16 @@
 <div class="flex gap-8">
   <.order_side_bar patient={@patient} admission={@admission} />
   <div class="max-w-6xl mx-auto grow">
-    <div class="tabs tab-container w-full">
-      <div class="flex justify-between items-center">
-        <div role="tablist" class="flex tablist">
-          <div
-            role="tab"
-            id="order-tab"
-            aria-controls="order-panel"
-            aria-selected="true"
-            tabindex="0"
-            class="tab active"
-          >
-            <.icon_document /> Order Form
-          </div>
-          <div
-            role="tab"
-            id="patient-tab"
-            aria-controls="patient-panel"
-            aria-selected="false"
-            tabindex="0"
-            class="tab"
-          >
-            <.icon_user /> Patient
-          </div>
-          <div
-            role="tab"
-            id="admission-tab"
-            aria-controls="admission-panel"
-            aria-selected="false"
-            tabindex="0"
-            class="tab"
-          >
-            <.icon_clipboard_list /> Admission
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="border border-background-surface-400 rounded-r-sm rounded-bl-sm mt-[-1px]">
-      <div
-        role="tabpanel"
-        id="order-panel"
-        tabindex="-1"
-        aria-selected="false"
-        aria-labelledby="order-tab"
-        class="p-4"
-      >
-        <.order_form_new
-          patient_id={@patient_id}
-          admission={@admission}
-          changeset={@changeset}
-          vascular_accesses={@vascular_accesses}
-          formularies={@formularies}
-          templates={@templates}
-        />
-      </div>
-      <div
-        role="tabpanel"
-        id="patient-panel"
-        tabindex="-1"
-        aria-selected="false"
-        aria-labelledby="patient-tab"
-        hidden
-      >
-        <.order_patient_details patient={@patient} />
-      </div>
-      <div
-        role="tabpanel"
-        id="admission-panel"
-        tabindex="-1"
-        aria-selected="false"
-        aria-labelledby="admission-tab"
-        hidden
-      >
-        <.order_admission admission={@admission} />
-      </div>
-    </div>
+    <header class="mb-8 font-semibold">
+      Order Form
+    </header>
+    <.order_form_new
+      patient_id={@patient_id}
+      admission={@admission}
+      changeset={@changeset}
+      vascular_accesses={@vascular_accesses}
+      formularies={@formularies}
+      templates={@templates}
+    />
   </div>
 </div>

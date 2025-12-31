@@ -87,7 +87,17 @@ defmodule TpnWeb.Hospital.OrdersController do
 
   defp template_products(id) do
     TemplateProducts.list_template_products_for_order(id)
+    |> Enum.map(&format_product_decimals/1)
     |> Jason.encode!()
+  end
+
+  defp format_product_decimals(product) do
+    product
+    |> Map.update(:dose, nil, &format_decimal_value/1)
+    |> Map.update(:volume, nil, &format_decimal_value/1)
+    |> Map.update(:fill_volume, nil, &format_decimal_value/1)
+    |> Map.update(:additional_dose, nil, &format_decimal_value/1)
+    |> Map.update(:max_allowed_limit, nil, &format_decimal_value/1)
   end
 
   defp classes(patient_type_id) do
@@ -97,8 +107,47 @@ defmodule TpnWeb.Hospital.OrdersController do
 
   defp formularies(class_ids) do
     Formularies.list_formularies_for_classes(class_ids)
+    |> Enum.map(&format_formulary_decimals/1)
     |> Jason.encode!()
   end
+
+  defp format_formulary_decimals(formulary) do
+    formulary
+    |> Map.update(:concentration, nil, &format_decimal_value/1)
+    |> Map.update(:calories, nil, &format_decimal_value/1)
+    |> Map.update(:cost_per_container, nil, &format_decimal_value/1)
+    |> Map.update(:container_size, nil, &format_decimal_value/1)
+    |> format_formulary_ingredients()
+  end
+
+  defp format_formulary_ingredients(formulary) do
+    case Map.get(formulary, :ingredients) do
+      nil ->
+        formulary
+
+      ingredients when is_list(ingredients) ->
+        formatted_ingredients =
+          Enum.map(ingredients, fn ingredient ->
+            Map.update(ingredient, :amount, nil, &format_decimal_value/1)
+          end)
+
+        Map.put(formulary, :ingredients, formatted_ingredients)
+
+      _ ->
+        formulary
+    end
+  end
+
+  defp format_decimal_value(nil), do: nil
+  defp format_decimal_value(value) when is_binary(value), do: value
+
+  defp format_decimal_value(%Decimal{} = value) do
+    value
+    |> Decimal.to_string()
+    |> String.replace(~r/\.?0+$/, "")
+  end
+
+  defp format_decimal_value(value), do: value
 
   defp get_currency() do
     currency =

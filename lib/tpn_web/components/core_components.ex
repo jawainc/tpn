@@ -73,12 +73,12 @@ defmodule TpnWeb.CoreComponents do
     """
   end
 
-  attr :type, :string, required: false, default: nil
+  attr :type, :string, required: false, default: ""
   slot :inner_block, required: true
 
   def badge(assigns) do
     ~H"""
-    <span class={"badge#{if @type, do: "-#{@type}", else: ""}"}>
+    <span class={"badge #{@type}"}>
       {render_slot(@inner_block)}
     </span>
     """
@@ -878,7 +878,7 @@ defmodule TpnWeb.CoreComponents do
       hx-target="#main-contents"
       hx-indicator="#main-contents-indicator"
       type="button"
-      class="btn-sm btn-brand text-xs h-xs flex items-center gap-2"
+      class="btn-sm"
     >
       <.icon_plus class="size-4" />
       {render_slot(@inner_block)}
@@ -1099,7 +1099,7 @@ defmodule TpnWeb.CoreComponents do
                 {col[:label]}
               <% end %>
             </th>
-            <th :if={@action != []} class="py-3 px-4 bg-card">
+            <th :if={@action != []} class="py-3 px-4 dark:bg-card">
               <span class="sr-only">{gettext("Actions")}</span>
             </th>
           </tr>

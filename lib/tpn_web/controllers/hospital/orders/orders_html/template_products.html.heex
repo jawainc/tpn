@@ -34,7 +34,7 @@
           type="number"
           step=".0001"
           class="input input-sm input-bordered"
-          value={@template.fluids}
+          value={format_decimal(@template.fluids)}
           readonly={@template.pre_mixed_standard}
         />
       </label>
@@ -182,7 +182,7 @@
           class="flex p-5 space-x-5 pb-10 mt-5 border border-white/5 rounded-md"
         >
           <div x-sort:handle class="cursor-move group">
-            <.icon_move class="flex-shrink size-4 text-muted-foreground group-hover:text-white" />
+            <.icon_move class="flex-shrink size-4 text-muted-foreground group-hover:text-foreground" />
           </div>
           <div class="flex-grow flex flex-col gap-4">
             <div>
@@ -320,7 +320,11 @@
           </div>
           <div class="flex-shrink">
             <template x-if="!product.substance_locked_on_order">
-              <button type="button" class="btn-sm-icon-outline" @click="removeProduct(product.id)">
+              <button
+                type="button"
+                class="btn-sm-icon-outline btn-red"
+                @click="removeProduct(product.id)"
+              >
                 <.icon_trash class="text-destructive" />
               </button>
             </template>
