@@ -1,8 +1,7 @@
 <.simple_form
   :let={f}
   for={@changeset}
-  action="/hospital/orders"
-  method="post"
+  hx-post="/hospital/orders"
   hx-disabled-elt="#form-button"
   hx-target="#main-contents"
   hx-on::config-request="formConfigRequest(event)"
@@ -109,10 +108,20 @@
   </section>
 
   <footer class="flex justify-end items-center space-x-3 mt-16">
-    <button type="button" class="btn btn-blue">
+    <input type="hidden" name="order[status]" value="draft" id="order-status-field" />
+    <button
+      type="submit"
+      class="btn btn-blue"
+      onclick="document.getElementById('order-status-field').value = 'draft'"
+    >
       <.icon_save /> Save as Draft
     </button>
-    <button id="form-button" type="submit" class="btn btn-green">
+    <button
+      id="form-button"
+      type="submit"
+      class="btn btn-green"
+      onclick="document.getElementById('order-status-field').value = 'pending'"
+    >
       <.icon_pakage_plus /> Create Order
     </button>
   </footer>

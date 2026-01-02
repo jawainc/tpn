@@ -102,6 +102,7 @@ defmodule Tpn.Formularies do
       %{
         id: formulary.id,
         name: formulary.name,
+        drug_id: formulary.drug_id,
         code: formulary.code,
         label_friendly_name: formulary.label_friendly_name,
         is_enteral: formulary.is_enteral,
@@ -127,8 +128,7 @@ defmodule Tpn.Formularies do
   def list_ingredients_for_formularies(formulary_ids) do
     Repo.all(
       from f in FormularyIngredient,
-        where: f.formulary_id in ^formulary_ids,
-        distinct: [f.formulary_id]
+        where: f.formulary_id in ^formulary_ids
     )
     |> Repo.preload([:ingredient, :unit])
     |> Enum.map(fn fi ->
@@ -140,7 +140,6 @@ defmodule Tpn.Formularies do
         print_on_label: fi.ingredient.print_on_label
       }
     end)
-    |> IO.inspect()
   end
 
   def change_formulary(formulary) do

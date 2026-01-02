@@ -2,6 +2,24 @@ defmodule Tpn.Order do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @moduledoc """
+  Order schema for managing TPN orders.
+
+  ## Order Status Workflow
+
+  The order status follows this workflow:
+  - **draft**: Order is saved but not submitted for review (can be edited)
+  - **pending**: Order is submitted and awaiting reviewer approval
+  - **approved**: Order has been approved by a reviewer and can be processed
+  - **rejected**: Order has been rejected by a reviewer (may need revision)
+
+  Status transitions:
+  - draft -> pending (when user clicks "Create Order")
+  - pending -> approved (when reviewer approves)
+  - pending -> rejected (when reviewer rejects)
+  - rejected -> pending (when user resubmits after revision)
+  """
+
   schema "orders" do
     field :order_type, :string
     field :status, :string

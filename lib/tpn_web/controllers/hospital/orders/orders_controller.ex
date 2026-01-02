@@ -17,7 +17,7 @@ defmodule TpnWeb.Hospital.OrdersController do
     Settings
   }
 
-  alias TpnWeb.Helpers.Networks
+  alias TpnWeb.Helpers.{ClientEvents, Networks}
 
   def index(conn, params) do
     records = Orders.list_orders_by_patient_id(params["patient_id"])
@@ -59,6 +59,73 @@ defmodule TpnWeb.Hospital.OrdersController do
     |> assign(:templates, templates)
     |> assign(:changeset, Order.changeset(%Order{}, %{}))
     |> render(:new)
+  end
+
+  def create(conn, %{"order" => order_params} = params) do
+    user_id = conn.assigns.current_user.id
+    patient_id = params["patient_id"]
+    admission_id = params["admission_id"]
+
+    # Generate unique bag_id
+    bag_id = generate_bag_id()
+
+    order_attrs =
+      order_params
+      |> Map.put("user_id", user_id)
+      |> Map.put("patient_id", patient_id)
+      |> Map.put("admission_id", admission_id)
+      |> Map.put("bag_id", bag_id)
+      |> Map.put("order_date", NaiveDateTime.utc_now())
+
+    case Orders.create_order(order_attrs) do
+      {:ok, order} ->
+        status = Map.get(order_attrs, "status", "draft")
+
+        message =
+          case status do
+            "draft" -> "Order saved as draft successfully"
+            "pending" -> "Order created and submitted for review"
+            _ -> "Order created successfully"
+          end
+
+        conn
+        |> put_resp_header(
+          "hx-trigger",
+          ClientEvents.generate_client_event(
+            "",
+            "success",
+            message
+          )
+        )
+        |> send_resp(204, "")
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        admission = Admissions.get_admission_view_by_patient_id(patient_id)
+
+        formularies =
+          Formularies.list_enteral_products_for_patient_type(admission.patient_type_id)
+
+        vascular_accesses = VascularAccesses.vascular_accesses_for_select()
+        templates = Templates.list_templates_for_patient_type(admission.patient_type_id)
+
+        conn
+        |> assign(:patient_id, patient_id)
+        |> assign(:patient, Patients.get_patient_view!(patient_id))
+        |> assign(:admission, admission)
+        |> assign(:vascular_accesses, vascular_accesses)
+        |> assign(:formularies, formularies)
+        |> assign(:templates, templates)
+        |> assign(:changeset, changeset)
+        |> put_flash(:error, "Failed to create order. Please check the form.")
+        |> render(:new)
+    end
+  end
+
+  defp generate_bag_id do
+    # Generate a unique bag ID with timestamp
+    timestamp = DateTime.utc_now() |> DateTime.to_unix()
+    random = :rand.uniform(9999)
+    "BAG-#{timestamp}-#{random}"
   end
 
   def template_products(conn, %{"order" => %{"template_id" => ""}}) do
