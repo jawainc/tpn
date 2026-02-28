@@ -74,6 +74,7 @@
     <button
       hx-get={"/patients/#{@patient.id}/admissions/list"}
       hx-target="#admissions_details_container"
+      hx-indicator=".nonexistent"
       hx-on:htmx:after-request="handleIconLoader('admissions_details_loader', false)"
       hx-on:click="handleIconLoader('admissions_details_loader', true)"
       type="button"
@@ -88,6 +89,7 @@
     <button
       hx-get={"/patients/#{@patient.id}/orders/list"}
       hx-target="#orders_details_container"
+      hx-indicator=".nonexistent"
       hx-on:htmx:after-request="handleIconLoader('orders_details_loader', false)"
       hx-on:click="handleIconLoader('orders_details_loader', true)"
       type="button"
@@ -150,6 +152,7 @@
             type="button"
             hx-get={"/patients/#{@patient.id}/admissions/list"}
             hx-target="#admissions_details_container"
+            hx-indicator=".nonexistent"
             hx-on:htmx:after-request="handleIconLoader('admissions_details_loader', false)"
             hx-on:click="handleIconLoader('admissions_details_loader', true)"
             class="btn-sm-icon-outline"
@@ -185,6 +188,7 @@
             type="button"
             hx-get={"/patients/#{@patient.id}/orders/list"}
             hx-target="#orders_details_container"
+            hx-indicator=".nonexistent"
             hx-on:htmx:after-request="handleIconLoader('orders_details_loader', false)"
             hx-on:click="handleIconLoader('orders_details_loader', true)"
             class="btn-sm-icon-outline"

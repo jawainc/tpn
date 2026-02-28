@@ -1,0 +1,133 @@
+<dialog id="add_substances" class="dialog w-full sm:max-w-[500px]">
+  <div>
+    <header>
+      <h2>Add Substance</h2>
+      <p>Select a substance to add to the template</p>
+    </header>
+
+    <section class="flex flex-col gap-4 overflow-y-auto scrollbar max-h-[400px]">
+      <div class="min-h-[350px] grid grid-cols-2 gap-2">
+        <div role="group" class="field">
+          <label for="select-substances">Substance</label>
+          <div id="select-substances" class="select w-full">
+            <button
+              type="button"
+              class="btn-outline w-full flex justify-between items-center"
+              id="select-substances-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="select-substances-listbox"
+            >
+              <span class="truncate"></span>
+              <.icon_chevron_down />
+            </button>
+            <div id="select-substances-popover" data-popover aria-hidden="true">
+              <header>
+                <.icon_select_search />
+                <input
+                  type="text"
+                  value=""
+                  placeholder="Search ..."
+                  autocomplete="off"
+                  autocorrect="off"
+                  spellcheck="false"
+                  aria-autocomplete="list"
+                  role="combobox"
+                  aria-expanded="false"
+                  aria-controls="select-substances-listbox"
+                  aria-labelledby="select-substances-trigger"
+                  class="shadow-none border-0 focus:ring-0 focus:border-0 focus:shadow-none"
+                />
+              </header>
+
+              <div
+                role="listbox"
+                id="select-substances-listbox"
+                aria-orientation="vertical"
+                aria-labelledby="select-substances-trigger"
+                class="max-h-[200px]"
+              >
+                <template x-for="(cls, index) in classes" x-bind:key="cls.id">
+                  <div
+                    role="option"
+                    x-bind:id="'select-substances-option-' + cls.id"
+                    x-bind:data-value="cls.id"
+                    x-bind:data-label="cls.name"
+                    x-text="cls.name"
+                  >
+                  </div>
+                </template>
+              </div>
+            </div>
+            <input type="hidden" name="select-substances-value" value="" />
+          </div>
+        </div>
+        <div role="group" class="field">
+          <label for="select-products">Product</label>
+          <div id="select-products" class="select w-full">
+            <button
+              type="button"
+              class="btn-outline w-full flex justify-between items-center"
+              id="select-products-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="select-products-listbox"
+            >
+              <span class="truncate">Apple</span>
+              <.icon_chevron_down />
+            </button>
+            <div id="select-products-popover" data-popover aria-hidden="true">
+              <header>
+                <.icon_select_search />
+                <input
+                  type="text"
+                  value=""
+                  placeholder="Search ..."
+                  autocomplete="off"
+                  autocorrect="off"
+                  spellcheck="false"
+                  aria-autocomplete="list"
+                  role="combobox"
+                  aria-expanded="false"
+                  aria-controls="select-products-listbox"
+                  aria-labelledby="select-products-trigger"
+                  class="shadow-none border-0 focus:ring-0 focus:border-0 focus:shadow-none"
+                />
+              </header>
+
+              <div
+                role="listbox"
+                id="select-products-listbox"
+                aria-orientation="vertical"
+                aria-labelledby="select-products-trigger"
+                class="max-h-[200px]"
+              >
+                <template x-for="(cls, index) in classList" x-bind:key="cls.id">
+                  <div
+                    role="option"
+                    x-bind:id="'select-products-option-' + cls.id"
+                    x-bind:data-value="cls.id"
+                    x-bind:data-label="cls.name"
+                    x-text="cls.name"
+                  >
+                  </div>
+                </template>
+              </div>
+            </div>
+            <input type="hidden" name="select-products-value" value="" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <button type="button" class="btn-outline" onclick="this.closest('dialog').close()">
+        Cancel
+      </button>
+    </footer>
+
+    <button type="button" aria-label="Close dialog" onclick="this.closest('dialog').close()">
+      <.icon_x_mark />
+    </button>
+  </div>
+</dialog>

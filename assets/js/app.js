@@ -14,7 +14,7 @@
 //
 //     import "some-package"
 //
-import { differenceBy } from "lodash";
+import { differenceBy, clone } from "lodash";
 import "basecoat-css/all";
 import "./xData.js";
 import "./custom.js";

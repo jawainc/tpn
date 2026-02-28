@@ -1,0 +1,107 @@
+<dialog
+  id="formulary_info"
+  class="dialog w-full sm:max-w-[425px] max-h-[612px]"
+  onclick="if (event.target === this) this.close()"
+>
+  <div>
+    <header>
+      <h2 id="demo-dialog-edit-profile-title" x-text="selectedFormulary?.name"></h2>
+      <p id="demo-dialog-edit-profile-description" x-text="selectedFormulary?.code"></p>
+    </header>
+
+    <section class="flex flex-col gap-4 divide-y divide-border overflow-y-auto scrollbar">
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">Drug ID</p>
+        <p class="text-right" x-text="selectedFormulary?.drug_id"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">Label</p>
+        <p class="text-right" x-text="selectedFormulary?.label_friendly_name"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">
+          Cost per Container (<span x-text="currency.code"></span>)
+        </p>
+        <p class="text-right">
+          <span x-text="currency.symbol === 'false'? '' : currency.symbol"></span>
+          <span x-text="selectedFormulary?.cost_per_container || '--'"></span>
+        </p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">Container Size</p>
+        <p class="text-right" x-text="selectedFormulary?.container_size || '--'"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">Solution Type</p>
+        <p class="text-right" x-text="selectedFormulary?.solution_type_name || '--'"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">UOM Unit</p>
+        <p class="text-right" x-text="selectedFormulary?.uom_unit_name || '--'"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">
+          Concentration (<span x-text="selectedFormulary?.concentration_unit_name"></span>)
+        </p>
+        <p class="text-right" x-text="selectedFormulary?.concentration"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pb-4">
+        <p class="text-muted-foreground">
+          Calories (<span x-text="selectedFormulary?.calories_unit_name"></span>)
+        </p>
+        <p class="text-right" x-text="selectedFormulary?.calories"></p>
+      </div>
+      <div class="flex gap-2 pb-4">
+        <span
+          class="badge"
+          x-bind:class="{ 'success': selectedFormulary?.is_enteral, 'alert': !selectedFormulary?.is_enteral }"
+        >
+          Enteral
+        </span>
+        <span
+          class="badge"
+          x-bind:class="{ 'success': selectedFormulary?.print_on_label, 'alert': !selectedFormulary?.print_on_label }"
+        >
+          Print On Label
+        </span>
+        <span
+          class="badge"
+          x-bind:class="{ 'success': selectedFormulary?.include_in_overfill, 'alert': !selectedFormulary?.include_in_overfill }"
+        >
+          Include In Overfill
+        </span>
+        <span
+          class="badge"
+          x-bind:class="{ 'success': selectedFormulary?.universal_fluid, 'alert': !selectedFormulary?.universal_fluid }"
+        >
+          Universal Fluid
+        </span>
+      </div>
+      <div>
+        <h2 class="font-bold my-2">Ingredients</h2>
+        <div class="flex flex-col divide-y divide-border">
+          <template x-for="ingredient in selectedFormulary?.ingredients || []">
+            <div class="grid grid-cols-2 gap-2 py-2">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-muted-foreground" x-text="ingredient.name"></span>
+                <span
+                  class="badge"
+                  x-bind:class="{ 'success': ingredient.print_on_label, 'alert': !ingredient.print_on_label }"
+                >
+                  Print On Label
+                </span>
+              </div>
+              <div class="text-right">
+                <span x-text="ingredient.amount"></span>
+                <span x-text="ingredient.unit_name"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+    <button type="button" aria-label="Close dialog" onclick="this.closest('dialog').close()">
+      <.icon_x_mark />
+    </button>
+  </div>
+</dialog>

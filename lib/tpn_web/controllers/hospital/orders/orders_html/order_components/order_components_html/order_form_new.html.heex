@@ -2,7 +2,7 @@
   :let={f}
   for={@changeset}
   hx-post="/hospital/orders"
-  hx-disabled-elt="#form-button"
+  hx-disabled-elt=".form-button"
   hx-target="#main-contents"
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
@@ -83,6 +83,7 @@
         hx-trigger="change"
         hx-target="#template_products_content"
         hx-indicator="#template_products_loader"
+        hx-swap="innerHTML"
         field={f[:template_id]}
         type="simple-select"
         prompt="Select..."
@@ -111,15 +112,14 @@
     <input type="hidden" name="order[status]" value="draft" id="order-status-field" />
     <button
       type="submit"
-      class="btn btn-blue"
+      class="btn btn-blue form-button"
       onclick="document.getElementById('order-status-field').value = 'draft'"
     >
       <.icon_save /> Save as Draft
     </button>
     <button
-      id="form-button"
       type="submit"
-      class="btn btn-green"
+      class="btn btn-green form-button"
       onclick="document.getElementById('order-status-field').value = 'pending'"
     >
       <.icon_pakage_plus /> Create Order

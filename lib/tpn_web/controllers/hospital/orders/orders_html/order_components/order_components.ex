@@ -45,6 +45,10 @@ defmodule TpnWeb.Orders.OrderComponents do
   attr :templates, :list, required: true
   def order_form_new(assigns)
 
+  def order_template_product_info(assigns)
+
+  def add_substances(assigns)
+
   def format_lines(nil), do: ""
 
   def format_lines(string) do

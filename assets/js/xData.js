@@ -10,22 +10,34 @@ window.orderTemplateProducts = function () {
   return {
     preMixedStandard: false,
     additionalSubstancesAllowed: false,
+    query: "",
     productsData: [],
     classes: [],
+    substances: [],
     fillingMethods: [],
     formularies: [],
     selectedFormulary: null,
     currency: null,
     productsToAdd: [],
+    substanceToAdd: {
+      class_id: null,
+      products: [],
+      volume: null,
+      fill_volume: null,
+    },
     initialized: function () {
-      this.productsData.forEach((product) => {
+      this.productsData.forEach((product, index) => {
         product.volume = 0.0;
         product.fill_volume = 0.0;
+        product.position = index;
+        product.substance_id = index;
       });
-      this.productsToAdd = this.classes.filter(
-        (cls) => !this.productsData.some((p) => p.class_id !== cls.id),
-      );
+      console.log(this.productsData);
     },
+    addProduct: function () {
+      document.getElementById("add_substances").showModal();
+    },
+
     handleSort: (item, position) => {
       console.log(item, position);
     },
@@ -38,16 +50,6 @@ window.orderTemplateProducts = function () {
       }
 
       return formularies;
-    },
-    removeProduct: function (id) {
-      this.productsData = this.productsData.filter(
-        (product) => product.id !== id,
-      );
-    },
-    addProduct: function (id) {
-      this.productsData.push(
-        this.productsToAdd.find((product) => product.id === id),
-      );
     },
     openFormularyInfo: function (product_id) {
       const product = this.productsData.find(
@@ -90,6 +92,9 @@ window.orderTemplateProducts = function () {
 
       product.formulary_id = selected.id;
       product.formulary_name = selected.name;
+    },
+    open_substances: function () {
+      document.getElementById("add_substances").showModal();
     },
   };
 };

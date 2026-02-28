@@ -2,24 +2,27 @@
   <div class="text-center">Select a template to view products</div>
 <% else %>
   <script>
-    const templateProducts = <%= raw @products %>;
-    const preMixed = <%= @template.pre_mixed_standard %>;
-    const additionalSubstances = <%= @template.additional_substances_allowed %>;
-    const classesData = <%= raw @classes %>;
-    const fillingMethodsData = <%= raw @filling_methods %>;
-    const formulariesData = <%= raw @formularies %>;
-    const currencyData = <%= raw @currency %>;
+    window.templateData = {
+      products: <%= raw @products %>,
+      preMixed: <%= Jason.encode!(@template.pre_mixed_standard) %>,
+      additionalSubstances: <%= Jason.encode!(@template.additional_substances_allowed) %>,
+      classes: <%= raw @classes %>,
+      fillingMethods: <%= raw @filling_methods %>,
+      formularies: <%= raw @formularies %>,
+      currency: <%= raw @currency %>
+    };
   </script>
   <div
-    x-data="orderTemplateProducts"
-    x-init="productsData = templateProducts; 
-        preMixedStandard = preMixed; 
-        additionalSubstancesAllowed = additionalSubstances; 
-        classes = classesData;
-        fillingMethods = fillingMethodsData;
-        formularies = formulariesData;
-        currency = currencyData;
-        initialized();
+    x-data="orderTemplateProducts()"
+    x-init="
+      productsData = window.templateData.products;
+      preMixedStandard = window.templateData.preMixed;
+      additionalSubstancesAllowed = window.templateData.additionalSubstances;
+      classes = window.templateData.classes;
+      fillingMethods = window.templateData.fillingMethods;
+      formularies = window.templateData.formularies;
+      currency = window.templateData.currency;
+      initialized();
     "
   >
     <div class="grid grid-cols-6 gap-4 my-6 px-4">
@@ -169,7 +172,6 @@
         type="button"
         class="btn-sm-outline btn-xs"
         @click="addProduct"
-        x-bind:disabled="!productsToAdd.length"
       >
         Add More
       </button>
@@ -177,16 +179,13 @@
 
     <div x-sort="handleSort">
       <template x-for="(product, index) in productsData">
-        <div
-          x-sort:item="product.id"
-          class="flex p-5 space-x-5 pb-10 mt-5 border border-white/5 rounded-md"
-        >
+        <div x-sort:item="product.id" class="flex p-4 space-x-4 border-t border-border">
           <div x-sort:handle class="cursor-move group">
             <.icon_move class="flex-shrink size-4 text-muted-foreground group-hover:text-foreground" />
           </div>
           <div class="flex-grow flex flex-col gap-4">
             <div>
-              <span class="badge" x-text="product.class_name"></span>
+              <span class="badge info" x-text="product.class_name"></span>
             </div>
             <div class="flex-grow grid grid-cols-5 gap-4">
               <label class="form-control w-full max-w-xs grid gap-3" for="template_dose">
@@ -332,113 +331,7 @@
         </div>
       </template>
     </div>
-    <dialog
-      id="formulary_info"
-      class="dialog w-full sm:max-w-[425px] max-h-[612px]"
-      onclick="if (event.target === this) this.close()"
-    >
-      <div>
-        <header>
-          <h2 id="demo-dialog-edit-profile-title" x-text="selectedFormulary?.name"></h2>
-          <p id="demo-dialog-edit-profile-description" x-text="selectedFormulary?.code"></p>
-        </header>
-
-        <section class="flex flex-col gap-4 divide-y divide-border">
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">Drug ID</p>
-            <p class="text-right" x-text="selectedFormulary?.drug_id"></p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">Label</p>
-            <p class="text-right" x-text="selectedFormulary?.label_friendly_name"></p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">
-              Cost per Container (<span x-text="currency.code"></span>)
-            </p>
-            <p class="text-right">
-              <span x-text="currency.symbol === 'false'? '' : currency.symbol"></span>
-              <span x-text="selectedFormulary?.cost_per_container || '--'"></span>
-            </p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">Container Size</p>
-            <p class="text-right" x-text="selectedFormulary?.container_size || '--'"></p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">Solution Type</p>
-            <p class="text-right" x-text="selectedFormulary?.solution_type_name || '--'"></p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">UOM Unit</p>
-            <p class="text-right" x-text="selectedFormulary?.uom_unit_name || '--'"></p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">
-              Concentration (<span x-text="selectedFormulary?.concentration_unit_name"></span>)
-            </p>
-            <p class="text-right" x-text="selectedFormulary?.concentration"></p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pb-4">
-            <p class="text-muted-foreground">
-              Calories (<span x-text="selectedFormulary?.calories_unit_name"></span>)
-            </p>
-            <p class="text-right" x-text="selectedFormulary?.calories"></p>
-          </div>
-          <div class="flex gap-2 pb-4">
-            <span
-              class="badge"
-              x-bind:class="{ 'success': selectedFormulary?.is_enteral, 'alert': !selectedFormulary?.is_enteral }"
-            >
-              Enteral
-            </span>
-            <span
-              class="badge"
-              x-bind:class="{ 'success': selectedFormulary?.print_on_label, 'alert': !selectedFormulary?.print_on_label }"
-            >
-              Print On Label
-            </span>
-            <span
-              class="badge"
-              x-bind:class="{ 'success': selectedFormulary?.include_in_overfill, 'alert': !selectedFormulary?.include_in_overfill }"
-            >
-              Include In Overfill
-            </span>
-            <span
-              class="badge"
-              x-bind:class="{ 'success': selectedFormulary?.universal_fluid, 'alert': !selectedFormulary?.universal_fluid }"
-            >
-              Universal Fluid
-            </span>
-          </div>
-          <div>
-            <h2 class="font-bold my-2">Ingredients</h2>
-            <div class="flex flex-col divide-y divide-border">
-              <template x-for="ingredient in selectedFormulary?.ingredients || []">
-                <div class="grid grid-cols-2 gap-2 py-2">
-                  <div class="flex items-center gap-2">
-                    <span class="font-semibold text-muted-foreground" x-text="ingredient.name">
-                    </span>
-                    <span
-                      class="badge"
-                      x-bind:class="{ 'success': ingredient.print_on_label, 'alert': !ingredient.print_on_label }"
-                    >
-                      Print On Label
-                    </span>
-                  </div>
-                  <div class="text-right">
-                    <span x-text="ingredient.amount"></span>
-                    <span x-text="ingredient.unit_name"></span>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </section>
-        <button type="button" aria-label="Close dialog" onclick="this.closest('dialog').close()">
-          <.icon_x_mark />
-        </button>
-      </div>
-    </dialog>
+    <.order_template_product_info />
+    <.add_substances />
   </div>
 <% end %>
