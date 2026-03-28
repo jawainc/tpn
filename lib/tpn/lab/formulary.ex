@@ -17,7 +17,8 @@ defmodule Tpn.Formulary do
              :print_on_label,
              :include_in_overfill,
              :universal_fluid,
-             :active
+             :active,
+             :osmolarity
            ]}
 
   schema "formularies" do
@@ -34,6 +35,7 @@ defmodule Tpn.Formulary do
     field :include_in_overfill, :boolean
     field :universal_fluid, :boolean
     field :active, :boolean
+    field :osmolarity, :decimal
 
     belongs_to :class, Tpn.Class
     belongs_to :concentration_unit, Tpn.Unit
@@ -65,6 +67,7 @@ defmodule Tpn.Formulary do
       :include_in_overfill,
       :universal_fluid,
       :active,
+      :osmolarity,
       :class_id,
       :concentration_unit_id,
       :calories_unit_id,
@@ -78,8 +81,10 @@ defmodule Tpn.Formulary do
       :code,
       :class_id,
       :concentration,
-      :concentration_unit_id
+      :concentration_unit_id,
+      :osmolarity
     ])
+    |> validate_number(:osmolarity, greater_than_or_equal_to: 0)
     |> unique_constraint(:code)
   end
 end

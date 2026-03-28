@@ -33,6 +33,7 @@ defmodule Tpn.FormularyView do
     field :include_in_overfill, :boolean
     field :universal_fluid, :boolean
     field :active, :boolean
+    field :osmolarity, :decimal
     field :class_id, :integer
     field :concentration_unit_id, :integer
     field :calories_unit_id, :integer

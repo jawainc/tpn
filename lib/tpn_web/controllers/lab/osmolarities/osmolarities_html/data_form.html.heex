@@ -21,6 +21,14 @@
         required
       />
       <.input
+        field={f[:alert_type]}
+        type="select"
+        label="Alert Type"
+        options={[{"Soft", "Soft"}, {"Hard", "Hard"}]}
+        prompt="Select..."
+        required
+      />
+      <.input
         field={f[:unit_id]}
         type="select"
         label="Unit"

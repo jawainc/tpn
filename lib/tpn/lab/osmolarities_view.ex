@@ -19,6 +19,7 @@ defmodule Tpn.Lab.OsmolaritiesView do
   schema "osmolarities_view" do
     field :name, :string
     field :osmolarity, :decimal
+    field :alert_type, :string
     field :unit, :string
     field :vascular_access, :string
     field :patient_type, :string

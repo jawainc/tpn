@@ -8,6 +8,7 @@ defmodule Tpn.Lab.Osmolarity do
   schema "osmolarities" do
     field :name, :string
     field :osmolarity, :decimal
+    field :alert_type, :string
 
     belongs_to :unit, Tpn.Unit
     belongs_to :vascular_access, Tpn.VascularAccess
@@ -22,6 +23,7 @@ defmodule Tpn.Lab.Osmolarity do
     |> cast(attrs, [
       :name,
       :osmolarity,
+      :alert_type,
       :unit_id,
       :vascular_access_id,
       :patient_type_id,
@@ -30,11 +32,14 @@ defmodule Tpn.Lab.Osmolarity do
     |> validate_required([
       :name,
       :osmolarity,
+      :alert_type,
       :unit_id,
       :vascular_access_id,
       :patient_type_id,
       :user_id
     ])
+    |> validate_number(:osmolarity, greater_than_or_equal_to: 0)
+    |> validate_inclusion(:alert_type, ["Soft", "Hard"])
     |> unique_constraint(:name)
   end
 

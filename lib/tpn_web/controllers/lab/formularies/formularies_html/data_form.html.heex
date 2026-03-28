@@ -31,6 +31,14 @@
       />
       <.input field={f[:container_size]} type="number" label="Container Size" step=".0001" />
       <.input
+        field={f[:osmolarity]}
+        type="number"
+        label="Osmolarity"
+        step=".0001"
+        placeholder="0.0000"
+        required
+      />
+      <.input
         field={f[:class_id]}
         type="select"
         label="Class"

@@ -4,6 +4,9 @@
     <:col :let={record} label="Drug ID" field={:drug_id}>{record.drug_id}</:col>
     <:col :let={record} label="Class" field={:class_name}>{record.class_name}</:col>
     <:col :let={record} label="Code" field={:code}>{record.code}</:col>
+    <:col :let={record} label="Osmolarity" field={:osmolarity}>
+      {format_decimal(record.osmolarity)}
+    </:col>
     <:col :let={record} label="Solution" field={:solution_type_name}>
       {record.solution_type_name}
     </:col>

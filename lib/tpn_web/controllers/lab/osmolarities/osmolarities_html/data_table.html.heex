@@ -4,6 +4,7 @@
     <:col :let={record} label="Osmolarity" field={:osmolarity}>
       {format_decimal(record.osmolarity)}
     </:col>
+    <:col :let={record} label="Alert Type" field={:alert_type}>{record.alert_type}</:col>
     <:col :let={record} label="Unit" field={:unit}>{record.unit}</:col>
     <:col :let={record} label="Patient Type" field={:ward}>{record.patient_type}</:col>
     <:col :let={record} label="Vascular Access" field={:room}>{record.vascular_access}</:col>
