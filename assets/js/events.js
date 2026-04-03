@@ -78,6 +78,7 @@ export function events(params) {
             swapStyle: swapElementStyle(evt.detail.target.id),
           });
         } else {
+          console.log(evt.detail.xhr.response);
           htmx.swap(evt.detail.target, evt.detail.xhr.response, {
             swapStyle: "innerHTML",
           });

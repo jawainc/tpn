@@ -1,0 +1,106 @@
+<div
+  x-data="{
+    osmolarityAlert: null,
+    osmolarityLimit: null,
+    showAlert: false,
+    
+    init() {
+      // Listen for osmolarity validation results
+      window.addEventListener('osmolarity-validation-result', (event) => {
+        if (event.detail) {
+          this.osmolarityAlert = event.detail.alert;
+          this.osmolarityLimit = event.detail.limit;
+          this.showAlert = event.detail.alert?.exceeds || false;
+        }
+      });
+      
+      // Listen for alert dismissal
+      window.addEventListener('osmolarity-alert-dismissed', () => {
+        this.showAlert = false;
+      });
+    },
+    
+    getAlertClass() {
+      if (!this.osmolarityAlert) return 'alert-info';
+      if (this.osmolarityAlert.alert_type === 'Hard') {
+        return 'alert-error';
+      }
+      return 'alert-warning';
+    }
+  }"
+  x-show="showAlert"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0 transform -translate-y-2"
+  x-transition:enter-end="opacity-100 transform translate-y-0"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  class="mb-6"
+>
+  <div class="alert shadow-lg" x-bind:class="getAlertClass()" role="alert">
+    <div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current flex-shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+        />
+      </svg>
+      <div>
+        <h3 class="font-bold">
+          <span x-show="osmolarityAlert?.alert_type === 'Hard'">
+            Hard Osmolarity Limit Exceeded
+          </span>
+          <span x-show="osmolarityAlert?.alert_type === 'Soft'">
+            Soft Osmolarity Limit Exceeded
+          </span>
+        </h3>
+        <div class="text-sm">
+          <p class="mb-2">
+            <span x-show="osmolarityAlert?.alert_type === 'Hard'">
+              The calculated osmolarity exceeds the hard limit. This order cannot proceed.
+            </span>
+            <span x-show="osmolarityAlert?.alert_type === 'Soft'">
+              The calculated osmolarity exceeds the soft limit. Please provide comments to proceed.
+            </span>
+          </p>
+          <div class="grid grid-cols-2 gap-2 text-xs mt-2">
+            <div>
+              <span class="font-medium">Calculated:</span>
+              <span x-text="osmolarityAlert ? osmolarityAlert.calculated.toFixed(2) + ' mOsm/L' : 'N/A'">
+              </span>
+            </div>
+            <div>
+              <span class="font-medium">Limit:</span>
+              <span x-text="osmolarityAlert ? osmolarityAlert.limit.toFixed(2) + ' mOsm/L' : 'N/A'">
+              </span>
+            </div>
+            <div>
+              <span class="font-medium">Exceeds by:</span>
+              <span x-text="osmolarityAlert ? osmolarityAlert.exceeds_limit.toFixed(2) + ' mOsm/L' : 'N/A'">
+              </span>
+            </div>
+            <div>
+              <span class="font-medium">Alert Type:</span>
+              <span x-text="osmolarityAlert?.alert_type || 'N/A'"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button
+      type="button"
+      @click="dismissAlert()"
+      class="btn btn-sm btn-circle btn-ghost"
+      aria-label="Dismiss alert"
+    >
+      ✕
+    </button>
+  </div>
+</div>

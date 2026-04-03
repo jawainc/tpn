@@ -49,6 +49,12 @@ defmodule TpnWeb.Orders.OrderComponents do
 
   def add_substances(assigns)
 
+  def summary_cards(assigns)
+
+  def osmolarity_alert(assigns)
+
+  def osmolarity_override_modal(assigns)
+
   def format_lines(nil), do: ""
 
   def format_lines(string) do

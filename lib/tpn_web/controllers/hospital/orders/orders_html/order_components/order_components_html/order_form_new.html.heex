@@ -7,13 +7,15 @@
   hx-on::config-request="formConfigRequest(event)"
   autocomplete="off"
   no_styles={true}
+  x-data="{ showTpnDuration: false }"
 >
-  <section class="space-y-6">
-    <input type="hidden" name="patient_id" value={@patient_id} />
-    <input type="hidden" name="admission_id" value={@admission.id} />
-    <input type="hidden" name="order_type" value="PatientSpecific" />
+  <input type="hidden" name="patient_id" value={@patient_id} />
+  <input type="hidden" name="admission_id" value={@admission.id} />
+  <input type="hidden" name="order_type" value="PatientSpecific" />
 
-    <div x-data="orderForm" class="grid grid-cols-4 gap-4">
+  <section class="space-y-6">
+    <!-- Basic Order Information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <.input
         field={f[:vascular_access_id]}
         type="simple-select"
@@ -21,6 +23,7 @@
         label="Vascular Access"
         options={@vascular_accesses}
         required
+        id="vascular_access_id"
       />
       <.input
         field={f[:formulary_id]}
@@ -29,6 +32,7 @@
         label="Enteral Product"
         options={@formularies}
         required
+        id="formulary_id"
       />
       <.input
         field={f[:enteral_dose]}
@@ -36,6 +40,7 @@
         label="Enteral Dose (mL)"
         step="0.1"
         required
+        id="enteral_dose"
       />
       <.input
         field={f[:infusion_duration_type]}
@@ -44,6 +49,7 @@
         label="Infusion Duration Type"
         options={@infusion_duration_type}
         required
+        id="infusion_duration_type"
       />
       <.input
         field={f[:lipid_infusion_duration_hours]}
@@ -51,6 +57,7 @@
         label="Lipid Infusion Duration (hours)"
         step="0.1"
         required
+        id="lipid_infusion_duration_hours"
       />
       <.input
         field={f[:tpn_infusion_type]}
@@ -59,15 +66,17 @@
         label="TPN Infusion Type"
         options={@tpn_infusion_types}
         required
-        x-on:change="showTpnInfusionDuration = $event.target.value === '2_in_1'"
+        id="tpn_infusion_type"
+        x-on:change="showTpnDuration = $event.target.value === '2_in_1'"
       />
-      <template x-if="showTpnInfusionDuration">
+      <template x-if="showTpnDuration">
         <.input
           field={f[:tpn_infusion_duration_hours]}
           type="number"
           label="TPN Infusion Duration (hours)"
           step="1"
           required
+          id="tpn_infusion_duration_hours"
         />
       </template>
       <.input
@@ -77,7 +86,13 @@
         step=".0001"
         required
         value={format_decimal(@admission.patient_weight)}
+        id="dosing_weight"
       />
+    </div>
+    
+<!-- Template Selection -->
+    <div class="mt-8 max-w-sm">
+      <h3 class="text-lg font-semibold mb-4">Template Selection</h3>
       <.input
         hx-get="/order/template_products"
         hx-trigger="change"
@@ -86,43 +101,182 @@
         hx-swap="innerHTML"
         field={f[:template_id]}
         type="simple-select"
-        prompt="Select..."
+        prompt="Select a template..."
         label="Template"
         options={@templates}
         required
       />
     </div>
-  </section>
-
-  <section class="w-full rounded-lg overflow-hidden border mt-8">
-    <header class="border-b px-4 py-3 font-semibold bg-card">
-      Template Products
-    </header>
-    <div id="template_products_loader" class="htmx-indicator">
-      <.icon_simple_spinner class="mx-auto my-12 text-foreground size-6" />
-    </div>
-    <div id="template_products_content" class="hide-on-htmx-request">
-      <div class="text-center my-10 text-sm text-muted-foreground">
-        Select a template to view products
+    
+<!-- Template Products Section -->
+    <div class="w-full rounded-lg overflow-hidden border mt-8">
+      <header class="border-b px-4 py-3 font-semibold bg-card">
+        Template Products
+      </header>
+      <div id="template_products_loader" class="htmx-indicator">
+        <.icon_simple_spinner class="mx-auto my-12 text-foreground size-6" />
+      </div>
+      <div id="template_products_content" class="hide-on-htmx-request">
+        <div class="text-center my-10 text-sm text-muted-foreground">
+          Select a template to view products
+        </div>
       </div>
     </div>
-  </section>
-
-  <footer class="flex justify-end items-center space-x-3 mt-16">
+    
+<!-- Hidden fields for calculations -->
     <input type="hidden" name="order[status]" value="draft" id="order-status-field" />
-    <button
-      type="submit"
-      class="btn btn-blue form-button"
-      onclick="document.getElementById('order-status-field').value = 'draft'"
-    >
-      <.icon_save /> Save as Draft
-    </button>
-    <button
-      type="submit"
-      class="btn btn-green form-button"
-      onclick="document.getElementById('order-status-field').value = 'pending'"
-    >
-      <.icon_pakage_plus /> Create Order
-    </button>
-  </footer>
+    <input type="hidden" name="infusion_calculations" id="infusion_calculations" value="" />
+    <input type="hidden" name="nutritional_calculations" id="nutritional_calculations" value="" />
+    <input type="hidden" name="electrolyte_summary" id="electrolyte_summary" value="" />
+    <input type="hidden" name="nutritional_summary" id="nutritional_summary" value="" />
+    <input type="hidden" name="calculated_at" id="calculated_at" value="" />
+    <input type="hidden" name="osmolarity_alert_data" id="osmolarity_alert_data" value="" />
+    <input
+      type="hidden"
+      name="patient_type_id"
+      id="patient_type_id"
+      value={@admission.patient_type_id}
+    />
+    
+<!-- Form Actions -->
+    <footer class="flex justify-end items-center space-x-3 mt-8 pt-6 border-t">
+      <button
+        type="button"
+        class="btn-outline"
+        hx-get={"/patients/dashboard/#{@patient_id}"}
+        hx-target="#main-contents"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="btn btn-blue form-button"
+        onclick="document.getElementById('order-status-field').value = 'draft'"
+      >
+        <.icon_save /> Save as Draft
+      </button>
+      <button
+        type="submit"
+        class="btn btn-green form-button"
+        onclick="document.getElementById('order-status-field').value = 'pending'"
+      >
+        <.icon_pakage_plus /> Create Order
+      </button>
+    </footer>
+  </section>
 </.simple_form>
+
+<script>
+  // Simple Alpine.js initialization with error suppression
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Alpine.js on current content
+    function initAlpineOnContent() {
+      if (typeof Alpine === 'undefined') return;
+
+      const elements = document.querySelectorAll('[x-data]:not([data-alpine-initialized])');
+      elements.forEach(element => {
+        try {
+          // For orderTemplateProducts component, ensure classList exists
+          const xDataAttr = element.getAttribute('x-data');
+          if (xDataAttr && xDataAttr.includes('orderTemplateProducts')) {
+            // Ensure window.templateData exists with classList
+            if (!window.templateData) {
+              window.templateData = { classes: [], classList: [], products: [] };
+            }
+            // Ensure classList is an array (not undefined)
+            if (!Array.isArray(window.templateData.classList)) {
+              window.templateData.classList = window.templateData.classes || [];
+            }
+          }
+
+          Alpine.initTree(element);
+          element.setAttribute('data-alpine-initialized', 'true');
+        } catch (error) {
+          // Suppress Alpine.js errors to prevent UI breakage
+          console.warn('Alpine.js initialization suppressed:', error.message);
+          element.setAttribute('data-alpine-initialized', 'true');
+        }
+      });
+    }
+
+    // Initialize Alpine.js
+    initAlpineOnContent();
+
+    // Re-initialize after HTMX content swaps
+    document.addEventListener('htmx:afterSwap', function() {
+      setTimeout(initAlpineOnContent, 50);
+    });
+
+    // Global Alpine.js error handler to suppress classList errors
+    if (typeof Alpine !== 'undefined') {
+      window.addEventListener('alpine:error', function(event) {
+        // Suppress classList errors
+        if (event.detail.error?.message?.includes('classList')) {
+          console.warn('Alpine.js classList error suppressed');
+          event.preventDefault();
+        }
+      });
+    }
+
+    // Save calculations before form submission
+    function saveCalculationsBeforeSubmit() {
+      // Try to get calculations from template products component
+      const templateProducts = document.querySelector('[x-data*="orderTemplateProducts"]');
+      if (templateProducts && templateProducts.__x) {
+        try {
+          const component = templateProducts.__x;
+          if (typeof component.saveCalculationsToForm === 'function') {
+            const calculatedValues = component.saveCalculationsToForm();
+
+            document.getElementById('infusion_calculations').value =
+              JSON.stringify(calculatedValues.infusion_calculations || {});
+            document.getElementById('nutritional_calculations').value =
+              JSON.stringify(calculatedValues.nutritional_calculations || {});
+            document.getElementById('electrolyte_summary').value =
+              JSON.stringify(calculatedValues.electrolyte_summary || {});
+            document.getElementById('nutritional_summary').value =
+              JSON.stringify(calculatedValues.nutritional_summary || {});
+            document.getElementById('calculated_at').value =
+              calculatedValues.calculated_at || new Date().toISOString();
+            return;
+          }
+        } catch (error) {
+          console.warn('Error getting calculations:', error.message);
+        }
+      }
+
+      // Fallback: empty calculations
+      document.getElementById('infusion_calculations').value = JSON.stringify({});
+      document.getElementById('nutritional_calculations').value = JSON.stringify({});
+      document.getElementById('electrolyte_summary').value = JSON.stringify({});
+      document.getElementById('nutritional_summary').value = JSON.stringify({});
+      document.getElementById('calculated_at').value = new Date().toISOString();
+    }
+
+    // Form submission handling
+    const form = document.querySelector('form[hx-post="/hospital/orders"]');
+    if (form) {
+      form.addEventListener('submit', saveCalculationsBeforeSubmit);
+      form.addEventListener('htmx:configRequest', saveCalculationsBeforeSubmit);
+    }
+
+    // Osmolarity override handling
+    window.addEventListener('osmolarity-override', function(event) {
+      const { alert, comments, overridden_at } = event.detail;
+
+      saveCalculationsBeforeSubmit();
+
+      const osmolarityData = {
+        alert: alert,
+        comments: comments,
+        overridden_at: overridden_at,
+        user_id: document.querySelector('input[name="user_id"]')?.value || ''
+      };
+
+      document.getElementById('osmolarity_alert_data').value = JSON.stringify(osmolarityData);
+
+      const form = document.querySelector('form[hx-post="/hospital/orders"]');
+      if (form) htmx.trigger(form, 'submit');
+    });
+  });
+</script>

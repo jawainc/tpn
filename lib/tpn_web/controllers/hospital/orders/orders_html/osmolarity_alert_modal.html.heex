@@ -1,0 +1,339 @@
+<!-- Osmolarity Alert Modal -->
+<div
+  x-data="{
+    show: false,
+    alert: null,
+    comments: '',
+    canProceed: false,
+    type: 'info',
+    message: '',
+
+    init() {
+      // Listen for osmolarity alert events
+      window.addEventListener('osmolarity-alert', (event) => {
+        this.alert = event.detail.alert;
+        this.comments = event.detail.comments || '';
+        this.checkCanProceed();
+        this.show = true;
+      });
+    },
+
+    checkCanProceed() {
+      if (!this.alert) return;
+
+      const hasComments = this.comments.trim().length > 0;
+
+      if (!this.alert.exceeds) {
+        this.canProceed = true;
+        this.type = 'info';
+        this.message = 'Osmolarity is within safe limits.';
+      } else if (this.alert.alert_type === 'Soft' && hasComments) {
+        this.canProceed = true;
+        this.type = 'warning';
+        this.message = 'Osmolarity exceeds soft limit but order can proceed with comments.';
+      } else if (this.alert.alert_type === 'Soft' && !hasComments) {
+        this.canProceed = false;
+        this.type = 'warning';
+        this.message = 'Osmolarity exceeds soft limit. Please provide comments to proceed.';
+      } else if (this.alert.alert_type === 'Hard') {
+        this.canProceed = false;
+        this.type = 'error';
+        this.message = 'Osmolarity exceeds hard limit. Order cannot proceed.';
+      }
+    },
+
+    handleCommentsChange() {
+      this.checkCanProceed();
+    },
+
+    proceedWithOrder() {
+      if (this.canProceed) {
+        // Dispatch event to submit order with override
+        window.dispatchEvent(new CustomEvent('osmolarity-override', {
+          detail: {
+            alert: this.alert,
+            comments: this.comments,
+            overridden_at: new Date().toISOString()
+          }
+        }));
+        this.closeModal();
+      }
+    },
+
+    closeModal() {
+      this.show = false;
+      this.alert = null;
+      this.comments = '';
+      this.canProceed = false;
+    }
+  }"
+  x-show="show"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  class="fixed inset-0 z-50 overflow-y-auto"
+  style="display: none;"
+  aria-labelledby="osmolarity-alert-title"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="flex min-h-screen items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div
+      x-show="show"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+      @click="closeModal()"
+    >
+    </div>
+    
+<!-- Modal -->
+    <div
+      x-show="show"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+      class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+    >
+      <!-- Header -->
+      <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
+        <button
+          type="button"
+          @click="closeModal()"
+          class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          <span class="sr-only">Close</span>
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="sm:flex sm:items-start">
+        <!-- Icon -->
+        <div
+          class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10"
+          x-bind:class="{
+               'bg-red-100': type === 'error',
+               'bg-yellow-100': type === 'warning',
+               'bg-blue-100': type === 'info'
+             }"
+        >
+          <svg
+            class="h-6 w-6"
+            x-bind:class="{
+              'text-red-600': type === 'error',
+              'text-yellow-600': type === 'warning',
+              'text-blue-600': type === 'info'
+            }"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <template x-if="type === 'error'">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+              />
+            </template>
+            <template x-if="type === 'warning'">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+              />
+            </template>
+            <template x-if="type === 'info'">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+              />
+            </template>
+          </svg>
+        </div>
+        
+<!-- Content -->
+        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+          <h3 class="text-lg font-semibold leading-6 text-gray-900" id="osmolarity-alert-title">
+            Osmolarity Alert
+          </h3>
+
+          <div class="mt-2">
+            <!-- Alert Message -->
+            <p class="text-sm text-gray-500" x-text="message"></p>
+            
+<!-- Alert Details -->
+            <template x-if="alert">
+              <div class="mt-4 space-y-2 rounded-md bg-gray-50 p-3">
+                <div class="flex justify-between">
+                  <span class="text-sm font-medium text-gray-700">Calculated Osmolarity:</span>
+                  <span
+                    class="text-sm text-gray-900"
+                    x-text="alert.calculated.toFixed(2) + ' mOsm/L'"
+                  >
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm font-medium text-gray-700">Limit:</span>
+                  <span class="text-sm text-gray-900" x-text="alert.limit.toFixed(2) + ' mOsm/L'">
+                  </span>
+                </div>
+                <template x-if="alert.exceeds">
+                  <div class="flex justify-between">
+                    <span class="text-sm font-medium text-gray-700">Exceeds Limit By:</span>
+                    <span
+                      class="text-sm font-medium text-red-600"
+                      x-text="alert.exceeds_limit.toFixed(2) + ' mOsm/L'"
+                    >
+                    </span>
+                  </div>
+                </template>
+                <div class="flex justify-between">
+                  <span class="text-sm font-medium text-gray-700">Alert Type:</span>
+                  <span
+                    class="text-sm font-medium"
+                    x-bind:class="{
+                      'text-yellow-600': alert.alert_type === 'Soft',
+                      'text-red-600': alert.alert_type === 'Hard'
+                    }"
+                    x-text="alert.alert_type"
+                  >
+                  </span>
+                </div>
+              </div>
+            </template>
+            
+<!-- Comments Input (only for soft alerts) -->
+            <template x-if="alert && alert.alert_type === 'Soft' && alert.exceeds">
+              <div class="mt-4">
+                <label for="osmolarity-comments" class="block text-sm font-medium text-gray-700">
+                  Comments for Override <span class="text-red-500">*</span>
+                </label>
+                <div class="mt-1">
+                  <textarea
+                    id="osmolarity-comments"
+                    x-model="comments"
+                    @input="handleCommentsChange()"
+                    rows="3"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="Please provide clinical justification for proceeding with elevated osmolarity..."
+                    required
+                  ></textarea>
+                </div>
+                <p class="mt-1 text-xs text-gray-500">
+                  Required for soft limit overrides. Provide clinical justification.
+                </p>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      
+<!-- Footer -->
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <!-- Proceed Button (only when allowed) -->
+        <template x-if="canProceed">
+          <button
+            type="button"
+            @click="proceedWithOrder()"
+            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto"
+            x-bind:class="{
+              'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500': type === 'warning',
+              'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500': type === 'info'
+            }"
+          >
+            Proceed with Order
+          </button>
+        </template>
+        
+<!-- Cancel/Close Button -->
+        <button
+          type="button"
+          @click="closeModal()"
+          class="mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+          x-bind:class="{
+            'bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-300': canProceed,
+            'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500': !canProceed && type === 'error',
+            'bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-300': !canProceed && type !== 'error'
+          }"
+        >
+          <template x-if="!canProceed && type === 'error'">Cancel Order</template>
+          <template x-if="!canProceed && type !== 'error'">Cancel</template>
+          <template x-if="canProceed">Cancel</template>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden fields for form submission -->
+<input type="hidden" name="osmolarity_alert_data" id="osmolarity_alert_data" value="" />
+<input type="hidden" name="infusion_calculations" id="infusion_calculations" value="" />
+<input type="hidden" name="nutritional_calculations" id="nutritional_calculations" value="" />
+<input type="hidden" name="electrolyte_summary" id="electrolyte_summary" value="" />
+<input type="hidden" name="nutritional_summary" id="nutritional_summary" value="" />
+<input type="hidden" name="calculated_at" id="calculated_at" value="" />
+
+<!-- JavaScript to handle osmolarity events -->
+<script>
+  document.addEventListener('alpine:init', () => {
+    // Listen for form submission to save calculations
+    document.addEventListener('htmx:configRequest', (event) => {
+      const orderForm = document.querySelector('[x-data*="orderTemplateProducts"]');
+      if (orderForm && orderForm.__x) {
+        const component = orderForm.__x;
+
+        // Save calculations to hidden fields
+        const calculatedValues = component.saveCalculationsToForm();
+
+        // Set hidden field values
+        document.getElementById('infusion_calculations').value = JSON.stringify(calculatedValues.infusion_calculations);
+        document.getElementById('nutritional_calculations').value = JSON.stringify(calculatedValues.nutritional_calculations);
+        document.getElementById('electrolyte_summary').value = JSON.stringify(calculatedValues.electrolyte_summary);
+        document.getElementById('nutritional_summary').value = JSON.stringify(calculatedValues.nutritional_summary);
+        document.getElementById('calculated_at').value = calculatedValues.calculated_at;
+      }
+    });
+
+    // Listen for osmolarity override events
+    window.addEventListener('osmolarity-override', (event) => {
+      const { alert, comments, overridden_at } = event.detail;
+
+      // Set osmolarity alert data
+      const osmolarityData = {
+        alert: alert,
+        comments: comments,
+        overridden_at: overridden_at,
+        user_id: document.querySelector('input[name="user_id"]')?.value || ''
+      };
+
+      document.getElementById('osmolarity_alert_data').value = JSON.stringify(osmolarityData);
+
+      // Submit the form
+      const form = document.querySelector('form[hx-post="/hospital/orders"]');
+      if (form) {
+        form.dispatchEvent(new Event('submit', { bubbles: true }));
+      }
+    });
+  });
+</script>

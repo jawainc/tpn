@@ -17,6 +17,7 @@ defmodule TpnWeb.Hospital.OrdersController do
     Settings
   }
 
+  alias Tpn.Calculations.{OrderCalculations, OsmolarityValidation}
   alias TpnWeb.Helpers.{ClientEvents, Networks}
 
   def index(conn, params) do
@@ -47,7 +48,10 @@ defmodule TpnWeb.Hospital.OrdersController do
   def new(conn, %{"patient_id" => patient_id}) do
     admission = Admissions.get_admission_view_by_patient_id(patient_id)
     formularies = Formularies.list_enteral_products_for_patient_type(admission.patient_type_id)
-    vascular_accesses = VascularAccesses.vascular_accesses_for_select()
+
+    vascular_accesses =
+      VascularAccesses.vascular_accesses_for_patient_type(admission.patient_type_id)
+
     templates = Templates.list_templates_for_patient_type(admission.patient_type_id)
 
     conn
@@ -69,6 +73,7 @@ defmodule TpnWeb.Hospital.OrdersController do
     # Generate unique bag_id
     bag_id = generate_bag_id()
 
+    # Parse calculation fields from JSON strings
     order_attrs =
       order_params
       |> Map.put("user_id", user_id)
@@ -76,10 +81,23 @@ defmodule TpnWeb.Hospital.OrdersController do
       |> Map.put("admission_id", admission_id)
       |> Map.put("bag_id", bag_id)
       |> Map.put("order_date", NaiveDateTime.utc_now())
+      |> parse_json_field("infusion_calculations")
+      |> parse_json_field("nutritional_calculations")
+      |> parse_json_field("electrolyte_summary")
+      |> parse_json_field("nutritional_summary")
+      |> parse_json_field("osmolarity_alert")
+
+    # Validate osmolarity alerts if present
+    order_attrs = validate_osmolarity_alerts(order_attrs, conn)
 
     case Orders.create_order(order_attrs) do
       {:ok, order} ->
         status = Map.get(order_attrs, "status", "draft")
+
+        # Create status snapshot if status is being set
+        if status != "draft" do
+          create_status_snapshot(order, status, order_attrs)
+        end
 
         message =
           case status do
@@ -105,7 +123,9 @@ defmodule TpnWeb.Hospital.OrdersController do
         formularies =
           Formularies.list_enteral_products_for_patient_type(admission.patient_type_id)
 
-        vascular_accesses = VascularAccesses.vascular_accesses_for_select()
+        vascular_accesses =
+          VascularAccesses.vascular_accesses_for_patient_type(admission.patient_type_id)
+
         templates = Templates.list_templates_for_patient_type(admission.patient_type_id)
 
         conn
@@ -126,6 +146,78 @@ defmodule TpnWeb.Hospital.OrdersController do
     timestamp = DateTime.utc_now() |> DateTime.to_unix()
     random = :rand.uniform(9999)
     "BAG-#{timestamp}-#{random}"
+  end
+
+  defp validate_osmolarity_alerts(order_attrs, conn) do
+    case Map.get(order_attrs, "osmolarity_alert") do
+      nil ->
+        order_attrs
+
+      alert_data ->
+        # Check if osmolarity alert requires comments
+        case alert_data do
+          %{"exceeds" => true, "alert_type" => "Soft", "comments" => comments} ->
+            if comments == nil or String.trim(comments) == "" do
+              conn
+              |> put_flash(
+                :error,
+                "Osmolarity exceeds soft limit. Please provide comments to proceed."
+              )
+              |> halt()
+            end
+
+          %{"exceeds" => true, "alert_type" => "Hard"} ->
+            conn
+            |> put_flash(:error, "Osmolarity exceeds hard limit. Order cannot proceed.")
+            |> halt()
+
+          _ ->
+            order_attrs
+        end
+
+        # Add override information if present
+        if Map.get(alert_data, "overridden_at") do
+          order_attrs
+          |> Map.put("osmolarity_overridden_at", alert_data["overridden_at"])
+          |> Map.put("osmolarity_override_user_id", conn.assigns.current_user.id)
+          |> Map.put("osmolarity_override_comments", alert_data["comments"])
+        else
+          order_attrs
+        end
+    end
+  end
+
+  defp parse_json_field(attrs, field) do
+    case Map.get(attrs, field) do
+      nil ->
+        attrs
+
+      value when is_binary(value) ->
+        case Jason.decode(value) do
+          {:ok, decoded} -> Map.put(attrs, field, decoded)
+          {:error, _} -> Map.put(attrs, field, %{})
+        end
+
+      value ->
+        Map.put(attrs, field, value)
+    end
+  end
+
+  defp create_status_snapshot(order, status, order_attrs) do
+    # Create a snapshot of the order status change
+    snapshot_attrs = %{
+      order_id: order.id,
+      status: status,
+      changed_at: NaiveDateTime.utc_now(),
+      changed_by_user_id: order_attrs["user_id"],
+      osmolarity_alert: order_attrs["osmolarity_alert"],
+      infusion_calculations: order_attrs["infusion_calculations"],
+      nutritional_calculations: order_attrs["nutritional_calculations"]
+    }
+
+    # In a real implementation, you would save this to a status_snapshots table
+    # For now, we'll log it
+    IO.inspect(snapshot_attrs, label: "Status snapshot created")
   end
 
   def template_products(conn, %{"order" => %{"template_id" => ""}}) do

@@ -1,0 +1,470 @@
+<div
+  x-data="{
+    // Calculation data
+    infusion: {
+      tpnRate: 0,
+      lipidRate: 0,
+      totalFluids: 0,
+      customTpnRate: 0
+    },
+    nutritional: {
+      gir: 0,
+      aminoAcidPercent: 0,
+      dextrosePercent: 0,
+      fatInfusionRate: 0,
+      osmolarity: 0
+    },
+    electrolyteTotals: {
+      sodium: 0,
+      potassium: 0,
+      calcium: 0,
+      magnesium: 0,
+      phosphate: 0,
+      chloride: 0,
+      acetate: 0
+    },
+    nutritionalSummary: {
+      proteinEnergy: 0,
+      dextroseEnergy: 0,
+      lipidEnergy: 0,
+      nitrogen: 0,
+      nonProteinEnergy: 0,
+      totalEnergy: 0,
+      totalKcalPerNitrogen: 0,
+      proteinEnergyPerNitrogen: 0,
+      nonProteinEnergyPerNitrogen: 0,
+      proteinToNonProteinRatio: 0,
+      lipidToTotalEnergyRatio: 0
+    },
+    osmolarityLimit: null,
+
+    // Initialize by listening for calculation updates
+    init() {
+      // Listen for calculation updates from the orderTemplateProducts component
+      window.addEventListener('order-calculations-updated', (event) => {
+        if (event.detail.infusion) {
+          this.infusion = event.detail.infusion;
+        }
+        if (event.detail.nutritional) {
+          this.nutritional = event.detail.nutritional;
+        }
+        if (event.detail.electrolyteTotals) {
+          this.electrolyteTotals = event.detail.electrolyteTotals;
+        }
+        if (event.detail.nutritionalSummary) {
+          this.nutritionalSummary = event.detail.nutritionalSummary;
+        }
+      });
+
+      // Listen for osmolarity limit updates
+      window.addEventListener('osmolarity-limit-fetched', (event) => {
+        if (event.detail) {
+          this.osmolarityLimit = event.detail;
+        }
+      });
+    },
+
+    // Format number with 2 decimal places
+    formatNumber(value) {
+      return parseFloat(value || 0).toFixed(2);
+    },
+
+    // Format energy values
+    formatEnergy(value) {
+      return parseFloat(value || 0).toFixed(1);
+    },
+
+    // Format ratio values
+    formatRatio(value) {
+      return parseFloat(value || 0).toFixed(3);
+    },
+
+    // Get osmolarity status class based on actual limit
+    getOsmolarityClass(value) {
+      if (!this.osmolarityLimit) {
+        // No limit configured - show neutral
+        return 'text-gray-600 dark:text-gray-400';
+      }
+      
+      const limit = parseFloat(this.osmolarityLimit.osmolarity) || 0;
+      if (value <= limit) {
+        return 'text-green-600 dark:text-green-400';
+      } else if (this.osmolarityLimit.alert_type === 'Soft') {
+        return 'text-yellow-600 dark:text-yellow-400';
+      } else {
+        return 'text-red-600 dark:text-red-400';
+      }
+    },
+
+    // Get osmolarity status text based on actual limit
+    getOsmolarityStatus(value) {
+      if (!this.osmolarityLimit) {
+        return 'No Limit';
+      }
+      
+      const limit = parseFloat(this.osmolarityLimit.osmolarity) || 0;
+      if (value <= limit) {
+        return 'Safe';
+      } else if (this.osmolarityLimit.alert_type === 'Soft') {
+        return 'Soft Limit';
+      } else {
+        return 'Hard Limit';
+      }
+    }
+  }"
+  class="space-y-6"
+>
+  <!-- Summary Cards Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+<!-- Infusion Calculations Card -->
+    <div class="card border border-border/50 bg-card shadow-sm hover:shadow-md transition-shadow duration-200 p-4">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-foreground mb-1">Infusion Calculations</h3>
+          <p class="text-sm text-muted-foreground">Calculated infusion rates and volumes</p>
+        </div>
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+          Rates
+        </span>
+      </div>
+
+      <div class="space-y-5">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-muted-foreground">TPN Rate</span>
+              <span
+                class="text-sm font-semibold text-foreground"
+                x-text="formatNumber(infusion.tpnRate)"
+              >
+              </span>
+            </div>
+            <div class="text-xs text-muted-foreground">mL/hr</div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-muted-foreground">Lipid Rate</span>
+              <span
+                class="text-sm font-semibold text-foreground"
+                x-text="formatNumber(infusion.lipidRate)"
+              >
+              </span>
+            </div>
+            <div class="text-xs text-muted-foreground">mL/hr</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-border/30">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-muted-foreground">Total Fluids</span>
+              <div class="text-xs text-muted-foreground">24-hour volume</div>
+            </div>
+            <span
+              class="text-base font-bold text-foreground"
+              x-text="formatNumber(infusion.totalFluids) + ' mL'"
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<!-- Nutritional Calculations Card -->
+    <div class="card border border-border/50 bg-card shadow-sm hover:shadow-md transition-shadow duration-200 p-4">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-foreground mb-1">Nutritional Values</h3>
+          <p class="text-sm text-muted-foreground">GIR, percentages, and osmolarity</p>
+        </div>
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+          Clinical
+        </span>
+      </div>
+
+      <div class="space-y-5">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-muted-foreground">GIR</span>
+              <span
+                class="text-sm font-semibold text-foreground"
+                x-text="formatNumber(nutritional.gir)"
+              >
+              </span>
+            </div>
+            <div class="text-xs text-muted-foreground">mg/kg/min</div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-muted-foreground">Fat Rate</span>
+              <span
+                class="text-sm font-semibold text-foreground"
+                x-text="formatNumber(nutritional.fatInfusionRate)"
+              >
+              </span>
+            </div>
+            <div class="text-xs text-muted-foreground">g/kg/day</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-muted-foreground">Amino Acid</span>
+              <span
+                class="text-sm font-semibold text-foreground"
+                x-text="formatNumber(nutritional.aminoAcidPercent) + '%'"
+              >
+              </span>
+            </div>
+            <div class="text-xs text-muted-foreground">of bag volume</div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-muted-foreground">Dextrose</span>
+              <span
+                class="text-sm font-semibold text-foreground"
+                x-text="formatNumber(nutritional.dextrosePercent) + '%'"
+              >
+              </span>
+            </div>
+            <div class="text-xs text-muted-foreground">of bag volume</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-border/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-muted-foreground">Calculated Osmolarity</span>
+              <div class="text-xs text-muted-foreground">Total bag osmolarity</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span
+                class="text-base font-bold text-foreground"
+                x-text="formatNumber(nutritional.osmolarity) + ' mOsm/L'"
+              >
+              </span>
+              <span
+                class="text-xs font-medium px-2.5 py-1 rounded-full"
+                x-bind:class="getOsmolarityClass(nutritional.osmolarity)"
+                x-text="getOsmolarityStatus(nutritional.osmolarity)"
+              >
+              </span>
+            </div>
+          </div>
+
+          <div
+            x-show="osmolarityLimit"
+            class="flex items-center justify-between bg-secondary/20 rounded-lg p-3"
+          >
+            <div>
+              <span class="text-sm font-medium text-muted-foreground">Max Allowed</span>
+              <div class="text-xs text-muted-foreground" x-show="osmolarityLimit">
+                <span x-text="osmolarityLimit?.alert_type || ''"></span> limit
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span
+                class="text-base font-bold"
+                x-bind:class="osmolarityLimit?.alert_type === 'Hard' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'"
+                x-text="osmolarityLimit ? formatNumber(osmolarityLimit.osmolarity) + ' mOsm/L' : 'N/A'"
+              >
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<!-- Electrolyte Summary Card -->
+    <div class="card border border-border/50 bg-card shadow-sm hover:shadow-md transition-shadow duration-200 p-4">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-foreground mb-1">Electrolyte Summary</h3>
+          <p class="text-sm text-muted-foreground">Total electrolyte content in mmol</p>
+        </div>
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">
+          7 Elements
+        </span>
+      </div>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Sodium</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.sodium)"
+            >
+            </span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Potassium</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.potassium)"
+            >
+            </span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Calcium</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.calcium)"
+            >
+            </span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Magnesium</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.magnesium)"
+            >
+            </span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Phosphate</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.phosphate)"
+            >
+            </span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Chloride</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.chloride)"
+            >
+            </span>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <div class="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+            <span class="text-sm font-medium text-muted-foreground">Acetate</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatNumber(electrolyteTotals.acetate)"
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<!-- Nutritional Summary Card -->
+    <div class="card border border-border/50 bg-card shadow-sm hover:shadow-md transition-shadow duration-200 p-4">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-foreground mb-1">Energy Summary</h3>
+          <p class="text-sm text-muted-foreground">Energy values and nutritional ratios</p>
+        </div>
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+          kcal
+        </span>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-muted-foreground">Total Energy</span>
+            <span
+              class="text-lg font-bold text-foreground"
+              x-text="formatEnergy(nutritionalSummary.totalEnergy) + ' kcal'"
+            >
+            </span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div class="text-xs font-medium text-blue-700 dark:text-blue-400 mb-1">Protein</div>
+              <div
+                class="text-sm font-semibold text-foreground"
+                x-text="formatEnergy(nutritionalSummary.proteinEnergy)"
+              >
+              </div>
+            </div>
+            <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div class="text-xs font-medium text-green-700 dark:text-green-400 mb-1">
+                Dextrose
+              </div>
+              <div
+                class="text-sm font-semibold text-foreground"
+                x-text="formatEnergy(nutritionalSummary.dextroseEnergy)"
+              >
+              </div>
+            </div>
+            <div class="text-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+              <div class="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">Lipid</div>
+              <div
+                class="text-sm font-semibold text-foreground"
+                x-text="formatEnergy(nutritionalSummary.lipidEnergy)"
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-border/30">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-muted-foreground">Protein:Non-Protein</span>
+                <span
+                  class="text-sm font-semibold text-foreground"
+                  x-text="formatRatio(nutritionalSummary.proteinToNonProteinRatio)"
+                >
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-muted-foreground">Lipid:Total Energy</span>
+                <span
+                  class="text-sm font-semibold text-foreground"
+                  x-text="formatRatio(nutritionalSummary.lipidToTotalEnergyRatio)"
+                >
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-muted-foreground">Total kcal/N</span>
+            <span
+              class="text-sm font-semibold text-foreground"
+              x-text="formatRatio(nutritionalSummary.totalKcalPerNitrogen) + ' kcal/g N'"
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<!-- JavaScript to trigger calculation updates -->
+  <script>
+    document.addEventListener('alpine:init', () => {
+      // Function to update summary cards with new calculation data
+      window.updateSummaryCards = function(data) {
+        window.dispatchEvent(new CustomEvent('order-calculations-updated', {
+          detail: data
+        }));
+      };
+
+      // Listen for calculation events from orderTemplateProducts
+      window.addEventListener('order-calculations-updated', (event) => {
+        window.updateSummaryCards(event.detail);
+      });
+    });
+  </script>
+</div>

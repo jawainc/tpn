@@ -23,8 +23,21 @@
       formularies = window.templateData.formularies;
       currency = window.templateData.currency;
       initialized();
+      // Trigger initial calculations
+      setTimeout(() => calculateAllValues(), 100);
     "
   >
+    <!-- Osmolarity Alert Banner -->
+    <div class="p-4">
+      <.osmolarity_alert />
+    </div>
+    
+<!-- Summary Cards Section -->
+    <div class="p-4">
+      <h3 class="text-lg font-semibold mb-4">Order Calculations Summary</h3>
+      <.summary_cards />
+    </div>
+
     <div class="grid grid-cols-6 gap-4 my-6 px-4">
       <label class="form-control w-full max-w-xs grid gap-3" for="template_fluids">
         <div class="label">
@@ -34,11 +47,18 @@
         </div>
         <input
           name="template_fluids"
+          id="template_fluids"
           type="number"
           step=".0001"
           class="input input-sm input-bordered"
           value={format_decimal(@template.fluids)}
           readonly={@template.pre_mixed_standard}
+          x-on:change="onFormChange()"
+        />
+        <input
+          type="hidden"
+          id="bag_over_fill_volume"
+          value={format_decimal(@template.bag_over_fill_volume)}
         />
       </label>
       <%= if @template.pre_mixed_standard do %>
@@ -52,6 +72,7 @@
             step=".0001"
             class="input input-sm input-bordered"
             value="0.0"
+            x-on:change="onFormChange()"
           />
         </label>
       <% end %>
@@ -66,6 +87,7 @@
             step=".0001"
             class="input input-sm input-bordered"
             value="0.0"
+            x-on:change="onFormChange()"
           />
         </label>
       <% end %>
@@ -81,6 +103,7 @@
             class="input input-sm input-read-only"
             value="0.0"
             readonly
+            x-bind:value="calculations.infusion.tpnRate.toFixed(2)"
           />
         </label>
       <% end %>
@@ -96,6 +119,7 @@
             class="input input-sm input-read-only"
             value="0.0"
             readonly
+            x-bind:value="calculations.infusion.lipidRate.toFixed(2)"
           />
         </label>
       <% end %>
@@ -110,6 +134,7 @@
           class="input input-sm input-read-only"
           value="0.0"
           readonly
+          x-bind:value="calculations.nutritional.gir.toFixed(2)"
         />
       </label>
       <label class="form-control w-full max-w-xs grid gap-3" for="template_amino_acid">
@@ -123,6 +148,7 @@
           class="input input-sm input-read-only"
           value="0.0"
           readonly
+          x-bind:value="calculations.nutritional.aminoAcidPercent.toFixed(2)"
         />
       </label>
       <label class="form-control w-full max-w-xs grid gap-3" for="template_dextrose">
@@ -136,6 +162,7 @@
           class="input input-sm input-read-only"
           value="0.0"
           readonly
+          x-bind:value="calculations.nutritional.dextrosePercent.toFixed(2)"
         />
       </label>
       <label class="form-control w-full max-w-xs grid gap-3" for="template_fat_infusion_rate">
@@ -149,6 +176,7 @@
           class="input input-sm input-read-only"
           value="0.0"
           readonly
+          x-bind:value="calculations.nutritional.fatInfusionRate.toFixed(2)"
         />
       </label>
       <label class="form-control w-full max-w-xs grid gap-3" for="template_osmolarity">
@@ -162,6 +190,7 @@
           class="input input-sm input-read-only"
           value="0.0"
           readonly
+          x-bind:value="calculations.nutritional.osmolarity.toFixed(2)"
         />
       </label>
     </div>
@@ -187,7 +216,7 @@
             <div>
               <span class="badge info" x-text="product.class_name"></span>
             </div>
-            <div class="flex-grow grid grid-cols-5 gap-4">
+            <div class="flex-grow grid grid-cols-6 gap-4">
               <label class="form-control w-full max-w-xs grid gap-3" for="template_dose">
                 <div class="label">
                   <span class="label-text" x-text="`Dose (${product.dose_unit})`"></span>
@@ -199,6 +228,7 @@
                   type="number"
                   step=".0001"
                   class="input input-sm input-bordered"
+                  x-on:change="onDoseChange(product.id)"
                 />
               </label>
               <label class="form-control w-full max-w-xs grid gap-3" for="template_product">
@@ -278,6 +308,20 @@
                   readonly
                 />
               </label>
+              <label class="form-control w-full max-w-xs grid gap-3" for="template_osmolarity">
+                <div class="label">
+                  <span class="label-text">Osmolarity</span>
+                </div>
+                <input
+                  name="template_osmolarity"
+                  id="template_osmolarity"
+                  x-bind:value="(product.osmolarity || 0).toFixed(2)"
+                  type="text"
+                  class="input input-sm input-read-only"
+                  readonly
+                  title="mOsm/L"
+                />
+              </label>
               <template x-if="product.additional_dose_allowed && preMixedStandard">
                 <label
                   class="form-control w-full max-w-xs grid gap-3"
@@ -333,5 +377,6 @@
     </div>
     <.order_template_product_info />
     <.add_substances />
+    <.osmolarity_override_modal />
   </div>
 <% end %>

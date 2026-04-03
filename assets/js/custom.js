@@ -203,7 +203,7 @@ window.handleIconLoader = function (id, spin = true, container = "") {
 window.openSlidingPanel = function () {
   const overlay = document.getElementById("panelOverlay");
   const panel = document.getElementById("slidingPanel");
-  
+
   if (overlay && panel) {
     overlay.classList.add("active");
     panel.classList.add("active");
@@ -214,7 +214,7 @@ window.openSlidingPanel = function () {
 window.closeSlidingPanel = function () {
   const overlay = document.getElementById("panelOverlay");
   const panel = document.getElementById("slidingPanel");
-  
+
   if (overlay && panel) {
     overlay.classList.remove("active");
     panel.classList.remove("active");
@@ -224,40 +224,40 @@ window.closeSlidingPanel = function () {
 
 window.switchToTab = function (tabId) {
   // Remove active class from all tabs
-  const tabs = document.querySelectorAll('.tab');
+  const tabs = document.querySelectorAll(".tab");
   const panels = document.querySelectorAll('[role="tabpanel"]');
-  
-  tabs.forEach(tab => {
-    tab.setAttribute('aria-selected', 'false');
-    tab.classList.remove('active');
+
+  tabs.forEach((tab) => {
+    tab.setAttribute("aria-selected", "false");
+    tab.classList.remove("active");
   });
-  
-  panels.forEach(panel => {
-    panel.setAttribute('hidden', '');
-    panel.setAttribute('aria-selected', 'false');
+
+  panels.forEach((panel) => {
+    panel.setAttribute("hidden", "");
+    panel.setAttribute("aria-selected", "false");
   });
-  
+
   // Activate the selected tab
   const selectedTab = document.getElementById(tabId);
-  const panelId = selectedTab.getAttribute('aria-controls');
+  const panelId = selectedTab.getAttribute("aria-controls");
   const selectedPanel = document.getElementById(panelId);
-  
+
   if (selectedTab && selectedPanel) {
-    selectedTab.setAttribute('aria-selected', 'true');
-    selectedTab.classList.add('active');
-    selectedPanel.removeAttribute('hidden');
-    selectedPanel.setAttribute('aria-selected', 'true');
-    
+    selectedTab.setAttribute("aria-selected", "true");
+    selectedTab.classList.add("active");
+    selectedPanel.removeAttribute("hidden");
+    selectedPanel.setAttribute("aria-selected", "true");
+
     // Trigger any HTMX requests if needed
-    if (selectedTab.hasAttribute('hx-get')) {
+    if (selectedTab.hasAttribute("hx-get")) {
       selectedTab.click();
     }
   }
 };
 
 // Close panel on Escape key
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
     closeSlidingPanel();
   }
 });

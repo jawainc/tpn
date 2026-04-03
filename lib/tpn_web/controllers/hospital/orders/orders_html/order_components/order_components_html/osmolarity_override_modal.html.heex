@@ -1,0 +1,145 @@
+<dialog
+  id="osmolarity_override_modal"
+  class="modal"
+  x-data="{
+    osmolarityAlert: null,
+    comments: '',
+    
+    init() {
+      // Listen for modal open event
+      window.addEventListener('show-osmolarity-override-modal', (event) => {
+        if (event.detail) {
+          this.osmolarityAlert = event.detail;
+          this.comments = '';
+          this.$el.showModal();
+        }
+      });
+    },
+    
+    closeModal() {
+      this.$el.close();
+      this.comments = '';
+    },
+    
+    proceedWithOverride() {
+      if (!this.comments.trim()) {
+        alert('Please provide comments to proceed with soft limit override.');
+        return;
+      }
+      
+      // Emit event with override data
+      window.dispatchEvent(new CustomEvent('osmolarity-override-confirmed', {
+        detail: {
+          alert: this.osmolarityAlert,
+          comments: this.comments,
+          overridden_at: new Date().toISOString()
+        }
+      }));
+      
+      this.closeModal();
+    }
+  }"
+>
+  <div class="modal-box max-w-2xl">
+    <h3 class="font-bold text-lg mb-4 text-yellow-700 dark:text-yellow-400">
+      <svg class="w-6 h-6 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fill-rule="evenodd"
+          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      Soft Osmolarity Limit Exceeded
+    </h3>
+
+    <div class="space-y-4">
+      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+        <p class="text-sm text-yellow-800 dark:text-yellow-200 mb-3">
+          The calculated osmolarity exceeds the soft limit. You may proceed with this order by providing justification comments.
+        </p>
+
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="bg-white dark:bg-gray-800 p-3 rounded">
+            <div class="text-xs text-muted-foreground mb-1">Calculated Osmolarity</div>
+            <div class="font-semibold text-foreground">
+              <span x-text="osmolarityAlert ? osmolarityAlert.calculated.toFixed(2) : '0.00'">
+              </span>
+              <span class="text-xs ml-1">mOsm/L</span>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-3 rounded">
+            <div class="text-xs text-muted-foreground mb-1">Maximum Allowed</div>
+            <div class="font-semibold text-foreground">
+              <span x-text="osmolarityAlert ? osmolarityAlert.limit.toFixed(2) : '0.00'"></span>
+              <span class="text-xs ml-1">mOsm/L</span>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-3 rounded col-span-2">
+            <div class="text-xs text-muted-foreground mb-1">Exceeds Limit By</div>
+            <div class="font-semibold text-yellow-600 dark:text-yellow-400">
+              <span x-text="osmolarityAlert ? osmolarityAlert.exceeds_limit.toFixed(2) : '0.00'">
+              </span>
+              <span class="text-xs ml-1">mOsm/L</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">
+            Justification Comments <span class="text-red-500">*</span>
+          </span>
+        </label>
+        <textarea
+          x-model="comments"
+          class="textarea textarea-bordered h-24"
+          placeholder="Please provide justification for exceeding the soft osmolarity limit..."
+          required
+        ></textarea>
+        <label class="label">
+          <span class="label-text-alt text-muted-foreground">
+            Comments are required to proceed with this order
+          </span>
+        </label>
+      </div>
+
+      <div class="alert alert-warning">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-current shrink-0 h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        <span class="text-sm">
+          By proceeding, you acknowledge that the osmolarity exceeds the recommended limit and take responsibility for this clinical decision.
+        </span>
+      </div>
+    </div>
+
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost" @click="closeModal()">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-warning"
+        @click="proceedWithOverride()"
+        x-bind:disabled="!comments.trim()"
+      >
+        Proceed with Override
+      </button>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" @click="closeModal()">close</button>
+  </form>
+</dialog>

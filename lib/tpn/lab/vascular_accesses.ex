@@ -29,6 +29,19 @@ defmodule Tpn.VascularAccesses do
     |> Enum.map(&{&1.name, &1.id})
   end
 
+  def vascular_accesses_for_patient_type(patient_type_id) do
+    # Get vascular accesses that have osmolarity limits defined for this patient type
+    from(va in VascularAccess,
+      join: o in Tpn.Lab.Osmolarity,
+      on: o.vascular_access_id == va.id,
+      where: o.patient_type_id == ^patient_type_id,
+      distinct: true,
+      order_by: [asc: va.name],
+      select: {va.name, va.id}
+    )
+    |> Repo.all()
+  end
+
   def create_vascular_access(params) do
     %VascularAccess{}
     |> VascularAccess.changeset(params)

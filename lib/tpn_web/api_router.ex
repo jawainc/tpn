@@ -55,6 +55,13 @@ defmodule TpnWeb.ApiRouter do
     # Template Products API
     get "/template_products/formularies", TemplateProductController, :formularies
 
+    # Osmolarity API
+    get "/osmolarity/limit", OsmolarityController, :get_limit
+    get "/osmolarity/validate", OsmolarityController, :validate
+    get "/osmolarity/validate_with_override", OsmolarityController, :validate_with_override
+    post "/osmolarity/calculate_total_osmoles", OsmolarityController, :calculate_total_osmoles
+    post "/osmolarity/calculate_osmolarity", OsmolarityController, :calculate_osmolarity
+
     # Resources API endpoints
     resources "/wards", WardsController, except: [:new, :edit]
     resources "/rooms", RoomsController, except: [:new, :edit]

@@ -39,6 +39,14 @@ defmodule Tpn.Order do
     field :premixed_bag_batch_number, :string
     field :premixed_bag_expiry, :naive_datetime
 
+    # Calculation fields
+    field :infusion_calculations, :map, default: %{}
+    field :nutritional_calculations, :map, default: %{}
+    field :electrolyte_summary, :map, default: %{}
+    field :nutritional_summary, :map, default: %{}
+    field :osmolarity_alert, :map, default: %{}
+    field :calculated_at, :utc_datetime
+
     belongs_to :template, Tpn.Template
     belongs_to :formulary, Tpn.Formulary
     belongs_to :vascular_access, Tpn.VascularAccess
@@ -71,6 +79,12 @@ defmodule Tpn.Order do
       :using_premixed_bag,
       :premixed_bag_batch_number,
       :premixed_bag_expiry,
+      :infusion_calculations,
+      :nutritional_calculations,
+      :electrolyte_summary,
+      :nutritional_summary,
+      :osmolarity_alert,
+      :calculated_at,
       :template_id,
       :formulary_id,
       :vascular_access_id,

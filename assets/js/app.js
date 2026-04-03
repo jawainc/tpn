@@ -16,6 +16,7 @@
 //
 import { differenceBy, clone } from "lodash";
 import "basecoat-css/all";
+import "./tpn-calculations.js";
 import "./xData.js";
 import "./custom.js";
 

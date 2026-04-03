@@ -1,0 +1,70 @@
+,,
+ID,Calculation,Other details from MS access file (check missing details on MS Access file)
+Order Type,,
+Order ID,,
+Bag ID,,
+Admission Number,,
+Order date,,
+Future Order,,
+TPN Infusion Type,,
+Number of bags,,
+Vascular Access,,
+Template,,
+Infusion duration Type,,
+TPN Infusion Duration (hours),,Disable if Order Type: Batch Production. If Ifusion duration type continuous: Default to 24 (editable). For cyclic leave it blank for user entry
+Lipid Infusion Duration (hours),,"Disabled if TPN Infusion Type = 3 in 1, Disable if Order Type: Batch Production"
+Dosing Weight,,"Mandatory, autofilled from admission weight, editable, Disable if Order Type: Batch Production"
+Enteral Product,,"Enable this filed only if enabled in compounding location table. Lookup value from formulary:Product name where is Enteral is Yes, Disable if Order Type: Batch Production"
+Enteral Product Dose per day (mL),,Disable if Order Type: Batch Production
+Fluids (TPN + Lipids) Rename to Bag Volume,,"Mandatory, Autofill corresponding value from Template selected, editable, locked if pre-mixed bag is selected"
+Fluid Units,,"Mandatory, Autofilled from corresponding template Non-editable, locked if premixed bag is selected"
+TPN Rate,Bag Volume / TPN Infusion Duration,
+Lipid Volume,"Lipid dose / product concentration (convert concentration mteric units to same as on the order if different to metric unit on the order e.g., if dosing in g but concentration units on the formulary is mg/mL, change it to g/mL etc before using it in this calculation)",
+Lipid rate,Lipid volume / duration,
+Custom TPN rate mL/hr,,"Enable only if premixed standard template is selected, Disable if Order Type: Batch Production. Default to TPN rate. Editable. If Custom TPN rate * Duration > bag Volume --> Alert and diable saving order"
+TPN Dose Units (Delete),,"Enable only if premixed standard template is selected, Disable if Order Type: Batch Production"
+Lipid Dose (Volume) - Delete,,"Enable only if premixed standard template is selected and/or TPN infusion type = 2 in 1, Disable if Order Type: Batch Production"
+Lipids Dose units (delete),,"Enable only if premixed standard template is selected, Disable if Order Type: Batch Production"
+Total Fluids,(TPN Rate * Duration) + (Lipid rate * duration) + Enteral Product Dose,"Autofilled, Calculated, Non-editable, if premixed standard is selected, Total fluids calculated from TPN dose and units. It should not be more than Fluids on the Template, if more than alert and ask user to fix rate"
+GIR (mg/kg/min),(Dextrose dose in mg / Dosing weight )/ (Duration in hours *60),
+Amino Acid %,(Amino acid dose in gm / bag volume in mL)*100,
+Dextrose %,(Dextrose dose in g / bag volume in mL)*100,
+Fat Infusion rate (g/kg/hour),"(Lipid dose in g / dosing weight in kg) / lipid infusion duration (for 3 in 1 bags, TPN infusion duration)",
+Osmolarity (mOsm /L),Add All subtances volume * osmolarity from formulary (in mOsm per ml) / (bag volume in mL/1000),
+,,
+Total Electrolyte Summary Card underneath Admission details information orders screen,,
+Total Sodium,Add (Substances volume * Sodium ingredient concentration in that substance in mmol/mL) from all subtances where sodium is one of the ingredient,
+Total Potassium,Add (Substances volume * Potassium ingredient concentration in that substance in mmol/mL) from all subtances where Potassium is one of the ingredient,
+Total Calcium,Add (Substances volume * Calcium ingredient concentration in that substance in mmol/mL) from all subtances where calcium is one of the ingredient,
+Total Magnesium,Add (Substances volume * Magnesium ingredient concentration in that substance in mmol/mL) from all subtances where magnesium is one of the ingredient,
+Total Phosphate,Add (Substances volume * phosphate ingredient concentration in that substance in mmol/mL) from all subtances where phosphate is one of the ingredient,
+Total Chloride,Add (Substances volume * chloride ingredient concentration in that substance in mmol/mL) from all subtances where chloride is one of the ingredient,
+Total Acetate,Add (Substances volume * acetate ingredient concentration in that substance in mmol/mL) from all subtances where acetate is one of the ingredient,
+,,
+Nutritional information Summary card underneath elecrolyte summary card,,
+Protein Energy (Kcal),Amino acid dose * 4 (Also show % of total energy i.e Protein energy / Total energy * 100),
+Dextrose energy (Kcal),Dextrose dose * 3.4 (Also show % of total energy i.e dextrose energy / Total energy * 100),
+Lipid Energy (Kcal),Lipid dose * 9 (Also show % of total energy i.e Lipid energy / Total energy * 100),
+Nitrogen,Amino acid dose / 6.25,
+Non-Protein Energy (Kcal),Dextrose energy + Lipid Energy,
+Total Energy (Kcal),Protein Energy + Dextrose energy + Lipid Energy,
+Total Kcal / Nitrogen,Total Energy / Nitrogen,
+Protein Energy / Nitrogen,Protein energy / Nitrogen,
+Non-Protein Energy / Nitrogen,Non protein energy / Nitrogen,
+protein energy / non-protein energy,protein energy / non-protein energy,
+Lipid energy / Total Energy (Kcal),Lipid energy / Total Energy (Kcal),
+,,
+Child table,,
+Substances,,
+Dose,,
+Dose Units,,
+Product,,
+Filling method,,
+Calculated Volume,"(dose (if dose units are per kg, then multiple dose with dose weight) / product concentration) + (Additional dose / product concentration) (convert concentration mteric units to same as on the order if different to metric unit on the order e.g., if dosing in g but concentration units on the formulary is mg/mL, change it to g/mL etc before using it in this calculation)",
+Fill Volume,(Calculated volume / bag volume) * (bag volume + overfil from template),
+Additional Dose,,
+Additional Dose units,,
+Max Allowed limit,,
+Max Allowed limit Units,,
+Pre-Mixed bag batch number,,
+Pre-Mixed bag expiry number,,
