@@ -44,6 +44,7 @@ window.orderTemplateProducts = function () {
     },
     osmolarityAlert: null,
     osmolarityLimit: null,
+    osmolarityLimits: [], // Preloaded osmolarity limits for patient type
     osmolarityComments: "",
     showOsmolarityAlertModal: false,
 
@@ -78,6 +79,12 @@ window.orderTemplateProducts = function () {
         product.position = index;
         product.substance_id = index;
       });
+
+      // Load preloaded osmolarity limits
+      if (window.templateData && window.templateData.osmolarityLimits) {
+        this.osmolarityLimits = window.templateData.osmolarityLimits;
+      }
+
       console.log(this.productsData);
       this.watchOrderAttributes();
       this.setupOsmolarityOverrideListener();
@@ -259,52 +266,39 @@ window.orderTemplateProducts = function () {
     checkOsmolarity: function () {
       if (!window.TpnCalculations) return;
 
-      const patientTypeId = document.getElementById("patient_type_id")?.value;
       const vascularAccessId =
         document.getElementById("vascular_access_id")?.value;
 
-      if (!patientTypeId || !vascularAccessId) {
-        console.log("Patient type or vascular access not selected");
+      if (!vascularAccessId) {
+        console.log("Vascular access not selected");
         return;
       }
 
-      // Fetch osmolarity limit from API
-      this.fetchOsmolarityLimit(patientTypeId, vascularAccessId);
+      // Get osmolarity limit from preloaded data (no API call)
+      this.getOsmolarityLimitFromPreloaded(vascularAccessId);
     },
 
-    fetchOsmolarityLimit: function (patientTypeId, vascularAccessId) {
-      const url = `/api/osmolarity/limit?patient_type_id=${patientTypeId}&vascular_access_id=${vascularAccessId}`;
+    getOsmolarityLimitFromPreloaded: function (vascularAccessId) {
+      // Find the osmolarity limit for the selected vascular access
+      const limit = this.osmolarityLimits.find(
+        (l) => l.vascular_access_id === parseInt(vascularAccessId)
+      );
 
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            this.osmolarityLimit = data.data;
+      if (limit) {
+        this.osmolarityLimit = limit;
 
-            // Emit event for summary cards to receive the limit
-            window.dispatchEvent(
-              new CustomEvent("osmolarity-limit-fetched", {
-                detail: data.data,
-              })
-            );
+        // Emit event for summary cards to receive the limit
+        window.dispatchEvent(
+          new CustomEvent("osmolarity-limit-fetched", {
+            detail: limit,
+          })
+        );
 
-            this.validateCurrentOsmolarity();
-          } else {
-            console.warn("No osmolarity limit found:", data.message);
-            this.osmolarityLimit = null;
-
-            // Emit null limit event
-            window.dispatchEvent(
-              new CustomEvent("osmolarity-limit-fetched", {
-                detail: null,
-              })
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching osmolarity limit:", error);
-          this.osmolarityLimit = null;
-        });
+        // Validate current osmolarity
+        this.validateCurrentOsmolarity();
+      } else {
+        console.log("No osmolarity limit found for this vascular access");
+      }
     },
 
     validateCurrentOsmolarity: function () {

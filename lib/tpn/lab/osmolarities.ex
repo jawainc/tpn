@@ -47,4 +47,23 @@ defmodule Tpn.Lab.Osmolarities do
   def delete_osmolarity(osmolarity) do
     Repo.delete(osmolarity)
   end
+
+  def get_osmolarities_by_patient_type(patient_type_id) do
+    from(o in Osmolarity,
+      where: o.patient_type_id == ^patient_type_id,
+      preload: [:vascular_access, :patient_type],
+      order_by: [asc: :vascular_access_id]
+    )
+    |> Repo.all()
+    |> Enum.map(fn o ->
+      %{
+        id: o.id,
+        osmolarity: Decimal.to_float(o.osmolarity),
+        alert_type: o.alert_type,
+        vascular_access_id: o.vascular_access_id,
+        vascular_access_name: o.vascular_access.name,
+        patient_type_id: o.patient_type_id
+      }
+    end)
+  end
 end

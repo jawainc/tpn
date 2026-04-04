@@ -9,7 +9,8 @@
       classes: <%= raw @classes %>,
       fillingMethods: <%= raw @filling_methods %>,
       formularies: <%= raw @formularies %>,
-      currency: <%= raw @currency %>
+      currency: <%= raw @currency %>,
+      osmolarityLimits: <%= raw Jason.encode!(Map.get(assigns, :osmolarity_limits, [])) %>
     };
   </script>
   <div

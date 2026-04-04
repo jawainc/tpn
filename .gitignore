@@ -57,3 +57,5 @@ npm-debug.log
 # ignore env file
 .aidocs/
 docs/
+
+.DS_Store

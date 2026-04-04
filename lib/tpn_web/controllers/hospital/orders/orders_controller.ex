@@ -17,6 +17,8 @@ defmodule TpnWeb.Hospital.OrdersController do
     Settings
   }
 
+  alias Tpn.Lab.Osmolarities
+
   alias Tpn.Calculations.{OrderCalculations, OsmolarityValidation}
   alias TpnWeb.Helpers.{ClientEvents, Networks}
 
@@ -53,6 +55,7 @@ defmodule TpnWeb.Hospital.OrdersController do
       VascularAccesses.vascular_accesses_for_patient_type(admission.patient_type_id)
 
     templates = Templates.list_templates_for_patient_type(admission.patient_type_id)
+    osmolarity_limits = Osmolarities.get_osmolarities_by_patient_type(admission.patient_type_id)
 
     conn
     |> assign(:patient_id, patient_id)
@@ -61,6 +64,7 @@ defmodule TpnWeb.Hospital.OrdersController do
     |> assign(:vascular_accesses, vascular_accesses)
     |> assign(:formularies, formularies)
     |> assign(:templates, templates)
+    |> assign(:osmolarity_limits, osmolarity_limits)
     |> assign(:changeset, Order.changeset(%Order{}, %{}))
     |> render(:new)
   end
@@ -128,6 +132,9 @@ defmodule TpnWeb.Hospital.OrdersController do
 
         templates = Templates.list_templates_for_patient_type(admission.patient_type_id)
 
+        osmolarity_limits =
+          Osmolarities.get_osmolarities_by_patient_type(admission.patient_type_id)
+
         conn
         |> assign(:patient_id, patient_id)
         |> assign(:patient, Patients.get_patient_view!(patient_id))
@@ -135,6 +142,7 @@ defmodule TpnWeb.Hospital.OrdersController do
         |> assign(:vascular_accesses, vascular_accesses)
         |> assign(:formularies, formularies)
         |> assign(:templates, templates)
+        |> assign(:osmolarity_limits, osmolarity_limits)
         |> assign(:changeset, changeset)
         |> put_flash(:error, "Failed to create order. Please check the form.")
         |> render(:new)
@@ -228,6 +236,8 @@ defmodule TpnWeb.Hospital.OrdersController do
     template = Templates.get_template_view!(id)
     {class_ids, classes} = classes(template.patient_type_id)
     currency = get_currency()
+    osmolarity_limits = Osmolarities.get_osmolarities_by_patient_type(template.patient_type_id)
+
     # load template without layout
     conn
     |> assign(:template, template)
@@ -236,6 +246,7 @@ defmodule TpnWeb.Hospital.OrdersController do
     |> assign(:filling_methods, filling_methods())
     |> assign(:formularies, formularies(class_ids))
     |> assign(:currency, currency)
+    |> assign(:osmolarity_limits, osmolarity_limits)
     |> render(:template_products, layout: false)
   end
 
