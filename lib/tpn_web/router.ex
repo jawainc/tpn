@@ -111,7 +111,10 @@ defmodule TpnWeb.Router do
 
     get "/order/template_products", Hospital.OrdersController, :template_products
     get "/orders", Hospital.OrdersController, :show
+    get "/orders/bulk", Hospital.OrdersController, :bulk
+    get "/orders/data", Hospital.OrdersController, :list_orders_data
     get "/orders/admissions", Hospital.OrdersController, :admissions
+    get "/orders/admitted-patients", Hospital.OrdersController, :admitted_patients
 
     get "/settings", SettingsController, :index
     post "/settings", SettingsController, :update

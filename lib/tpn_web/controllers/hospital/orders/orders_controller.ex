@@ -28,8 +28,67 @@ defmodule TpnWeb.Hospital.OrdersController do
   end
 
   def show(conn, _params) do
-    orders = Orders.list_orders()
-    render(conn, :show, orders: orders)
+    # Initial page render - no data loaded
+    render(conn, :show)
+  end
+
+  def bulk(conn, _params) do
+    # Get all templates (not filtered by patient type for bulk orders)
+    templates = Templates.templates_for_select()
+
+    # Create empty changeset for bulk order
+    changeset = Order.changeset(%Order{}, %{})
+
+    conn
+    |> assign(:templates, templates)
+    |> assign(:changeset, changeset)
+    |> render(:bulk)
+  end
+
+  def list_orders_data(conn, params) do
+    # Map 'filter' to 'search' for the Orders context and force page_size to 25
+    params =
+      params
+      |> Map.put("page_size", "25")
+      |> then(fn p -> if p["filter"], do: Map.put(p, "search", p["filter"]), else: p end)
+
+    case Networks.get_user_network_access(conn) do
+      {:ok, %{lhn_id: lhn_id, facility_id: facility_id, campus_id: campus_id}} ->
+        case Orders.list_orders_for_user(lhn_id, facility_id, campus_id, params) do
+          {:ok, {orders, meta}} ->
+            conn
+            |> assign(:orders, orders)
+            |> assign(:meta, meta)
+            |> assign(:filters, params)
+            |> render(:_orders_table, layout: false)
+
+          {:error, _} ->
+            conn
+            |> assign(:orders, [])
+            |> assign(:meta, %{
+              current_page: 1,
+              total_pages: 0,
+              total_count: 0,
+              page_size: 25,
+              has_prev: false,
+              has_next: false
+            })
+            |> render(:_orders_table, layout: false)
+        end
+
+      {:error, _} ->
+        conn
+        |> assign(:orders, [])
+        |> assign(:meta, %{
+          current_page: 1,
+          total_pages: 0,
+          total_count: 0,
+          page_size: 25,
+          has_prev: false,
+          has_next: false
+        })
+        |> render(:_orders_table, layout: false)
+    end
   end
 
   @doc """
@@ -43,6 +102,51 @@ defmodule TpnWeb.Hospital.OrdersController do
 
       {:error, _} ->
         render(conn, :admissions, admissions: [])
+    end
+  end
+
+  @doc """
+  Get admitted patients for the patient selection modal.
+  Returns HTML fragment to be loaded via HTMX.
+  """
+  def admitted_patients(conn, params) do
+    case Networks.get_user_network_access(conn) do
+      {:ok, %{lhn_id: lhn_id, facility_id: facility_id, campus_id: campus_id}} ->
+        {:ok, admissions} = Admissions.list_admissions_for_user(lhn_id, facility_id, campus_id)
+
+        # Apply search filter if provided (from 'filter' or 'search' param)
+        search_param = params["filter"] || params["search"]
+
+        filtered_admissions =
+          case search_param do
+            nil ->
+              admissions
+
+            "" ->
+              admissions
+
+            search_term ->
+              search_lower = String.downcase(search_term)
+
+              Enum.filter(admissions, fn admission ->
+                patient_name =
+                  "#{admission.first_name} #{admission.last_name}" |> String.downcase()
+
+                mrn = to_string(admission.mrn || "") |> String.downcase()
+
+                String.contains?(patient_name, search_lower) or
+                  String.contains?(mrn, search_lower)
+              end)
+          end
+
+        conn
+        |> assign(:admissions, filtered_admissions)
+        |> render(:admitted_patients, layout: false)
+
+      {:error, _} ->
+        conn
+        |> assign(:admissions, [])
+        |> render(:admitted_patients, layout: false)
     end
   end
 

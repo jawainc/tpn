@@ -1,0 +1,73 @@
+<%= if @admissions == [] do %>
+  <div class="text-center py-12">
+    <.icon_user class="size-12 mx-auto text-muted-foreground mb-4" />
+    <h3 class="text-lg font-semibold text-foreground mb-2">No admitted patients found</h3>
+    <p class="text-sm text-muted-foreground">
+      There are no currently admitted patients in your network.
+    </p>
+  </div>
+<% else %>
+  <div class="space-y-3 divide-border divide-y">
+    <%= for admission <- @admissions do %>
+      <div class="py-4 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <h4 class="text-base font-semibold text-foreground">
+              {admission.first_name} {admission.last_name}
+            </h4>
+            <span class="badge info text-xs">
+              MRN: {admission.mrn || "N/A"}
+            </span>
+          </div>
+          <button
+            type="button"
+            hx-get={"/patients/#{admission.patient_id}/orders/new"}
+            hx-target="#main-contents"
+            hx-swap="innerHTML"
+            hx-indicator="#main-contents-indicator"
+            onclick="closePatientModal()"
+            class="btn-sm-outline"
+          >
+            <.icon_plus class="size-4" /> Create Order
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-muted-foreground">Admitted:</span>
+            <span class="text-foreground">
+              {Calendar.strftime(admission.inserted_at, "%b %d, %Y")}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-muted-foreground">Age:</span>
+            <span class="text-foreground">{admission.age || "N/A"}</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-muted-foreground">Ward:</span>
+            <span class="text-foreground">{admission.ward || "N/A"}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-muted-foreground">Type:</span>
+            <span class="text-foreground">{admission.patient_type || "N/A"}</span>
+          </div>
+        </div>
+
+        <%= if admission.campus do %>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">Location:</span>
+            <span class="text-foreground text-xs">
+              {admission.campus}
+              <%= if admission.facility do %>
+                , {admission.facility}
+              <% end %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

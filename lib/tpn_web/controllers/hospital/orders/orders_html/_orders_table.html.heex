@@ -1,0 +1,100 @@
+<div id="orders-loader" class="htmx-indicator">
+  <.icon_spinner class="animate-spin size-6" />
+</div>
+
+<%= if @orders == [] do %>
+  <div class="custom-card p-12 text-center">
+    <.icon_clipboard_list class="size-12 mx-auto text-muted-foreground mb-4" />
+    <h3 class="text-lg font-semibold text-foreground mb-2">No orders found</h3>
+    <p class="text-sm text-muted-foreground mb-4">
+      Get started by creating your first order
+    </p>
+  </div>
+<% else %>
+  <div class="rounded border border-card-foreground/10 overflow-x-auto">
+    <table class="w-full text-sm text-foreground-light">
+      <thead>
+        <tr class="border-b border-card-foreground/10">
+          <th class="py-3 px-4 dark:bg-card text-left">Type</th>
+          <th class="py-3 px-4 dark:bg-card text-left">Bag ID</th>
+          <th class="py-3 px-4 dark:bg-card text-left">Patient</th>
+          <th class="py-3 px-4 dark:bg-card text-left">Order Date</th>
+          <th class="py-3 px-4 dark:bg-card text-left">Status</th>
+          <th class="py-3 px-4 dark:bg-card text-left">Campus</th>
+          <th class="py-3 px-4 dark:bg-card text-left">Facility</th>
+          <th class="py-3 px-4 dark:bg-card text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= for order <- @orders do %>
+          <tr class="border-t border-card-foreground/5 hover:bg-card/60">
+            <td class="py-3 px-4">
+              <%= if order.order_type == "patient" do %>
+                <span class="badge info">
+                  <.icon_user class="size-3" /> Patient
+                </span>
+              <% else %>
+                <span class="badge warning">
+                  <.icon_boxes class="size-3" /> Bulk
+                </span>
+              <% end %>
+            </td>
+            <td class="py-3 px-4 font-mono text-xs">{order.bag_id}</td>
+            <td class="py-3 px-4">
+              <%= if order.patient_name do %>
+                {order.patient_name}
+              <% else %>
+                <span class="text-muted-foreground italic">Batch Production</span>
+              <% end %>
+            </td>
+            <td class="py-3 px-4">
+              <%= if order.order_date do %>
+                {Calendar.strftime(order.order_date, "%b %d, %Y %I:%M %p")}
+              <% end %>
+            </td>
+            <td class="py-3 px-4">
+              <%= case order.status do %>
+                <% "draft" -> %>
+                  <span class="badge">Draft</span>
+                <% "pending" -> %>
+                  <span class="badge warning">Pending</span>
+                <% "approved" -> %>
+                  <span class="badge success">Approved</span>
+                <% "rejected" -> %>
+                  <span class="badge alert">Rejected</span>
+                <% _ -> %>
+                  <span class="badge">{order.status}</span>
+              <% end %>
+            </td>
+            <td class="py-3 px-4 text-xs">{order.campus_name || "-"}</td>
+            <td class="py-3 px-4 text-xs">{order.facility_name || "-"}</td>
+            <td class="py-3 px-4">
+              <div class="flex items-center justify-end gap-2">
+                <button type="button" class="btn-secondary btn-sm" title="View order">
+                  <.icon_eye class="size-4" />
+                </button>
+
+                <%= if order.status == "draft" do %>
+                  <button type="button" class="btn-secondary btn-sm" title="Edit order">
+                    <.icon_edit class="size-4" />
+                  </button>
+                <% end %>
+
+                <%= if order.status == "approved" do %>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-sm"
+                    title="Copy order"
+                    onclick="openPatientModal()"
+                  >
+                    <.icon_squares class="size-4" />
+                  </button>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -1,32 +1,162 @@
-<div class="mx-auto max-w-7xl">
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Orders"}
+]} />
+
+<div class="mx-auto max-w-7xl" id="orders-container">
   <.header>
     Orders
+    <:subtitle>
+      Manage and track all orders
+    </:subtitle>
+    <:actions>
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <.icon_search class="size-3 opacity-70 absolute left-2 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            name="filter"
+            hx-get="/orders/data"
+            hx-target="#orders-table-container"
+            hx-trigger="keyup changed delay:500ms"
+            hx-indicator="#orders-data-table-indicator"
+            hx-include="[name='status'], [name='order_type']"
+            class="input pl-8 h-xs text-xs"
+            autocomplete="off"
+            placeholder="Search..."
+          />
+        </div>
+        <div id="orders-filter-dropdown" class="dropdown-menu">
+          <button
+            type="button"
+            id="orders-filter-dropdown-trigger"
+            aria-haspopup="menu"
+            aria-controls="orders-filter-dropdown-menu"
+            aria-expanded="false"
+            class="btn-sm-outline btn-xs"
+          >
+            <.icon_filter class="size-3 opacity-70" />
+          </button>
+          <div
+            id="orders-filter-dropdown-popover"
+            data-popover
+            aria-hidden="true"
+            class="min-w-56"
+          >
+            <div
+              role="menu"
+              id="orders-filter-dropdown-menu"
+              aria-labelledby="orders-filter-dropdown-trigger"
+            >
+              <div role="group">
+                <span role="heading">Order Status</span>
+                <hr role="separator" />
+                <select
+                  name="status"
+                  hx-get="/orders/data"
+                  hx-target="#orders-table-container"
+                  hx-trigger="change"
+                  hx-indicator="#orders-data-table-indicator"
+                  hx-include="[name='filter'], [name='order_type']"
+                  class="select w-full"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="draft">Draft</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+              <div role="group">
+                <span role="heading">Order Type</span>
+                <hr role="separator" />
+                <select
+                  name="order_type"
+                  hx-get="/orders/data"
+                  hx-target="#orders-table-container"
+                  hx-trigger="change"
+                  hx-indicator="#orders-data-table-indicator"
+                  hx-include="[name='filter'], [name='status']"
+                  class="select w-full"
+                >
+                  <option value="">All Types</option>
+                  <option value="Patient Specific">Patient Specific</option>
+                  <option value="Batch Production">Batch Production</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          hx-get="/orders/data"
+          hx-target="#orders-table-container"
+          hx-indicator="#orders-data-table-indicator"
+          hx-include="[name='filter'], [name='status'], [name='order_type']"
+          class="btn-secondary btn-xs"
+          title="Refresh orders"
+        >
+          Reload Orders
+        </button>
+      </div>
+      <div role="group" class="button-group">
+        <button
+          type="button"
+          class="btn-secondary"
+          hx-get="/orders/admitted-patients"
+          hx-target="#patient-dialog-list"
+          hx-indicator="#patient-dialog-indicator"
+          hx-on:click="document.getElementById('patient-dialog').showModal()"
+        >
+          <.icon_clipboard_plus class="size-4" /> Admisssion Order
+        </button>
+        <hr role="separator" />
+        <button
+          type="button"
+          class="btn-secondary"
+          hx-get="/orders/bulk"
+          hx-target="#main-contents"
+          hx-indicator="#main-contents-indicator"
+        >
+          <.icon_boxes class="size-4" /> Batch Order
+        </button>
+      </div>
+    </:actions>
   </.header>
+</div>
 
-  <div class="flex items-center gap-4">
-    <div class="custom-card flex items-center gap-2 cursor-pointer">
-      <span class="badge-outline bg-background-dash py-1"><.icon_boxes /></span>
-      <div class="text-sm text-foreground">
-        Bulk Order
-        <p class="text-xs text-muted-foreground">Order multiple batches</p>
-      </div>
-    </div>
-    <div
-      hx-get="/orders/admissions"
-      hx-target="#slidingPanel-content"
-      hx-indicator="#slidingPanel-loader"
-      onclick="openSlidingPanel()"
-      class="custom-card flex items-center gap-2 cursor-pointer"
-    >
-      <span class="badge-outline bg-background-dash py-1">
-        <.icon_clipboard_plus />
-      </span>
-      <div class="text-sm text-foreground">
-        Admission Order
-        <p class="text-xs text-muted-foreground">Order for patient admission</p>
-      </div>
-    </div>
+<div class="mx-auto max-w-7xl mt-5">
+  <.htmx_content_indicator id="orders-data-table-indicator" />
+  <div
+    id="orders-table-container"
+    class="hide-on-htmx-request"
+    hx-get="/orders/data"
+    hx-trigger="load"
+    hx-target="#orders-table-container"
+    hx-swap="innerHTML"
+    hx-indicator="#orders-data-table-indicator"
+  >
   </div>
 </div>
 
-<.right_sliding_panel title="Admissions" />
+<dialog
+  id="patient-dialog"
+  class="dialog w-full sm:max-w-[850px] max-h-[612px]"
+  aria-labelledby="patient-dialog-title"
+  aria-describedby="patient-dialog-description"
+>
+  <div>
+    <header>
+      <h2 id="patient-dialog-title">Select Patient</h2>
+      <p id="patient-dialog-description">Choose a patient from the list below.</p>
+      <div class="mb-4">
+        <.search url="/orders/admitted-patients" target="#patient-dialog-list" />
+      </div>
+    </header>
+    <section>
+      <.htmx_content_indicator id="patient-dialog-indicator" />
+      <div id="patient-dialog-list" class="hide-on-htmx-request"></div>
+    </section>
+    <.form_modal_close_button />
+  </div>
+</dialog>

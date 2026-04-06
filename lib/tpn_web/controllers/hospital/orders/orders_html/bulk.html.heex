@@ -1,0 +1,221 @@
+<.bread_crumb items={[
+  %{label: "Home", to: "/dash"},
+  %{label: "Orders", to: "/orders"},
+  %{label: "Batch Order"}
+]} />
+
+<div class="mx-auto max-w-7xl" id="bulk-order-container">
+  <.header>
+    Batch Order
+    <:subtitle>
+      Create a new batch production TPN order
+    </:subtitle>
+  </.header>
+
+  <div class="mt-6">
+    <.simple_form
+      :let={f}
+      for={@changeset}
+      hx-post="/hospital/orders"
+      hx-disabled-elt=".form-button"
+      hx-target="#main-contents"
+      hx-on::config-request="formConfigRequest(event)"
+      autocomplete="off"
+      no_styles={true}
+    >
+      <input type="hidden" name="order_type" value="BatchProduction" />
+      <input type="hidden" name="patient_id" value="" />
+      <input type="hidden" name="admission_id" value="" />
+
+      <section class="space-y-6">
+        <!-- Basic Bulk Order Information -->
+        <div class="custom-card">
+          <header class="border-b px-4 py-3 font-semibold bg-card">
+            Order Information
+          </header>
+          <div class="p-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <.input
+                field={f[:number_of_bags]}
+                type="number"
+                label="Number of Bags"
+                step="1"
+                min="1"
+                required
+                value="1"
+                id="number_of_bags"
+              />
+
+              <.input
+                field={f[:template_id]}
+                type="simple-select"
+                prompt="Select a template..."
+                label="Template"
+                options={@templates}
+                required
+                hx-get="/order/template_products"
+                hx-trigger="change"
+                hx-target="#template_products_content"
+                hx-indicator="#template_products_loader"
+                hx-swap="innerHTML"
+                id="template_id"
+              />
+
+              <.input
+                field={f[:fluids]}
+                type="number"
+                label="Fluids (TPN + Lipids)"
+                step="0.1"
+                required
+                id="fluids"
+                placeholder="Auto-filled from template"
+              />
+            </div>
+          </div>
+        </div>
+        
+<!-- Template Products Section -->
+        <div class="custom-card">
+          <header class="border-b px-4 py-3 font-semibold bg-card">
+            Template Products
+          </header>
+          <div id="template_products_loader" class="htmx-indicator">
+            <.icon_spinner class="animate-spin mx-auto my-12 text-foreground size-6" />
+          </div>
+          <div id="template_products_content" class="hide-on-htmx-request">
+            <div class="text-center my-10 text-sm text-muted-foreground">
+              Select a template to view products
+            </div>
+          </div>
+        </div>
+        
+<!-- Hidden fields for calculations -->
+        <input type="hidden" name="order[status]" value="draft" id="order-status-field" />
+        <input type="hidden" name="infusion_calculations" id="infusion_calculations" value="" />
+        <input
+          type="hidden"
+          name="nutritional_calculations"
+          id="nutritional_calculations"
+          value=""
+        />
+        <input type="hidden" name="electrolyte_summary" id="electrolyte_summary" value="" />
+        <input type="hidden" name="nutritional_summary" id="nutritional_summary" value="" />
+        <input type="hidden" name="calculated_at" id="calculated_at" value="" />
+        <input type="hidden" name="osmolarity_alert_data" id="osmolarity_alert_data" value="" />
+        
+<!-- Form Actions -->
+        <footer class="flex justify-end items-center space-x-3 pt-6 border-t">
+          <button
+            type="button"
+            class="btn-outline"
+            hx-get="/orders"
+            hx-target="#main-contents"
+            hx-indicator="#main-contents-indicator"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn-secondary form-button"
+            onclick="document.getElementById('order-status-field').value = 'draft'"
+          >
+            <.icon_save class="size-4" /> Save as Draft
+          </button>
+          <button
+            type="submit"
+            class="btn-primary form-button"
+            onclick="document.getElementById('order-status-field').value = 'pending'"
+          >
+            <.icon_pakage_plus class="size-4" /> Create Bulk Order
+          </button>
+        </footer>
+      </section>
+    </.simple_form>
+  </div>
+</div>
+
+<script>
+  // Alpine.js initialization for bulk order form
+  document.addEventListener('DOMContentLoaded', function() {
+    function initAlpineOnContent() {
+      if (typeof Alpine === 'undefined') return;
+
+      const elements = document.querySelectorAll('[x-data]:not([data-alpine-initialized])');
+      elements.forEach(element => {
+        try {
+          const xDataAttr = element.getAttribute('x-data');
+          if (xDataAttr && xDataAttr.includes('orderTemplateProducts')) {
+            if (!window.templateData) {
+              window.templateData = { classes: [], classList: [], products: [] };
+            }
+            if (!Array.isArray(window.templateData.classList)) {
+              window.templateData.classList = window.templateData.classes || [];
+            }
+          }
+
+          Alpine.initTree(element);
+          element.setAttribute('data-alpine-initialized', 'true');
+        } catch (error) {
+          console.warn('Alpine.js initialization suppressed:', error.message);
+          element.setAttribute('data-alpine-initialized', 'true');
+        }
+      });
+    }
+
+    initAlpineOnContent();
+
+    document.addEventListener('htmx:afterSwap', function() {
+      setTimeout(initAlpineOnContent, 50);
+    });
+
+    if (typeof Alpine !== 'undefined') {
+      window.addEventListener('alpine:error', function(event) {
+        if (event.detail.error?.message?.includes('classList')) {
+          console.warn('Alpine.js classList error suppressed');
+          event.preventDefault();
+        }
+      });
+    }
+
+    // Save calculations before form submission
+    function saveCalculationsBeforeSubmit() {
+      const templateProducts = document.querySelector('[x-data*="orderTemplateProducts"]');
+      if (templateProducts && templateProducts.__x) {
+        try {
+          const component = templateProducts.__x;
+          if (typeof component.saveCalculationsToForm === 'function') {
+            const calculatedValues = component.saveCalculationsToForm();
+
+            document.getElementById('infusion_calculations').value =
+              JSON.stringify(calculatedValues.infusion_calculations || {});
+            document.getElementById('nutritional_calculations').value =
+              JSON.stringify(calculatedValues.nutritional_calculations || {});
+            document.getElementById('electrolyte_summary').value =
+              JSON.stringify(calculatedValues.electrolyte_summary || {});
+            document.getElementById('nutritional_summary').value =
+              JSON.stringify(calculatedValues.nutritional_summary || {});
+            document.getElementById('calculated_at').value =
+              calculatedValues.calculated_at || new Date().toISOString();
+            return;
+          }
+        } catch (error) {
+          console.warn('Error getting calculations:', error.message);
+        }
+      }
+
+      // Fallback: empty calculations
+      document.getElementById('infusion_calculations').value = JSON.stringify({});
+      document.getElementById('nutritional_calculations').value = JSON.stringify({});
+      document.getElementById('electrolyte_summary').value = JSON.stringify({});
+      document.getElementById('nutritional_summary').value = JSON.stringify({});
+      document.getElementById('calculated_at').value = new Date().toISOString();
+    }
+
+    // Form submission handling
+    const form = document.querySelector('form[hx-post="/hospital/orders"]');
+    if (form) {
+      form.addEventListener('submit', saveCalculationsBeforeSubmit);
+      form.addEventListener('htmx:configRequest', saveCalculationsBeforeSubmit);
+    }
+  });
+</script>
