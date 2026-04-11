@@ -23,7 +23,7 @@
       autocomplete="off"
       no_styles={true}
     >
-      <input type="hidden" name="order_type" value="BatchProduction" />
+      <input type="hidden" name="order_type" value="Batch Production" />
       <input type="hidden" name="patient_id" value="" />
       <input type="hidden" name="admission_id" value="" />
 
@@ -59,16 +59,6 @@
                 hx-indicator="#template_products_loader"
                 hx-swap="innerHTML"
                 id="template_id"
-              />
-
-              <.input
-                field={f[:fluids]}
-                type="number"
-                label="Fluids (TPN + Lipids)"
-                step="0.1"
-                required
-                id="fluids"
-                placeholder="Auto-filled from template"
               />
             </div>
           </div>
@@ -217,5 +207,24 @@
       form.addEventListener('submit', saveCalculationsBeforeSubmit);
       form.addEventListener('htmx:configRequest', saveCalculationsBeforeSubmit);
     }
+
+    // Osmolarity override handling
+    window.addEventListener('osmolarity-override', function(event) {
+      const { alert, comments, overridden_at } = event.detail;
+
+      saveCalculationsBeforeSubmit();
+
+      const osmolarityData = {
+        alert: alert,
+        comments: comments,
+        overridden_at: overridden_at,
+        user_id: document.querySelector('input[name="user_id"]')?.value || ''
+      };
+
+      document.getElementById('osmolarity_alert_data').value = JSON.stringify(osmolarityData);
+
+      const form = document.querySelector('form[hx-post="/hospital/orders"]');
+      if (form) htmx.trigger(form, 'submit');
+    });
   });
 </script>
